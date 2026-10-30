@@ -1,0 +1,1522 @@
+﻿  <div class="about-tab-content active" id="tab-overview">
+
+  <!-- 서브 탭 네비게이션 -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="overviewSubTabs">
+      <button class="sub-tab active" data-subtab="sub-overview">사용 사례</button>
+      <button class="sub-tab" data-subtab="sub-pipeline">워크플로우</button>
+      <button class="sub-tab" data-subtab="sub-why">개발 동기</button>
+      <button class="sub-tab" data-subtab="sub-compare">시스템 비교</button>
+    </div>
+  </div>
+
+  <!-- SUB-TAB: 개요 -->
+  <div class="sub-tab-content active" id="sub-overview">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 0: 이 도구는 무엇인가
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="about-section">
+    <p class="sec-desc"><strong>TS-Lens</strong>는 <strong>업로드 &rarr; 전처리 &rarr; 탐색(검색 &middot; 군집화) &rarr; 해석 &rarr; 라벨링</strong>을 하나의 작업 공간에서 연결하는 웹 기반 시계열 패턴 발견 도구입니다.</p>
+
+    <div class="about-callout">
+      <div class="about-callout-title"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span> TS-Lens 핵심 흐름</div>
+      <div class="about-callout-body">
+        사용자는 원하는 패턴을 자연어, 스케치, 예시 구간, 프리셋, 클러스터 대표 형태로 표현합니다.
+        TS-Lens는 이를 검사 가능한 파형 질의로 만들거나 실제 구간과 비교하여 유사 interval을 찾고,
+        선택된 결과를 자연어 설명, 라벨 바스켓, 커스텀 프리셋으로 이어줍니다.
+        <div class="scenario-method-note" style="margin-top:8px;">
+          <strong>논문 관점:</strong> Describe &rarr; Generate &rarr; Search &rarr; Explain &rarr; Curate.
+          새로운 예측 모델이 아니라, zero-shot 시계열 패턴 탐색을 위한 다중 모달 인터페이스입니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="about-callout">
+      <div class="about-callout-title"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span> 뷰 적응형 쿼리 모드</div>
+      <div class="about-callout-body">
+        시스템이 데이터 뷰에 따라 사용 가능한 검색 모드를 자동으로 조정합니다:
+        <ul>
+          <li><strong style="color:var(--text);">Continuous 뷰:</strong> <span style="color:var(--purple);">Select</span> (차트 드래그), <span style="color:var(--purple);">Sketch</span> (프리핸드 스케치), <span style="color:var(--purple);">Text</span> (LLM) &mdash; 전체 타임라인에서 슬라이딩 윈도우 검색</li>
+          <li><strong style="color:var(--text);">Segment 뷰:</strong> <span style="color:var(--purple);">Sample</span> (카드 클릭), <span style="color:var(--purple);">Sketch</span> (프리핸드 스케치), <span style="color:var(--purple);">Preset</span> (7종 내장 + 커스텀), <span style="color:var(--purple);">Cluster</span> (Fast/Shape/Semantic AI), <span style="color:var(--purple);">Text</span> (LLM)</li>
+        </ul>
+        이러한 명확한 구분은 각 모드가 혼란 없이 적절한 데이터 구조에서 작동하도록 보장합니다.
+      </div>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="feat-list" style="margin-top:16px;">
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#D97706;">&#9881;</span>
+          <h3>데이터 준비</h3>
+        </div>
+        <p>
+          CSV 업로드(파일 1개·폴더), 전처리 (컬럼 물리 범위 밖 값 제거·극단값 처리, 시간 갭 채우기, 8가지 보간/복원 방법), 품질 진단, FFT 주기성 분석, 시간 단위별 분할.
+        </p>
+        <div class="scenario-method-note" style="margin-top:8px;">
+          <strong>자세한 내용과 사용 시나리오:</strong> <a href="#" onclick="document.querySelector('[data-tab=\"tab-data-prep\"]').click(); return false;" style="color:var(--purple);">데이터 준비 탭</a> 참조
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#059669;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span></span>
+          <h3>패턴 검색</h3>
+        </div>
+        <p>
+          6가지 입력 경로: <strong>Text</strong> (자연어 &rarr; 규칙 선처리 후 로컬 모델 또는 외부 LLM이 형태 생성), <strong>Preset</strong> (7종 내장 + 커스텀),
+          <strong>Select/Sample</strong> (실제 파형 QBE), <strong>Sketch</strong> (프리핸드 드로잉), <strong>Cluster</strong> (비지도 발견).
+          다중 컬럼 검색, 4가지 거리 함수 (Euclidean/DTW/Cosine/Shape), ChatTS 구간 설명 (역방향).
+        </p>
+        <div class="scenario-method-note" style="margin-top:8px;">
+          <strong>자세한 내용과 사용 시나리오:</strong> <a href="#" onclick="document.querySelector('[data-tab=\"tab-search\"]').click(); return false;" style="color:var(--purple);">패턴 검색 탭</a> 참조
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#7C3AED;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span></span>
+          <h3>라벨링</h3>
+        </div>
+        <p>
+          검색 결과를 수락/거절하여 패턴 라이브러리 구축. Label Basket (Draft &rarr; Confirmed) 워크플로우.
+          확정된 세그먼트의 평균 형태로 쿼리 자동 정제. 클러스터 센트로이드를 커스텀 프리셋으로 저장.
+          교차 컬럼 패턴 상관관계 분석.
+        </p>
+        <div class="scenario-method-note" style="margin-top:8px;">
+          <strong>자세한 내용과 사용 시나리오:</strong> <a href="#" onclick="document.querySelector('[data-tab=\"tab-labeling\"]').click(); return false;" style="color:var(--purple);">라벨링 탭</a> 참조
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#0F766E;">&#9783;</span>
+          <h3>데이터 관리</h3>
+        </div>
+        <p>
+          데이터 관리 페이지는 데이터 목록·데이터 업로드·모델 연결 세 탭으로 나뉩니다. 업로드는 파일 1개 또는 폴더(파일마다 개별 소스, 또는 시간순으로 하나로 합치기)를 받고, 인코딩·구분자를 자동 감지하며 같은 시각이 겹칠 때의 처리(저장 안 함·첫 값·마지막 값·평균·밀기)를 고릅니다. 모든 시각이 k번씩 나오면 지역별 파일 k개를 합친 데이터라고 알려줍니다. 데이터셋을 지우면 연결된 전처리 결과·라벨·바스켓·프리셋·캐시·파일이 함께 지워지고, 지우기 전에 DB 백업을 만듭니다. 함께 제공하는 공개 데이터로 Elia(벨기에 송전망 운영사)의 2015~2026년 풍력 발전량·예측을 지역별 시간 단위 CSV 5개로 정리한 것, 상명풍력, 행원 기상탑 데이터가 있습니다.
+        </p>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#B45309;">&#10024;</span>
+          <h3>AI 메타 추정</h3>
+        </div>
+        <p>
+          관리자가 모델 연결 탭에서 외부 LLM(Anthropic Claude 또는 OpenAI 호환 서버)을 연결하면, 업로드 탭 맨 위 스위치로 업로드마다 AI 메타 추정을 켤 수 있습니다(기본 꺼짐, 마지막 선택 기억). 켜면 데이터셋 키·이름·설명·위치·시설·용량·측정 간격·특성·태그와 컬럼 라벨·단위·설명·최소·최대를 채우고, AI가 채운 칸은 붉은 테두리로 표시하며 사용자가 고치면 표시가 사라집니다. 모든 메타 칸에는 ⓘ 설명이 있고, 컬럼 최소·최대는 물리적으로 가능한 범위로서 전처리에서 범위 밖 값을 걸러내는 데 쓰입니다. API 키는 서버 파일에만 저장되고 화면에는 끝 4자리만 보이며, 사용 비용을 추정해 월 $10에서 경고하고 $100에서 막습니다(설정 가능).
+        </p>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head">
+          <span class="feat-num" style="background:#374151;">&#9919;</span>
+          <h3>로그인과 모델</h3>
+        </div>
+        <p>
+          로그인은 서버의 config/local/users.yaml 에 계정이 있을 때만 켜집니다. 역할은 관리자와 일반 사용자 두 가지이며, 데이터 업로드와 모델 연결 탭은 관리자만 씁니다. 계정은 화면에서 만들지 않고 관리자가 tools/set_password.py 로 등록합니다. 구간 설명의 기본 모델은 ByteDance Research의 ChatTS-14B로, 별도 서버에서 GPU를 함께 쓰며 8bit로 돌고 요청이 올 때만 올렸다가 5분 동안 쓰지 않으면 내립니다. 외부 LLM도 설명·생성 모델로 고를 수 있습니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /sub-overview -->
+
+  <!-- SUB-TAB: 왜 필요한가 -->
+  <div class="sub-tab-content" id="sub-why">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 1: 왜 이 도구가 필요한가
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="about-section">
+    <div class="why-grid">
+
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:4px 0 -4px;">
+        <span style="font-size:.7rem;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;">문제점</span>
+        <span style="flex:1;height:1px;background:rgba(100,116,139,.15);"></span>
+      </div>
+
+      <!-- 1. 시계열에는 Ctrl+F가 없다 -->
+      <div class="why-card">
+        <div class="why-num">1</div>
+        <h3>시계열에는 Ctrl+F가 없습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>텍스트는 키워드로 검색할 수 있지만, <strong>숫자 파형에서 "유사한 형태"를 찾을 방법이 없습니다.</strong>
+              엔지니어가 수만 개의 데이터 포인트를 눈으로 스크롤하는 것은 비현실적이며, 구간을 놓치는 것은 불가피합니다.</p>
+            <div class="why-example"><span class="why-ex-label">현실</span>8,760pt (1년) &times; 24pt 윈도우 = 8,737개 후보. 육안으로는 불가능.</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 52" fill="none" style="margin-bottom:4px;">
+              <polyline points="4,40 12,36 20,28 28,18 36,22 44,30 52,38 60,34 68,20 76,14 84,18 92,28 100,36 108,32 116,22 124,10 132,16 140,26 148,34 156,38 164,30 172,20 180,24 188,32 196,38" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="60" y="6" width="36" height="16" rx="3" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3 2"/>
+              <text x="78" y="4" text-anchor="middle" font-size="5.5" fill="#ef4444" font-weight="700">?</text>
+              <circle cx="30" cy="42" r="8" fill="none" stroke="#2563EB" stroke-width="1" opacity=".3"/>
+              <line x1="36" y1="48" x2="42" y2="52" stroke="#2563EB" stroke-width="1" opacity=".3"/>
+              <rect x="118" y="4" width="36" height="16" rx="3" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-dasharray="3 2"/>
+              <text x="136" y="4" text-anchor="middle" font-size="5.5" fill="#22c55e" font-weight="700">!</text>
+            </svg>
+            <canvas class="why-mini-chart" id="whyChart1" height="44"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 크기가 달라도 같은 패턴이다 -->
+      <div class="why-card">
+        <div class="why-num">2</div>
+        <h3>같은 형태지만 "다름"으로 분류됩니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>겨울철 50kW와 여름철 100kW는 크기는 다르지만, <strong>곡선의 형태는 동일합니다.</strong>
+              단순 값 비교로는 이러한 패턴을 포착할 수 없습니다. 순수한 형태만 비교하려면 스케일을 제거해야 합니다.</p>
+            <div class="why-example"><span class="why-ex-label">해결책</span>Z-점수 정규화로 스케일 제거 &rarr; 형태만 비교</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 60" fill="none" style="margin-bottom:4px;">
+              <text x="4" y="8" font-size="5" fill="#94a3b8">100kW</text>
+              <polyline points="4,14 24,12 44,16 64,26 84,30 104,28 124,18 144,12 164,14" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
+              <text x="168" y="16" font-size="5" fill="#f59e0b">summer</text>
+              <text x="4" y="34" font-size="5" fill="#94a3b8">50kW</text>
+              <polyline points="4,40 24,38 44,42 64,50 84,54 104,52 124,44 144,38 164,40" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/>
+              <text x="168" y="42" font-size="5" fill="#3b82f6">winter</text>
+              <path d="M186,28 L196,28" stroke="#22c55e" stroke-width="1.5"/>
+              <text x="191" y="24" text-anchor="middle" font-size="5" fill="#22c55e" font-weight="700">Z</text>
+            </svg>
+            <canvas class="why-mini-chart" id="whyChart2" height="44"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:4px 0 -4px;">
+        <span style="font-size:.7rem;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase;">언어와 시계열 연결</span>
+        <span style="flex:1;height:1px;background:rgba(5,150,105,.15);"></span>
+      </div>
+
+      <!-- 3. "그 모양"을 말로 설명하고 싶다 (Forward) -->
+      <div class="why-card">
+        <div class="why-num">3</div>
+        <h3>"그 모양"은 말로만 설명할 수 있습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>전문가는 찾고자 하는 패턴을 머릿속에 알고 있지만, 이를 수학적 벡터로 표현할 방법이 없습니다.
+              <strong>"갑자기 하락"이라고 적으면 규칙 선처리를 거쳐 로컬 모델이나 외부 LLM이 질의 파형을 만들고</strong> 바로 검색합니다.
+              예시 데이터 없이 바로 시작할 수 있습니다.</p>
+            <div class="why-example"><span class="why-ex-label">방향</span>Text &rarr; Shape &rarr; 검색 (순방향)</div>
+          </div>
+          <div class="why-col-viz">
+            <!-- Text → Shape 일러스트 -->
+            <div style="background:rgba(5,150,105,.04);border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:10px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+                <span style="font-size:.65rem;font-weight:600;color:#059669;">Text → Shape</span>
+                <span style="font-size:.55rem;color:#6b7280;">(순방향)</span>
+              </div>
+              <svg viewBox="0 0 200 50" fill="none" style="width:100%;">
+                <!-- 텍스트 입력 -->
+                <rect x="4" y="10" width="60" height="30" rx="5" fill="#fff" stroke="#059669" stroke-width="1.2"/>
+                <text x="34" y="24" text-anchor="middle" font-size="5.5" fill="#059669" font-style="italic">"천천히 상승 후</text>
+                <text x="34" y="33" text-anchor="middle" font-size="5.5" fill="#059669" font-style="italic">갑자기 하락"</text>
+                <!-- 화살표 -->
+                <path d="M68,25 L88,25" stroke="#059669" stroke-width="1.5"/>
+                <path d="M84,21 L90,25 L84,29" fill="none" stroke="#059669" stroke-width="1.5"/>
+                <rect x="72" y="8" width="20" height="12" rx="4" fill="rgba(5,150,105,.1)"/>
+                <text x="82" y="16" text-anchor="middle" font-size="5" fill="#059669" font-weight="700">LLM</text>
+                <!-- 생성된 형태 -->
+                <rect x="94" y="6" width="102" height="38" rx="6" fill="rgba(5,150,105,.06)" stroke="#059669" stroke-width="1"/>
+                <polyline points="102,38 118,34 134,28 150,20 162,16 170,14 178,30 186,38" stroke="#059669" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="145" y="44" text-anchor="middle" font-size="4" fill="#059669">생성된 쿼리 형태</text>
+              </svg>
+            </div>
+            <!-- 컬럼별 독립 생성 예시 -->
+            <div style="display:flex;gap:4px;">
+              <div style="flex:1;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:4px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 50 24" fill="none" style="width:100%;height:20px;">
+                  <polyline points="4,18 12,14 20,10 28,8 36,10 44,14" stroke="#ef4444" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#dc2626;">온도</div>
+              </div>
+              <div style="flex:1;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.15);border-radius:4px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 50 24" fill="none" style="width:100%;height:20px;">
+                  <polyline points="4,16 12,12 20,6 28,4 36,8 44,16" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#2563eb;">전력</div>
+              </div>
+              <div style="flex:1;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:4px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 50 24" fill="none" style="width:100%;height:20px;">
+                  <polyline points="4,12 12,10 20,8 28,10 36,12 44,14" stroke="#10b981" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#059669;">습도</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 이 구간이 뭔지 모르겠다 (역방향) -->
+      <div class="why-card">
+        <div class="why-num">4</div>
+        <h3>이 구간이 무엇을 의미하는지 모르겠습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>차트에서 특이한 구간을 발견했지만, <strong>정상인지 비정상인지, 어떤 상황을 나타내는지 빠르게 판단하기 어렵습니다.</strong>
+              구간을 드래그하면 시계열 전용 모델 ChatTS-14B가 형태를 문장으로 설명합니다. 추세와 변동성 수치는 앱이 직접 계산해 함께 보여줍니다.</p>
+            <div class="why-example"><span class="why-ex-label">방향</span>구간 선택 &rarr; Shape &rarr; Text (역방향)</div>
+          </div>
+          <div class="why-col-viz">
+            <!-- Shape → Text 일러스트 -->
+            <div style="background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:10px;">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+                <span style="font-size:.65rem;font-weight:600;color:#7c3aed;">Shape → Text</span>
+                <span style="font-size:.55rem;color:#6b7280;">(역방향)</span>
+              </div>
+              <svg viewBox="0 0 200 50" fill="none" style="width:100%;">
+                <!-- 선택된 구간 -->
+                <rect x="4" y="6" width="70" height="38" rx="6" fill="rgba(124,58,237,.06)" stroke="#7c3aed" stroke-width="1"/>
+                <polyline points="10,34 18,28 26,20 34,12 42,16 50,26 58,22 66,18" stroke="#7c3aed" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="20" y="8" width="32" height="10" rx="3" fill="rgba(124,58,237,.15)" stroke="#7c3aed" stroke-width=".8" stroke-dasharray="2 1"/>
+                <text x="36" y="15" text-anchor="middle" font-size="4" fill="#7c3aed">선택 구간</text>
+                <!-- 화살표 -->
+                <path d="M78,25 L98,25" stroke="#7c3aed" stroke-width="1.5"/>
+                <path d="M94,21 L100,25 L94,29" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+                <rect x="82" y="8" width="20" height="12" rx="4" fill="rgba(124,58,237,.1)"/>
+                <text x="92" y="16" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="700">ChatTS</text>
+                <!-- 텍스트 설명 출력 -->
+                <rect x="104" y="6" width="92" height="38" rx="5" fill="#fff" stroke="#7c3aed" stroke-width="1.2"/>
+                <text x="150" y="18" text-anchor="middle" font-size="5" fill="#7c3aed">"낮 시간대에 높고</text>
+                <text x="150" y="27" text-anchor="middle" font-size="5" fill="#7c3aed">야간에 낮아지는</text>
+                <text x="150" y="36" text-anchor="middle" font-size="5" fill="#7c3aed">주기적 패턴"</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 형태를 직접 고를 수도 있다 (프리셋) -->
+      <div class="why-card">
+        <div class="why-num">5</div>
+        <h3>일부 형태는 말로 설명하기 어렵습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>모든 패턴을 자연어로 설명할 수 있는 것은 아닙니다.
+              <strong>7종 내장 프리셋</strong> (rise, fall, flat, bell, spike, V-shape, dip) 또는 클러스터 중심에서 저장한 커스텀 프리셋을 클릭 한 번으로 선택하거나,
+              차트에서 드래그하여 해당 파형 자체를 쿼리로 사용할 수 있습니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>종형 선택 &rarr; 일별 분할 &rarr; 365일 중 맑은 하늘 168일 발견</div>
+          </div>
+          <div class="why-col-viz">
+            <!-- 프리셋 아이콘 그리드 (SVG) -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+              <!-- rise -->
+              <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.25);border-radius:6px;padding:6px;text-align:center;">
+                <svg viewBox="0 0 40 28" fill="none" style="width:100%;height:24px;">
+                  <polyline points="4,24 12,20 20,14 28,8 36,4" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#16a34a;font-weight:600;">rise</div>
+              </div>
+              <!-- bell -->
+              <div style="background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.4);border-radius:6px;padding:6px;text-align:center;">
+                <svg viewBox="0 0 40 28" fill="none" style="width:100%;height:24px;">
+                  <polyline points="4,24 10,20 16,12 20,4 24,12 30,20 36,24" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#d97706;font-weight:600;">bell ✓</div>
+              </div>
+              <!-- dip -->
+              <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.25);border-radius:6px;padding:6px;text-align:center;">
+                <svg viewBox="0 0 40 28" fill="none" style="width:100%;height:24px;">
+                  <polyline points="4,4 10,8 16,16 20,24 24,16 30,8 36,4" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#2563eb;font-weight:600;">dip</div>
+              </div>
+              <!-- v_shape -->
+              <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.25);border-radius:6px;padding:6px;text-align:center;">
+                <svg viewBox="0 0 40 28" fill="none" style="width:100%;height:24px;">
+                  <polyline points="4,4 20,24 36,4" stroke="#7c3aed" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size:.52rem;color:#6d28d9;font-weight:600;">v_shape</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;margin-top:4px;">
+              <!-- spike -->
+              <div style="flex:1;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:6px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 40 20" fill="none" style="width:100%;height:16px;">
+                  <polyline points="4,16 14,14 20,2 26,14 36,16" stroke="#ef4444" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.48rem;color:#dc2626;">spike</div>
+              </div>
+              <!-- flat -->
+              <div style="flex:1;background:rgba(100,116,139,.06);border:1px solid rgba(100,116,139,.25);border-radius:6px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 40 20" fill="none" style="width:100%;height:16px;">
+                  <polyline points="4,10 12,10 20,10 28,10 36,10" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.48rem;color:#475569;">flat</div>
+              </div>
+              <!-- fall -->
+              <div style="flex:1;background:rgba(236,72,153,.06);border:1px solid rgba(236,72,153,.25);border-radius:6px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 40 20" fill="none" style="width:100%;height:16px;">
+                  <polyline points="4,4 12,8 20,12 28,16 36,18" stroke="#ec4899" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div style="font-size:.48rem;color:#db2777;">fall</div>
+              </div>
+              <!-- custom -->
+              <div style="flex:1;background:rgba(217,119,6,.06);border:1px dashed rgba(217,119,6,.4);border-radius:6px;padding:4px;text-align:center;">
+                <svg viewBox="0 0 40 20" fill="none" style="width:100%;height:16px;">
+                  <text x="20" y="14" text-anchor="middle" font-size="10" fill="#d97706">+</text>
+                </svg>
+                <div style="font-size:.48rem;color:#b45309;">custom</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:4px 0 -4px;">
+        <span style="font-size:.7rem;font-weight:700;color:#2563EB;letter-spacing:.08em;text-transform:uppercase;">공정한 비교</span>
+        <span style="flex:1;height:1px;background:rgba(37,99,235,.15);"></span>
+      </div>
+
+      <!-- 6. 길이와 타이밍이 다르면? -->
+      <div class="why-card">
+        <div class="why-num">6</div>
+        <h3>길이와 타이밍이 다릅니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>실제 패턴은 항상 같은 길이와 속도로 나타나지 않습니다.
+              <strong>4가지 거리 함수</strong>로 상황에 맞는 비교 방법을 선택할 수 있습니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>8개 모터 실행 (95~148pt) &rarr; DTW &rarr; 길이가 다름에도 비교 가능</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 52" fill="none" style="margin-bottom:6px;">
+              <text x="42" y="6" text-anchor="middle" font-size="5" fill="#94a3b8">Euclidean: 1:1 매핑</text>
+              <polyline points="4,18 16,14 28,20 40,28 52,32 64,26 76,16" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="4,38 16,34 28,40 40,46 52,48 64,42 76,36" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <line x1="4" y1="18" x2="4" y2="38" stroke="#e5e7eb" stroke-width=".5"/>
+              <line x1="28" y1="20" x2="28" y2="40" stroke="#e5e7eb" stroke-width=".5"/>
+              <line x1="52" y1="32" x2="52" y2="48" stroke="#e5e7eb" stroke-width=".5"/>
+              <text x="148" y="6" text-anchor="middle" font-size="5" fill="#2563EB">DTW: 최적 정렬</text>
+              <polyline points="108,18 120,14 132,20 144,28 156,32 168,26 180,16" stroke="#2563EB" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="116,38 128,34 140,40 148,44 156,48 164,46 172,42 180,36 192,34" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <line x1="120" y1="14" x2="128" y2="34" stroke="#bfdbfe" stroke-width=".5"/>
+              <line x1="132" y1="20" x2="140" y2="40" stroke="#bfdbfe" stroke-width=".5"/>
+              <line x1="156" y1="32" x2="164" y2="46" stroke="#bfdbfe" stroke-width=".5"/>
+              <line x1="168" y1="26" x2="180" y2="36" stroke="#bfdbfe" stroke-width=".5"/>
+            </svg>
+            <div style="display:flex;gap:4px;">
+              <div style="flex:1;text-align:center;padding:5px;border-radius:5px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.12);">
+                <div style="font-family:'DM Mono',monospace;font-size:.76rem;font-weight:700;color:var(--green);">ED</div>
+                <div style="font-size:.56rem;color:var(--text3);">Euclidean</div>
+              </div>
+              <div style="flex:1;text-align:center;padding:5px;border-radius:5px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.12);">
+                <div style="font-family:'DM Mono',monospace;font-size:.76rem;font-weight:700;color:#2563EB;">DTW</div>
+                <div style="font-size:.56rem;color:var(--text3);">시간 워핑</div>
+              </div>
+              <div style="flex:1;text-align:center;padding:5px;border-radius:5px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.12);">
+                <div style="font-family:'DM Mono',monospace;font-size:.76rem;font-weight:700;color:#7C3AED;">COS</div>
+                <div style="font-size:.56rem;color:var(--text3);">Cosine</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. 변수 하나로는 부족하다 -->
+      <div class="why-card">
+        <div class="why-num">7</div>
+        <h3>단일 변수로는 충분하지 않습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>실제 환경에서는 <strong>여러 변수가 함께 움직입니다</strong> — 온도, 일사량, 발전량 등.
+              단일 컬럼만 보면 상관관계를 놓칩니다.
+              컬럼 간 거리를 균등 평균하여 전체 유사도를 계산합니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>전력 + Irradiance + 온도 &rarr; 균등 평균 거리 &rarr; top 20 results</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 160 40">
+              <polyline points="5,32 30,24 55,10 80,6 105,12 130,22 155,30" fill="none" stroke="#059669" stroke-width="2" stroke-opacity="1" stroke-linecap="round"/>
+              <polyline points="5,28 30,20 55,8 80,4 105,10 130,18 155,26" fill="none" stroke="#2563EB" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+              <polyline points="5,20 30,19 55,17 80,16 105,18 130,20 155,21" fill="none" stroke="#D97706" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:4px 0 -4px;">
+        <span style="font-size:.7rem;font-weight:700;color:#D97706;letter-spacing:.08em;text-transform:uppercase;">실제 데이터</span>
+        <span style="flex:1;height:1px;background:rgba(217,119,6,.15);"></span>
+      </div>
+
+      <!-- 8. 데이터는 항상 불완전하다 -->
+      <div class="why-card">
+        <div class="why-num">8</div>
+        <h3>실제 데이터는 절대 깨끗하지 않습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>센서 고장, 통신 장애, 극단값. <strong>결측값과 이상값이 없는 현장 데이터는 사실상 존재하지 않습니다.</strong>
+              전처리 없이 검색하면 신뢰할 수 없는 결과가 나옵니다.</p>
+            <div class="why-example"><span class="why-ex-label">해결책</span>3단계: 극단값 처리 &rarr; 시간 갭 채우기 &rarr; 8가지 보간/복원 방법 (MOMENT FM 포함)</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 50" fill="none" style="margin-bottom:4px;">
+              <text x="40" y="6" text-anchor="middle" font-size="5" fill="#ef4444">전</text>
+              <polyline points="4,36 14,30 24,28" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <circle cx="34" cy="12" r="3" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="1.5 1"/>
+              <text x="34" y="14" text-anchor="middle" font-size="4" fill="#ef4444">!</text>
+              <polyline points="44,32 54,26" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <text x="62" y="22" font-size="4" fill="#94a3b8">gap</text>
+              <polyline points="70,24 80,20" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="2 3"/>
+              <path d="M88,24 L98,24" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="96,21 100,24 96,27" fill="#94a3b8"/>
+              <text x="150" y="6" text-anchor="middle" font-size="5" fill="#22c55e">후</text>
+              <polyline points="104,36 114,30 124,28 134,24 144,22 154,20 164,18 174,22 184,28 194,34" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <canvas class="why-mini-chart" id="whyChartPreprocess" height="44"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. 분석 단위가 정해져 있지 않다 -->
+      <div class="why-card">
+        <div class="why-num">9</div>
+        <h3>분석 단위가 고정되어 있지 않습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>시간별로, 일별로, 때로는 전체 구간으로 분석해야 합니다.
+              <strong>분석 목표에 따라 데이터를 자유롭게 연결하고 재분할할 수 있어야 합니다.</strong></p>
+            <div class="why-example"><span class="why-ex-label">예시</span>3개 일별 세그먼트 &rarr; 연결 &rarr; 전체에서 패턴 검색 &rarr; 시간별 재분할</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 90" fill="none" class="why-viz-svg">
+              <!-- Row 1: 3 day segments -->
+              <text x="6" y="10" font-size="4.5" fill="#94a3b8" font-weight="600">1일</text>
+              <text x="72" y="10" font-size="4.5" fill="#94a3b8" font-weight="600">2일</text>
+              <text x="138" y="10" font-size="4.5" fill="#94a3b8" font-weight="600">3일</text>
+              <rect x="4" y="14" width="56" height="18" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width=".8"/>
+              <polyline points="8,28 16,22 24,26 32,18 40,24 48,20 56,28" stroke="#059669" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="70" y="14" width="56" height="18" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width=".8"/>
+              <polyline points="74,26 82,20 90,28 98,22 106,18 114,24 122,28" stroke="#059669" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="136" y="14" width="56" height="18" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width=".8"/>
+              <polyline points="140,24 148,18 156,26 164,20 172,22 180,28 188,24" stroke="#059669" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <!-- Arrow: Concat -->
+              <text x="100" y="42" text-anchor="middle" font-size="5" fill="#d97706" font-weight="700">연결 &#x25BC;</text>
+              <!-- Row 2: concatenated long strip -->
+              <rect x="4" y="48" width="188" height="16" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+              <polyline points="8,60 16,54 24,58 32,50 40,56 48,52 56,60 66,58 74,52 82,60 90,54 98,50 106,56 114,60 124,56 132,50 140,58 148,52 156,56 164,60 172,54 180,60 188,56" stroke="#d97706" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- Bracket: 검색 윈도우 -->
+              <rect x="60" y="46" width="60" height="20" rx="2" fill="none" stroke="#7c3aed" stroke-width="1.2" stroke-dasharray="3 2"/>
+              <text x="90" y="72" text-anchor="middle" font-size="4" fill="#7c3aed" font-weight="600">검색 윈도우</text>
+              <!-- Arrow: Split -->
+              <text x="100" y="82" text-anchor="middle" font-size="5" fill="#2563EB" font-weight="700">&#x25BC; 분할 (시간별)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. 다양한 데이터 형태 -->
+      <div class="why-card">
+        <div class="why-num">10</div>
+        <h3>데이터 형식이 매우 다양합니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>날짜 기반 연속 시계열, 스텝 기반 배치 데이터, 비연속 세그먼트 컬렉션.
+              <strong>단일 도구가 이러한 모든 형식을 처리</strong>해야 현장에서 사용할 수 있습니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>모터 실행 (step 1~148) &times; 8개 컬렉션 &middot; DTW 가변 길이 비교</div>
+          </div>
+          <div class="why-col-viz"><canvas class="why-mini-chart" id="whyChart6" height="44"></canvas></div>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:4px 0 -4px;">
+        <span style="font-size:.7rem;font-weight:700;color:#7C3AED;letter-spacing:.08em;text-transform:uppercase;">지식 순환</span>
+        <span style="flex:1;height:1px;background:rgba(124,58,237,.15);"></span>
+      </div>
+
+      <!-- 11. 코드를 몰라도 된다 -->
+      <div class="why-card">
+        <div class="why-num">11</div>
+        <h3>도메인 전문가는 코드를 작성하지 않습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>패턴을 가장 잘 이해하는 사람은 현장 전문가입니다.
+              하지만 <strong>DTW 알고리즘을 구현하거나 Python 스크립트를 작성할 수 없습니다.</strong>
+              CSV를 업로드하고 몇 번의 클릭으로 검색 결과를 얻을 수 있는 도구가 필요합니다.</p>
+            <div class="why-example"><span class="why-ex-label">흐름</span>업로드 &rarr; 컬럼 선택 &rarr; 드래그/프리셋/자연어 &rarr; 결과</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 68" fill="none" class="why-viz-svg">
+              <rect x="4" y="4" width="40" height="24" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width=".8"/>
+              <text x="24" y="12" text-anchor="middle" font-size="5" fill="#92400e" font-weight="700">CSV</text>
+              <text x="24" y="22" text-anchor="middle" font-size="4" fill="#b45309">업로드</text>
+              <path d="M44,16 L56,16" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="54,13 58,16 54,19" fill="#94a3b8"/>
+              <rect x="60" y="4" width="44" height="24" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width=".8"/>
+              <text x="82" y="14" text-anchor="middle" font-size="5" fill="#1e40af">컬럼 선택</text>
+              <text x="82" y="22" text-anchor="middle" font-size="4" fill="#60a5fa">+ 메타</text>
+              <path d="M104,16 L116,16" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="114,13 118,16 114,19" fill="#94a3b8"/>
+              <rect x="120" y="0" width="48" height="32" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.2"/>
+              <text x="144" y="14" text-anchor="middle" font-size="6" fill="#065f46" font-weight="700">검색</text>
+              <text x="144" y="24" text-anchor="middle" font-size="4" fill="#059669">6가지 입력</text>
+              <path d="M168,16 L180,16" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="178,13 182,16 178,19" fill="#94a3b8"/>
+              <rect x="184" y="4" width="14" height="24" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".8"/>
+              <text x="191" y="19" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="700">&#x2713;</text>
+              <!-- No code badge -->
+              <rect x="58" y="40" width="84" height="20" rx="6" fill="rgba(239,68,68,.06)" stroke="rgba(239,68,68,.2)" stroke-width=".8"/>
+              <text x="72" y="52" font-size="5" fill="#ef4444" font-weight="700">노 코드</text>
+              <text x="108" y="52" font-size="4.5" fill="#94a3b8">Python 불필요</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. 한 번 찾고 끝이 아니다 -->
+      <div class="why-card">
+        <div class="why-num">12</div>
+        <h3>한 번 찾는 것이 끝이 아닙니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>LLM이나 프리셋으로 생성된 초기 쿼리는 <strong>이상화된 근사치</strong>입니다.
+              결과에서 실제로 원하는 세그먼트를 수락하면,
+              실제 데이터가 평균화되어 <strong>더 현실적인 쿼리 형태가 자동 생성</strong>됩니다.
+              이 과정을 반복하면 쿼리가 점진적으로 데이터에 적응합니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>"갑작스러운 하락" 검색 &rarr; 10개 중 6개 수락 &rarr; 정제 &rarr; 실제 하락 형태로 쿼리 업데이트</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 86" fill="none" class="why-viz-svg">
+              <!-- 검색 -->
+              <rect x="4" y="8" width="42" height="22" rx="5" fill="#ecfdf5" stroke="#059669" stroke-width=".8"/>
+              <text x="25" y="22" text-anchor="middle" font-size="5.5" fill="#065f46" font-weight="600">검색</text>
+              <path d="M46,19 L58,19" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="56,16 60,19 56,22" fill="#94a3b8"/>
+              <!-- Accept/Reject -->
+              <rect x="62" y="4" width="56" height="30" rx="5" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1"/>
+              <text x="90" y="16" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="700">수락 / 거부</text>
+              <rect x="68" y="22" width="18" height="8" rx="2" fill="#dcfce7" stroke="#86efac" stroke-width=".5"/>
+              <text x="77" y="29" text-anchor="middle" font-size="4" fill="#166534">18</text>
+              <rect x="90" y="22" width="18" height="8" rx="2" fill="#fef2f2" stroke="#fca5a5" stroke-width=".5"/>
+              <text x="99" y="29" text-anchor="middle" font-size="4" fill="#991b1b">5</text>
+              <path d="M118,19 L130,19" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="128,16 132,19 128,22" fill="#94a3b8"/>
+              <!-- 정제 -->
+              <rect x="134" y="6" width="46" height="26" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+              <text x="157" y="17" text-anchor="middle" font-size="5.5" fill="#92400e" font-weight="700">정제</text>
+              <text x="157" y="26" text-anchor="middle" font-size="4" fill="#b45309">평균 형태</text>
+              <!-- Loop arrow back -->
+              <path d="M157,32 L157,54 Q157,62 151,62 L25,62 Q19,62 19,54 L19,30" stroke="#d97706" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>
+              <polygon points="16,32 19,26 22,32" fill="#d97706"/>
+              <rect x="50" y="56" width="86" height="16" rx="5" fill="rgba(217,119,6,.12)" stroke="#d97706" stroke-width=".5"/>
+              <text x="93" y="67" text-anchor="middle" font-size="5.5" fill="#92400e" font-weight="700">정제된 형태로 재검색</text>
+              <!-- Iteration labels -->
+              <text x="25" y="82" text-anchor="middle" font-size="4" fill="#94a3b8">1차</text>
+              <text x="93" y="82" text-anchor="middle" font-size="4" fill="#d97706" font-weight="600">2차 &#x2192; 더 정확함</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13. 전문가 판단이 사라진다 -->
+      <div class="why-card">
+        <div class="why-num">13</div>
+        <h3>전문가 판단이 사라지고 있습니다</h3>
+        <div class="why-row">
+          <div class="why-col-text">
+            <p>숙련된 엔지니어가 "이것은 비정상"이라고 판단해도, 그 지식은 기록되지 않고 사라집니다.
+              수락된 세그먼트가 <strong>패턴 라이브러리에 누적</strong>되면, 전문가 판단이 재사용 가능한 데이터 자산이 됩니다.</p>
+            <div class="why-example"><span class="why-ex-label">예시</span>"맑은 하늘" 168개 인스턴스 누적 &rarr; CSV 내보내기 &rarr; ML 학습 라벨</div>
+          </div>
+          <div class="why-col-viz">
+            <svg viewBox="0 0 200 72" fill="none" class="why-viz-svg">
+              <!-- Accept badges stacking into library -->
+              <rect x="4" y="10" width="16" height="12" rx="3" fill="#dcfce7" stroke="#86efac" stroke-width=".6"/>
+              <text x="12" y="19" text-anchor="middle" font-size="5" fill="#166534">&#x2713;</text>
+              <rect x="24" y="10" width="16" height="12" rx="3" fill="#dcfce7" stroke="#86efac" stroke-width=".6"/>
+              <text x="32" y="19" text-anchor="middle" font-size="5" fill="#166534">&#x2713;</text>
+              <rect x="44" y="10" width="16" height="12" rx="3" fill="#dcfce7" stroke="#86efac" stroke-width=".6"/>
+              <text x="52" y="19" text-anchor="middle" font-size="5" fill="#166534">&#x2713;</text>
+              <text x="66" y="19" font-size="5" fill="#94a3b8">...</text>
+              <path d="M74,16 L86,16" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="84,13 88,16 84,19" fill="#94a3b8"/>
+              <!-- 패턴 라이브러리 -->
+              <rect x="90" y="2" width="60" height="36" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+              <text x="120" y="14" text-anchor="middle" font-size="5" fill="#5b21b6" font-weight="700">패턴 라이브러리</text>
+              <rect x="96" y="20" width="22" height="6" rx="2" fill="#ede9fe"/>
+              <text x="107" y="25" text-anchor="middle" font-size="3.5" fill="#7c3aed">맑음 168</text>
+              <rect x="122" y="20" width="22" height="6" rx="2" fill="#ede9fe"/>
+              <text x="133" y="25" text-anchor="middle" font-size="3.5" fill="#7c3aed">흐림 42</text>
+              <rect x="96" y="28" width="22" height="6" rx="2" fill="#ede9fe"/>
+              <text x="107" y="33" text-anchor="middle" font-size="3.5" fill="#7c3aed">이상 23</text>
+              <rect x="122" y="28" width="22" height="6" rx="2" fill="#fef3c7"/>
+              <text x="133" y="33" text-anchor="middle" font-size="3.5" fill="#92400e">+ 신규</text>
+              <!-- Export -->
+              <path d="M150,20 L162,20" stroke="#94a3b8" stroke-width="1"/>
+              <polygon points="160,17 164,20 160,23" fill="#94a3b8"/>
+              <rect x="166" y="8" width="30" height="24" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width=".8"/>
+              <text x="181" y="18" text-anchor="middle" font-size="5" fill="#92400e" font-weight="600">CSV</text>
+              <text x="181" y="27" text-anchor="middle" font-size="4" fill="#b45309">내보내기</text>
+              <!-- Bottom: usage arrows -->
+              <path d="M120,38 L120,48" stroke="#7c3aed" stroke-width=".8" stroke-dasharray="2 2"/>
+              <path d="M181,32 L181,48" stroke="#d97706" stroke-width=".8" stroke-dasharray="2 2"/>
+              <rect x="56" y="50" width="56" height="16" rx="4" fill="rgba(124,58,237,.06)" stroke="rgba(124,58,237,.15)" stroke-width=".6"/>
+              <text x="84" y="61" text-anchor="middle" font-size="4.5" fill="#7c3aed">검색 쿼리로 재사용</text>
+              <rect x="132" y="50" width="56" height="16" rx="4" fill="rgba(217,119,6,.06)" stroke="rgba(217,119,6,.15)" stroke-width=".6"/>
+              <text x="160" y="61" text-anchor="middle" font-size="4.5" fill="#92400e">ML 학습 라벨</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 2: 핵심 차별점 (왜 TS-Lens인가)
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="about-section" style="margin-top:32px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <span style="font-size:.8rem;font-weight:700;color:#059669;letter-spacing:.08em;text-transform:uppercase;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span> 핵심 차별점</span>
+      <span style="flex:1;height:2px;background:linear-gradient(90deg,rgba(5,150,105,.4) 0%,rgba(5,150,105,.05) 100%);"></span>
+    </div>
+
+    <div class="about-callout" style="background:linear-gradient(135deg,rgba(5,150,105,.06) 0%,rgba(124,58,237,.04) 100%);border-color:rgba(5,150,105,.25);">
+      <div class="about-callout-title" style="color:#059669;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span> TS-Lens의 통합 구성</div>
+      <div class="about-callout-body">
+        <p style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:12px;">
+          TS-Lens는 <strong style="color:#059669;">양방향(Text↔TS)</strong> + <strong style="color:#ec4899;">스케치 쿼리</strong> + <strong style="color:#2563EB;">과제별 검색기 학습 없는 탐색</strong> + <strong style="color:#7c3aed;">6가지 입력 경로</strong>를 패턴 탐색 화면 하나에 연결합니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- 비교표 -->
+    <div style="overflow-x:auto;margin:20px 0;">
+      <table style="width:100%;border-collapse:collapse;font-size:.78rem;text-align:center;">
+        <thead>
+          <tr style="background:rgba(100,116,139,.08);">
+            <th style="padding:10px 8px;text-align:left;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">시스템</th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">Text→TS<br><span style="font-size:.65rem;color:#6b7280;">NL로 검색</span></th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">TS→Text<br><span style="font-size:.65rem;color:#6b7280;">구간 해석</span></th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">Sketch<br><span style="font-size:.65rem;color:#6b7280;">그려서 검색</span></th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">Zero-shot<br><span style="font-size:.65rem;color:#6b7280;">검색기 학습 불필요</span></th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">Multi-modal<br><span style="font-size:.65rem;color:#6b7280;">6가지 입력 경로</span></th>
+            <th style="padding:10px 6px;font-weight:600;border-bottom:2px solid rgba(100,116,139,.2);">Interactive<br><span style="font-size:.65rem;color:#6b7280;">웹 UI</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(5,150,105,.06);">
+            <td style="padding:10px 8px;text-align:left;font-weight:700;color:#059669;border-bottom:1px solid rgba(100,116,139,.1);">TS-Lens (Ours)</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;font-weight:700;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 8px;text-align:left;font-weight:500;border-bottom:1px solid rgba(100,116,139,.1);">LaSTR <span style="font-size:.65rem;color:#94a3b8;">(2026)</span></td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+          </tr>
+          <tr style="background:rgba(100,116,139,.03);">
+            <td style="padding:10px 8px;text-align:left;font-weight:500;border-bottom:1px solid rgba(100,116,139,.1);">Sonar-TS <span style="font-size:.65rem;color:#94a3b8;">(2026)</span></td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 8px;text-align:left;font-weight:500;border-bottom:1px solid rgba(100,116,139,.1);">CLaSP <span style="font-size:.65rem;color:#94a3b8;">(2024)</span></td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#d97706;border-bottom:1px solid rgba(100,116,139,.1);">제한적</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+          </tr>
+          <tr style="background:rgba(100,116,139,.03);">
+            <td style="padding:10px 8px;text-align:left;font-weight:500;border-bottom:1px solid rgba(100,116,139,.1);">Qetch <span style="font-size:.65rem;color:#94a3b8;">(CHI 2018)</span></td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 8px;text-align:left;font-weight:500;border-bottom:1px solid rgba(100,116,139,.1);">ShapeSearch <span style="font-size:.65rem;color:#94a3b8;">(2020)</span></td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+            <td style="padding:8px;color:#ef4444;border-bottom:1px solid rgba(100,116,139,.1);">✗</td>
+            <td style="padding:8px;color:#22c55e;border-bottom:1px solid rgba(100,116,139,.1);">✓</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:.72rem;color:#6b7280;margin:8px 0 0;">
+        여기서 Zero-shot은 대상 데이터셋용 text-time-series 검색기를 별도로 학습하지 않고 시작할 수 있음을 의미하며, 학습된 검색기/인덱스에 의존하는 경우는 Zero-shot으로 계산하지 않습니다.
+      </p>
+    </div>
+
+    <!-- 기존 시스템 한계 -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px;">
+      <div style="padding:12px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:8px;">
+        <div style="font-size:.75rem;font-weight:600;color:#dc2626;margin-bottom:6px;">LaSTR / CLaSP</div>
+        <div style="font-size:.72rem;color:var(--text3);">양방향이지만 <strong style="color:#dc2626;">학습 데이터 필요</strong></div>
+      </div>
+      <div style="padding:12px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:8px;">
+        <div style="font-size:.75rem;font-weight:600;color:#dc2626;margin-bottom:6px;">Sonar-TS</div>
+        <div style="font-size:.72rem;color:var(--text3);">Zero-shot이지만 <strong style="color:#dc2626;">해석(TS→Text) 불가</strong></div>
+      </div>
+      <div style="padding:12px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:8px;">
+        <div style="font-size:.75rem;font-weight:600;color:#dc2626;margin-bottom:6px;">Qetch / ShapeSearch</div>
+        <div style="font-size:.72rem;color:var(--text3);">스케치 가능하지만 <strong style="color:#dc2626;">자연어 쿼리 불가</strong></div>
+      </div>
+      <div style="padding:12px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.25);border-radius:8px;">
+        <div style="font-size:.75rem;font-weight:600;color:#059669;margin-bottom:6px;">TS-Lens ✓</div>
+        <div style="font-size:.72rem;color:var(--text3);"><strong style="color:#059669;">모든 기능 통합</strong> + <strong style="color:#059669;">Zero-shot</strong> + <strong style="color:#059669;">Interactive UI</strong></div>
+      </div>
+    </div>
+
+    <!-- 핵심 가치 요약 -->
+    <div style="margin-top:20px;padding:16px;background:linear-gradient(90deg,rgba(5,150,105,.08) 0%,rgba(124,58,237,.06) 100%);border-radius:10px;border:1px solid rgba(5,150,105,.2);">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
+        <div style="text-align:center;min-width:100px;">
+          <div style="font-size:1.4rem;margin-bottom:4px;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.5L4 8M4 13a8 8 0 0 0 14.5 4.5L20 16"/><path d="M4 4v4h4M20 20v-4h-4"/></svg></span></div>
+          <div style="font-size:.72rem;font-weight:700;color:#059669;">양방향</div>
+          <div style="font-size:.65rem;color:#6b7280;">Text↔TS</div>
+        </div>
+        <div style="text-align:center;min-width:100px;">
+          <div style="font-size:1.4rem;margin-bottom:4px;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1L19.5 7.5a1.5 1.5 0 0 0-3-3L5 16z"/></svg></span></div>
+          <div style="font-size:.72rem;font-weight:700;color:#ec4899;">스케치</div>
+          <div style="font-size:.65rem;color:#6b7280;">프리핸드 드로잉</div>
+        </div>
+        <div style="text-align:center;min-width:100px;">
+          <div style="font-size:1.4rem;margin-bottom:4px;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></svg></span></div>
+          <div style="font-size:.72rem;font-weight:700;color:#2563EB;">Zero-shot</div>
+          <div style="font-size:.65rem;color:#6b7280;">과제별 검색기 학습 불필요</div>
+        </div>
+        <div style="text-align:center;min-width:100px;">
+          <div style="font-size:1.4rem;margin-bottom:4px;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h12M20 17h0"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg></span></div>
+          <div style="font-size:.72rem;font-weight:700;color:#7c3aed;">Multi-modal</div>
+          <div style="font-size:.65rem;color:#6b7280;">6가지 입력 경로</div>
+        </div>
+        <div style="text-align:center;min-width:100px;">
+          <div style="font-size:1.4rem;margin-bottom:4px;"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span></div>
+          <div style="font-size:.72rem;font-weight:700;color:#d97706;">Interactive</div>
+          <div style="font-size:.65rem;color:#6b7280;">웹 기반 UI</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  </div><!-- /sub-why -->
+
+  <!-- SUB-TAB: 파이프라인 -->
+  <div class="sub-tab-content" id="sub-pipeline">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 1: 전체 워크플로우
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="about-section">
+    <p class="sec-desc">데이터 업로드부터 패턴 라이브러리 구축까지, 워크플로우는 3단계로 나뉩니다. 각 단계는 전담 에이전트가 처리하며, 사용자가 단계 간 전환을 제어합니다.</p>
+
+    <!-- ── Phase-based pipeline ── -->
+    <div class="pv-phases">
+
+      <!-- ── Top row: Phase A (left) + Phase C (right) ── -->
+      <div class="pv-top-row">
+
+        <!-- Phase A: 준비 -->
+        <div class="pv-phase pv-phase-prepare">
+          <div class="pv-phase-head">
+            <span class="pv-phase-badge">A</span>
+            <span class="pv-phase-name">준비</span>
+            <span class="pv-phase-agent">데이터 큐레이터</span>
+          </div>
+          <div class="pv-steps">
+            <div class="pv-step">
+              <div class="pv-step-body">
+                <h4><span class="pv-step-num" style="color:#D97706;">1.</span> 데이터 등록</h4>
+                <div class="pv-step-illust">
+                  <svg viewBox="0 0 120 40" fill="none">
+                    <rect x="6" y="4" width="28" height="32" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                    <text x="20" y="16" text-anchor="middle" font-size="5" fill="#92400e" font-weight="600">CSV</text>
+                    <path d="M10,22 L30,22" stroke="#d97706" stroke-width=".5"/>
+                    <path d="M12,26 L28,26 M12,29 L22,29" stroke="#d97706" stroke-width=".4" opacity=".5"/>
+                    <path d="M38,20 L50,20" stroke="#d97706" stroke-width="1"/>
+                    <rect x="54" y="6" width="60" height="28" rx="4" fill="#fff7ed" stroke="#fed7aa" stroke-width=".8"/>
+                    <text x="84" y="16" text-anchor="middle" font-size="4.5" fill="#92400e">데이터셋 + 컬럼</text>
+                    <text x="84" y="24" text-anchor="middle" font-size="4.5" fill="#92400e">메타데이터 + 단위</text>
+                    <text x="84" y="31" text-anchor="middle" font-size="4" fill="#b45309" opacity=".6">샘플링 간격</text>
+                  </svg>
+                </div>
+                <ul class="pv-step-list">
+                  <li>파일 1개 또는 폴더 업로드 (개별 / 시간순 합치기)</li>
+                  <li>인코딩·구분자 자동 감지, 같은 시각 겹침 정책 선택</li>
+                  <li>컬럼 메타데이터: 라벨·단위·설명·최소/최대(물리 범위)</li>
+                  <li>선택: AI 메타 추정 (관리자가 외부 LLM을 연결했을 때)</li>
+                </ul>
+              </div>
+            </div>
+            <div class="pv-step-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5,12 L17,12" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/><path d="M13,7 L18,12 L13,17" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <div class="pv-step">
+              <div class="pv-step-body">
+                <h4><span class="pv-step-num" style="color:#D97706;">2.</span> 전처리 <span class="pv-optional">선택사항</span></h4>
+                <div class="pv-step-illust">
+                  <svg viewBox="0 0 120 40" fill="none">
+                    <polyline points="4,30 10,24 16,26 22,8 26,28 32,22 38,32" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".6"/>
+                    <circle cx="22" cy="8" r="2.5" fill="none" stroke="#ef4444" stroke-width=".7"/>
+                    <circle cx="42" cy="24" r="1" fill="#ef4444" opacity=".4"/>
+                    <circle cx="45" cy="22" r="1" fill="#ef4444" opacity=".4"/>
+                    <path d="M52,20 L62,20" stroke="#d97706" stroke-width="1"/>
+                    <text x="57" y="17" text-anchor="middle" font-size="4" fill="#92400e">3단계</text>
+                    <polyline points="68,30 76,26 84,22 92,18 100,16 108,18 114,22" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <ul class="pv-step-list">
+                  <li>극단값 처리: 컬럼 최소·최대(물리 범위) 밖 값 제거, 클램핑</li>
+                  <li>시간 갭 감지 및 타임스탬프 채우기</li>
+                  <li>8가지 보간/복원 방법 (linear, cubic, ..., MOMENT FM)</li>
+                  <li>품질 진단 &middot; FFT 주기성 분석</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase C: 라벨 -->
+        <div class="pv-phase pv-phase-label">
+          <div class="pv-phase-head">
+            <span class="pv-phase-badge">C</span>
+            <span class="pv-phase-name">라벨</span>
+            <span class="pv-phase-agent">라벨러</span>
+          </div>
+          <div class="pv-steps">
+            <div class="pv-step">
+              <div class="pv-step-body">
+                <h4><span class="pv-step-num" style="color:#7C3AED;">5.</span> 라벨링 &amp; 관리</h4>
+                <div class="pv-step-illust">
+                  <svg viewBox="0 0 120 40" fill="none">
+                    <rect x="4" y="4" width="24" height="14" rx="2" fill="#dcfce7" stroke="#86efac" stroke-width=".6"/>
+                    <text x="16" y="13" text-anchor="middle" font-size="5" fill="#166534">&#10003;</text>
+                    <rect x="4" y="22" width="24" height="14" rx="2" fill="#fef2f2" stroke="#fca5a5" stroke-width=".6"/>
+                    <text x="16" y="31" text-anchor="middle" font-size="5" fill="#991b1b">&#10007;</text>
+                    <path d="M32,11 L42,11" stroke="#7c3aed" stroke-width="1"/>
+                    <rect x="46" y="2" width="38" height="36" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".8"/>
+                    <text x="65" y="12" text-anchor="middle" font-size="4.5" fill="#5b21b6" font-weight="600">Pattern</text>
+                    <text x="65" y="18" text-anchor="middle" font-size="4.5" fill="#5b21b6" font-weight="600">Library</text>
+                    <rect x="50" y="22" width="14" height="5" rx="1.5" fill="#ede9fe"/>
+                    <rect x="66" y="22" width="14" height="5" rx="1.5" fill="#ede9fe"/>
+                    <rect x="50" y="30" width="14" height="5" rx="1.5" fill="#ede9fe"/>
+                    <rect x="66" y="30" width="14" height="5" rx="1.5" fill="#ede9fe"/>
+                    <path d="M88,20 L98,20" stroke="#7c3aed" stroke-width="1"/>
+                    <rect x="100" y="10" width="16" height="20" rx="2" fill="#fef3c7" stroke="#fcd34d" stroke-width=".6"/>
+                    <text x="108" y="18" text-anchor="middle" font-size="4" fill="#92400e">CSV</text>
+                    <text x="108" y="25" text-anchor="middle" font-size="4" fill="#92400e">&#8595;</text>
+                  </svg>
+                </div>
+                <ul class="pv-step-list">
+                  <li>검색 결과 수락 / 거부</li>
+                  <li>패턴 정의 (이름, 설명, 태그)</li>
+                  <li>정제: 인스턴스 평균 &#8594; 개선된 형태</li>
+                  <li>패턴 라이브러리 내보내기 (CSV)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /pv-top-row -->
+
+      <!-- ── Connector arrows: A ↓ and C ↑ ── -->
+      <div class="pv-mid-arrows">
+        <div class="pv-mid-arrow pv-mid-arrow-down">
+          <span class="pv-mid-arrow-icon" style="color:#D97706;">&#9660;</span>
+          <span class="pv-mid-arrow-label" style="color:#D97706;">정제 데이터</span>
+        </div>
+        <div class="pv-mid-arrow pv-mid-arrow-up">
+          <span class="pv-mid-arrow-icon" style="color:#7C3AED;">&#9650;</span>
+          <span class="pv-mid-arrow-label" style="color:#7C3AED;">순위 결과</span>
+        </div>
+      </div>
+
+      <!-- ── Bottom row: Phase B (full width) ── -->
+      <div class="pv-phase pv-phase-search pv-phase-full">
+        <div class="pv-phase-head">
+          <span class="pv-phase-badge">B</span>
+          <span class="pv-phase-name">검색</span>
+          <span class="pv-phase-agent">인터프리터 + 검색기</span>
+        </div>
+
+        <div class="pv-steps">
+          <div class="pv-step pv-step-wide">
+            <div class="pv-step-body">
+              <h4><span class="pv-step-num" style="color:#059669;">3.</span> 쿼리 생성 / 모드 선택</h4>
+              <p class="pv-step-note">뷰 모드에 따라 사용 가능한 검색 모드가 자동으로 변경됩니다:</p>
+
+              <!-- Venn Diagram Style Layout -->
+              <div style="display:flex;gap:0;margin-bottom:16px;position:relative;">
+
+                <!-- LEFT: Continuous Only (Select) -->
+                <div style="flex:1;background:linear-gradient(135deg,rgba(217,119,6,.08) 0%,rgba(217,119,6,.03) 100%);border:2px solid rgba(217,119,6,.3);border-right:none;border-radius:16px 0 0 16px;padding:14px 12px 14px 14px;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+                    <span style="font-size:.65rem;font-weight:700;color:#D97706;letter-spacing:.05em;">CONTINUOUS</span>
+                    <span style="font-size:.6rem;color:#b45309;opacity:.7;">전용</span>
+                  </div>
+                  <!-- Select Mode -->
+                  <div style="background:#fff;border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:10px;">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                      <div style="width:20px;height:20px;border-radius:5px;background:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;">S</div>
+                      <strong style="font-size:.78rem;color:#7c3aed;">Select</strong>
+                    </div>
+                    <svg viewBox="0 0 100 40" fill="none" style="width:100%;height:32px;margin-bottom:4px;">
+                      <polyline points="2,32 12,28 22,24 32,14 42,10 52,14 62,22 72,18 82,12 92,18" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                      <rect x="26" y="6" width="34" height="30" rx="3" fill="rgba(139,92,246,.1)" stroke="#8b5cf6" stroke-width="1.2" stroke-dasharray="3 2"/>
+                      <polyline points="32,14 42,10 52,14" stroke="#8b5cf6" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <div style="font-size:.62rem;color:var(--text3);text-align:center;">차트 드래그</div>
+                  </div>
+                </div>
+
+                <!-- CENTER: Shared (Sketch, Text) -->
+                <div style="flex:1.4;background:linear-gradient(180deg,rgba(16,185,129,.1) 0%,rgba(16,185,129,.04) 100%);border:2px solid rgba(16,185,129,.4);border-radius:0;padding:14px 16px;position:relative;z-index:1;">
+                  <div style="text-align:center;margin-bottom:10px;">
+                    <span style="display:inline-block;padding:3px 10px;background:rgba(16,185,129,.15);border-radius:12px;font-size:.65rem;font-weight:700;color:#059669;letter-spacing:.05em;">공통 모드</span>
+                    <div style="font-size:.55rem;color:#6b7280;margin-top:2px;">양쪽 뷰 모두 사용 가능</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <!-- Sketch -->
+                    <div style="flex:1;background:#fff;border:1.5px solid rgba(236,72,153,.3);border-radius:8px;padding:8px;">
+                      <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px;">
+                        <div style="width:18px;height:18px;border-radius:4px;background:#ec4899;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;">D</div>
+                        <strong style="font-size:.72rem;color:#db2777;">Sketch</strong>
+                      </div>
+                      <svg viewBox="0 0 80 32" fill="none" style="width:100%;height:26px;margin-bottom:3px;">
+                        <rect x="2" y="2" width="76" height="28" rx="3" fill="rgba(236,72,153,.04)" stroke="rgba(236,72,153,.2)" stroke-width=".8"/>
+                        <path d="M8,26 Q18,24 28,16 Q38,6 48,6 Q58,6 68,16 Q74,22 76,26" stroke="#ec4899" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      </svg>
+                      <div style="font-size:.58rem;color:var(--text3);text-align:center;">프리핸드 드로잉</div>
+                    </div>
+                    <!-- Text -->
+                    <div style="flex:1;background:#fff;border:1.5px solid rgba(5,150,105,.3);border-radius:8px;padding:8px;">
+                      <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px;">
+                        <div style="width:18px;height:18px;border-radius:4px;background:#059669;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;">T</div>
+                        <strong style="font-size:.72rem;color:#059669;">Text</strong>
+                      </div>
+                      <svg viewBox="0 0 80 32" fill="none" style="width:100%;height:26px;margin-bottom:3px;">
+                        <rect x="2" y="8" width="28" height="16" rx="3" fill="#fff" stroke="#059669" stroke-width=".8"/>
+                        <text x="16" y="19" text-anchor="middle" font-size="5" fill="#059669" font-style="italic">NL</text>
+                        <path d="M32,16 L42,16" stroke="#059669" stroke-width="1"/>
+                        <path d="M39,13 L43,16 L39,19" fill="none" stroke="#059669" stroke-width="1"/>
+                        <rect x="46" y="4" width="32" height="24" rx="3" fill="rgba(5,150,105,.06)" stroke="#059669" stroke-width=".8"/>
+                        <polyline points="50,22 56,18 62,24 68,10 74,14" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                      </svg>
+                      <div style="font-size:.58rem;color:var(--text3);text-align:center;">자연어 → LLM</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- RIGHT: Segment Only (Sample, Preset, Cluster) -->
+                <div style="flex:1.6;background:linear-gradient(135deg,rgba(124,58,237,.03) 0%,rgba(124,58,237,.08) 100%);border:2px solid rgba(124,58,237,.3);border-left:none;border-radius:0 16px 16px 0;padding:14px 14px 14px 12px;">
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:10px;">
+                    <span style="font-size:.6rem;color:#6d28d9;opacity:.7;">전용</span>
+                    <span style="font-size:.65rem;font-weight:700;color:#7C3AED;letter-spacing:.05em;">SEGMENT</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <!-- Row 1: Sample + Preset -->
+                    <div style="display:flex;gap:6px;">
+                      <!-- Sample -->
+                      <div style="flex:1;background:#fff;border:1px solid rgba(6,182,212,.25);border-radius:6px;padding:6px;">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+                          <div style="width:16px;height:16px;border-radius:4px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;">Q</div>
+                          <strong style="font-size:.68rem;color:#0891b2;">Sample</strong>
+                        </div>
+                        <svg viewBox="0 0 70 24" fill="none" style="width:100%;height:20px;">
+                          <rect x="2" y="2" width="18" height="20" rx="2" fill="#f0fdfa" stroke="#5eead4" stroke-width=".6"/>
+                          <polyline points="5,16 8,12 11,14 15,8 17,10" stroke="#14b8a6" stroke-width=".8" fill="none"/>
+                          <rect x="24" y="2" width="18" height="20" rx="2" fill="#fff" stroke="#06b6d4" stroke-width="1.2"/>
+                          <polyline points="27,14 30,10 33,12 37,6 39,8" stroke="#06b6d4" stroke-width="1" fill="none"/>
+                          <circle cx="33" cy="10" r="5" fill="none" stroke="#06b6d4" stroke-width=".8" stroke-dasharray="2 1"/>
+                          <path d="M48,12 L56,12" stroke="#06b6d4" stroke-width=".8"/>
+                          <text x="62" y="14" font-size="4" fill="#06b6d4">Q</text>
+                        </svg>
+                      </div>
+                      <!-- Preset -->
+                      <div style="flex:1;background:#fff;border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:6px;">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+                          <div style="width:16px;height:16px;border-radius:4px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;">P</div>
+                          <strong style="font-size:.68rem;color:#d97706;">Preset</strong>
+                        </div>
+                        <svg viewBox="0 0 70 24" fill="none" style="width:100%;height:20px;">
+                          <rect x="2" y="2" width="18" height="16" rx="2" fill="rgba(245,158,11,.08)" stroke="#fbbf24" stroke-width=".6"/>
+                          <polyline points="5,14 8,12 11,6 14,12 17,14" stroke="#f59e0b" stroke-width="1" fill="none"/>
+                          <rect x="24" y="2" width="18" height="16" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width=".8"/>
+                          <polyline points="27,12 33,4 39,12" stroke="#f59e0b" stroke-width="1" fill="none"/>
+                          <rect x="46" y="2" width="14" height="16" rx="2" fill="rgba(245,158,11,.04)" stroke="#fcd34d" stroke-width=".5" stroke-dasharray="2 1"/>
+                          <text x="53" y="12" text-anchor="middle" font-size="5" fill="#d97706">+5</text>
+                        </svg>
+                      </div>
+                    </div>
+                    <!-- Row 2: Cluster -->
+                    <div style="background:#fff;border:1px solid rgba(124,58,237,.25);border-radius:6px;padding:6px;">
+                      <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+                        <div style="width:16px;height:16px;border-radius:4px;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;">C</div>
+                        <strong style="font-size:.68rem;color:#7c3aed;">Cluster</strong>
+                        <span style="font-size:.55rem;color:#a78bfa;margin-left:auto;">비지도 발견</span>
+                      </div>
+                      <svg viewBox="0 0 140 28" fill="none" style="width:100%;height:22px;">
+                        <!-- 입력 세그먼트 -->
+                        <rect x="2" y="4" width="10" height="8" rx="1.5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".4"/>
+                        <rect x="14" y="4" width="10" height="8" rx="1.5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".4"/>
+                        <rect x="2" y="14" width="10" height="8" rx="1.5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".4"/>
+                        <rect x="14" y="14" width="10" height="8" rx="1.5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width=".4"/>
+                        <!-- 화살표 -->
+                        <path d="M28,13 L38,13" stroke="#7c3aed" stroke-width=".8"/>
+                        <path d="M35,10 L39,13 L35,16" fill="none" stroke="#7c3aed" stroke-width=".8"/>
+                        <text x="33" y="9" text-anchor="middle" font-size="4" fill="#7c3aed">K</text>
+                        <!-- 클러스터 결과 -->
+                        <rect x="42" y="2" width="24" height="10" rx="2" fill="rgba(34,197,94,.08)" stroke="#22c55e" stroke-width=".6"/>
+                        <text x="48" y="9" font-size="4" fill="#16a34a">C1</text>
+                        <rect x="54" y="4" width="6" height="6" rx="1" fill="#dcfce7"/>
+                        <rect x="42" y="14" width="24" height="10" rx="2" fill="rgba(59,130,246,.08)" stroke="#3b82f6" stroke-width=".6"/>
+                        <text x="48" y="21" font-size="4" fill="#2563eb">C2</text>
+                        <rect x="54" y="16" width="6" height="6" rx="1" fill="#dbeafe"/>
+                        <!-- 센트로이드 -->
+                        <path d="M70,13 L80,13" stroke="#64748b" stroke-width=".6"/>
+                        <rect x="84" y="4" width="52" height="20" rx="3" fill="rgba(124,58,237,.04)" stroke="#c4b5fd" stroke-width=".6"/>
+                        <text x="110" y="10" text-anchor="middle" font-size="4" fill="#64748b">Centroids</text>
+                        <polyline points="90,20 96,16 102,18 108,12 114,14 120,16 126,18 132,20" stroke="#22c55e" stroke-width="1" fill="none" stroke-linecap="round"/>
+                        <polyline points="90,18 96,14 102,20 108,14 114,12 120,14 126,16 132,18" stroke="#3b82f6" stroke-width="1" fill="none" stroke-linecap="round" opacity=".6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Legend -->
+              <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:8px;background:rgba(100,116,139,.04);border-radius:8px;font-size:.68rem;">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="width:10px;height:10px;border-radius:2px;background:rgba(217,119,6,.2);border:1px solid #d97706;"></span>
+                  <span style="color:#92400e;">Continuous 전용</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="width:10px;height:10px;border-radius:2px;background:rgba(16,185,129,.2);border:1px solid #10b981;"></span>
+                  <span style="color:#059669;">공통 (양쪽 뷰)</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <span style="width:10px;height:10px;border-radius:2px;background:rgba(124,58,237,.2);border:1px solid #7c3aed;"></span>
+                  <span style="color:#6d28d9;">Segment 전용</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pv-step-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5,12 L17,12" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/><path d="M13,7 L18,12 L13,17" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+
+          <div class="pv-step pv-step-wide">
+            <div class="pv-step-body">
+              <h4><span class="pv-step-num" style="color:#2563EB;">4.</span> 유사도 검색</h4>
+              <div class="pv-step-illust" style="margin-bottom:12px;">
+                <svg viewBox="0 0 280 70" fill="none" style="width:100%;max-width:360px;">
+                  <!-- 쿼리 -->
+                  <rect x="2" y="10" width="50" height="50" rx="5" fill="rgba(37,99,235,.06)" stroke="#2563EB" stroke-width="1.2"/>
+                  <text x="27" y="20" text-anchor="middle" font-size="5" fill="#1e40af" font-weight="600">Query</text>
+                  <polyline points="8,52 14,48 20,38 26,28 32,32 38,44 44,50" stroke="#2563EB" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+                  <!-- 화살표 + 거리함수 -->
+                  <g transform="translate(56,20)">
+                    <path d="M0,15 L24,15" stroke="#64748b" stroke-width="1.2"/>
+                    <path d="M20,11 L26,15 L20,19" fill="none" stroke="#64748b" stroke-width="1.2"/>
+                    <rect x="2" y="0" width="20" height="10" rx="3" fill="rgba(37,99,235,.08)" stroke="#93c5fd" stroke-width=".6"/>
+                    <text x="12" y="7" text-anchor="middle" font-size="4" fill="#2563EB" font-weight="600">ED</text>
+                    <rect x="2" y="22" width="20" height="8" rx="2" fill="rgba(124,58,237,.06)"/>
+                    <text x="12" y="28" text-anchor="middle" font-size="3.5" fill="#7c3aed">DTW</text>
+                    <rect x="2" y="32" width="20" height="8" rx="2" fill="rgba(217,119,6,.06)"/>
+                    <text x="12" y="38" text-anchor="middle" font-size="3.5" fill="#d97706">COS</text>
+                  </g>
+
+                  <!-- 비교 대상 세그먼트들 -->
+                  <g transform="translate(88,4)">
+                    <text x="24" y="8" text-anchor="middle" font-size="4" fill="#64748b">세그먼트 비교</text>
+                    <rect x="0" y="12" width="48" height="18" rx="3" fill="#eff6ff" stroke="#93c5fd" stroke-width=".8"/>
+                    <polyline points="4,26 10,22 16,16 22,14 28,18 34,24 40,26" stroke="#3b82f6" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                    <rect x="0" y="32" width="48" height="18" rx="3" fill="#eff6ff" stroke="#93c5fd" stroke-width=".8"/>
+                    <polyline points="4,44 12,40 20,34 28,36 36,42 44,46" stroke="#3b82f6" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                    <rect x="0" y="52" width="48" height="18" rx="3" fill="#eff6ff" stroke="#93c5fd" stroke-width=".8"/>
+                    <polyline points="4,64 10,62 16,58 22,56 28,60 34,64 40,66" stroke="#3b82f6" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                  </g>
+
+                  <!-- 화살표: 순위 -->
+                  <g transform="translate(142,30)">
+                    <path d="M0,10 L18,10" stroke="#059669" stroke-width="1.2"/>
+                    <path d="M14,6 L20,10 L14,14" fill="none" stroke="#059669" stroke-width="1.2"/>
+                    <text x="10" y="4" text-anchor="middle" font-size="4" fill="#059669" font-weight="600">순위</text>
+                  </g>
+
+                  <!-- 순위 결과 -->
+                  <g transform="translate(166,2)">
+                    <text x="52" y="8" text-anchor="middle" font-size="4.5" fill="#64748b" font-weight="600">Top-K 결과</text>
+                    <!-- 1등 -->
+                    <rect x="0" y="12" width="104" height="16" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.2"/>
+                    <circle cx="12" cy="20" r="6" fill="#22c55e"/>
+                    <text x="12" y="23" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">1</text>
+                    <polyline points="22,24 26,22 30,16 34,14 38,16 42,20" stroke="#16a34a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    <text x="56" y="22" font-size="5" fill="#166534" font-weight="600">seg_042</text>
+                    <rect x="76" y="14" width="24" height="10" rx="2" fill="#bbf7d0"/>
+                    <text x="88" y="21" text-anchor="middle" font-size="5" fill="#166534" font-weight="700">0.94</text>
+                    <!-- 2등 -->
+                    <rect x="0" y="30" width="104" height="16" rx="4" fill="#fef9c3" stroke="#facc15" stroke-width="1"/>
+                    <circle cx="12" cy="38" r="6" fill="#eab308"/>
+                    <text x="12" y="41" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">2</text>
+                    <polyline points="22,42 26,38 30,34 34,32 38,36 42,40" stroke="#ca8a04" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    <text x="56" y="40" font-size="5" fill="#854d0e" font-weight="600">seg_107</text>
+                    <rect x="76" y="32" width="24" height="10" rx="2" fill="#fef08a"/>
+                    <text x="88" y="39" text-anchor="middle" font-size="5" fill="#854d0e" font-weight="700">0.87</text>
+                    <!-- 3등 -->
+                    <rect x="0" y="48" width="104" height="16" rx="4" fill="#fed7aa" stroke="#f97316" stroke-width="1"/>
+                    <circle cx="12" cy="56" r="6" fill="#f97316"/>
+                    <text x="12" y="59" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">3</text>
+                    <polyline points="22,60 26,56 30,50 34,52 38,56 42,58" stroke="#ea580c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    <text x="56" y="58" font-size="5" fill="#9a3412" font-weight="600">seg_203</text>
+                    <rect x="76" y="50" width="24" height="10" rx="2" fill="#fdba74"/>
+                    <text x="88" y="57" text-anchor="middle" font-size="5" fill="#9a3412" font-weight="700">0.79</text>
+                  </g>
+                </svg>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+                <div style="padding:8px;background:rgba(37,99,235,.04);border-radius:6px;">
+                  <div style="font-size:.72rem;font-weight:600;color:#2563EB;margin-bottom:4px;">거리 함수</div>
+                  <div style="font-size:.68rem;color:var(--text3);">Euclidean · DTW · Cosine · Shape</div>
+                </div>
+                <div style="padding:8px;background:rgba(5,150,105,.04);border-radius:6px;">
+                  <div style="font-size:.72rem;font-weight:600;color:#059669;margin-bottom:4px;">정규화</div>
+                  <div style="font-size:.68rem;color:var(--text3);">Z-score (형태 비교)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 정제 feedback loop -->
+        <div class="pv-refine-loop">
+          <span class="pv-refine-label">&#8617; 정제: 개선된 형태로 재검색 (사용자 주도)</span>
+        </div>
+      </div>
+
+    </div><!-- /pv-phases -->
+
+    <!-- Legend -->
+    <div class="pipe-legend">
+      <div class="pipe-legend-item"><span class="pipe-legend-dot pld-curator"></span><strong>데이터 큐레이터</strong> &mdash; A단계 (단계 1 &amp; 2)</div>
+      <div class="pipe-legend-item"><span class="pipe-legend-dot pld-interp"></span><strong>인터프리터</strong> &mdash; 단계 3: 쿼리 생성</div>
+      <div class="pipe-legend-item"><span class="pipe-legend-dot pld-retriever"></span><strong>검색기</strong> &mdash; 단계 4: 유사도 검색</div>
+      <div class="pipe-legend-item"><span class="pipe-legend-dot pld-labeler"></span><strong>라벨러</strong> &mdash; C단계 (단계 5)</div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 2: 에이전트 아키텍처
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="about-section">
+    <p class="sec-desc">4개의 전문 에이전트가 각자의 역할을 수행합니다. 에이전트 간 연결은 Flask 라우트를 통해 이루어지며, 사용자가 직접 워크플로우 흐름을 제어합니다.</p>
+
+    <!-- Agent cards -->
+    <div class="agent-grid">
+      <div class="agent-card agent-card-curator">
+        <div class="agent-card-head">
+          <div class="agent-icon agent-icon-curator">
+            <svg viewBox="0 0 28 28" fill="none"><rect x="4" y="8" width="20" height="16" rx="2" fill="rgba(217,119,6,.15)" stroke="#D97706" stroke-width="1.2"/><path d="M8,14 L20,14 M8,18 L16,18 M8,22 L12,22" stroke="#D97706" stroke-width=".8"/><path d="M14,4 L14,8" stroke="#D97706" stroke-width="1.2"/><circle cx="14" cy="3" r="2" fill="#D97706"/></svg>
+          </div>
+          <div>
+            <h3>데이터 큐레이터</h3>
+            <div class="agent-subtitle">데이터 큐레이터</div>
+          </div>
+        </div>
+        <p>원시 데이터를 정제하고 구조를 분석하여 탐색 준비를 합니다.</p>
+        <ul class="agent-caps">
+          <li>전처리 파이프라인 (극단값, 갭, 보간/복원 incl. MOMENT FM)</li>
+          <li>데이터 품질 진단 (NaN, 범위, 이상치)</li>
+          <li>FFT 주기성 분석</li>
+          <li>샘플링 간격 감지 / 세그먼트 분할</li>
+        </ul>
+        <div class="agent-io">
+          <span class="agent-io-in">원시 CSV</span>
+          <span class="agent-io-arrow">&#8594;</span>
+          <span class="agent-io-out">정제 데이터 (DB)</span>
+        </div>
+      </div>
+
+      <div class="agent-card agent-card-interp">
+        <div class="agent-card-head">
+          <div class="agent-icon agent-icon-interp">
+            <svg viewBox="0 0 28 28" fill="none"><path d="M4,20 Q8,6 14,14 Q20,22 24,8" stroke="#059669" stroke-width="1.5" fill="none" stroke-linecap="round"/><rect x="1" y="22" width="12" height="5" rx="2" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width=".8"/><text x="7" y="26" text-anchor="middle" font-size="4" fill="#059669">NL</text><path d="M14,24 L16,24" stroke="#059669" stroke-width=".8"/><path d="M16,22 L18,24 L16,26" stroke="#059669" stroke-width=".6" fill="none"/><path d="M18,22 L20,24 L18,26" stroke="#059669" stroke-width=".6" fill="none"/></svg>
+          </div>
+          <div>
+            <h3>인터프리터</h3>
+            <div class="agent-subtitle">인터프리터 (ChatTS · LLM)</div>
+          </div>
+        </div>
+        <p>자연어와 시계열 형태 간 양방향 변환을 수행합니다. 도메인 메타데이터를 인식합니다.</p>
+        <ul class="agent-caps">
+          <li><strong>순방향:</strong> 텍스트 &#8594; 형태 (NL-to-Shape)</li>
+          <li><strong>역방향:</strong> 형태 &#8594; 텍스트 (구간 설명)</li>
+          <li>컬럼별 독립 형태 생성 (메타데이터 인식)</li>
+          <li>설명: ChatTS-14B (별도 GPU 서버, 요청 때만 적재)</li>
+          <li>생성: 규칙 선처리 + 로컬 모델 또는 외부 LLM (Claude · OpenAI 호환)</li>
+        </ul>
+        <div class="agent-io">
+          <span class="agent-io-in">자연어 / 세그먼트 값</span>
+          <span class="agent-io-arrow">&#8596;</span>
+          <span class="agent-io-out">형태 / 설명</span>
+        </div>
+      </div>
+
+      <div class="agent-card agent-card-retriever">
+        <div class="agent-card-head">
+          <div class="agent-icon agent-icon-retriever">
+            <svg viewBox="0 0 28 28" fill="none"><circle cx="12" cy="12" r="8" fill="rgba(37,99,235,.08)" stroke="#2563EB" stroke-width="1.2"/><line x1="18" y1="18" x2="25" y2="25" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round"/><polyline points="6,16 8,12 11,14 14,8 17,12" stroke="#2563EB" stroke-width="1" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <h3>검색기</h3>
+            <div class="agent-subtitle">검색기</div>
+          </div>
+        </div>
+        <p>쿼리 형태와 데이터 세그먼트를 수학적으로 비교하여 유사한 구간을 찾습니다.</p>
+        <ul class="agent-caps">
+          <li>슬라이딩 윈도우 / 세그먼트 / 프리셋 자동 분류</li>
+          <li>4가지 거리 함수 (Euclidean / DTW / Cosine / Shape)</li>
+          <li>Z-점수 정규화 + NaN 처리</li>
+          <li>다중 컬럼 검색</li>
+        </ul>
+        <div class="agent-io">
+          <span class="agent-io-in">쿼리 형태 + 데이터</span>
+          <span class="agent-io-arrow">&#8594;</span>
+          <span class="agent-io-out">순위 결과</span>
+        </div>
+      </div>
+
+      <div class="agent-card agent-card-labeler">
+        <div class="agent-card-head">
+          <div class="agent-icon agent-icon-labeler">
+            <svg viewBox="0 0 28 28" fill="none"><rect x="4" y="6" width="20" height="18" rx="3" fill="rgba(124,58,237,.08)" stroke="#7C3AED" stroke-width="1.2"/><path d="M8,12 L14,12 M8,16 L18,16 M8,20 L12,20" stroke="#7C3AED" stroke-width=".7" opacity=".5"/><circle cx="20" cy="10" r="4" fill="#7C3AED" opacity=".2"/><path d="M18,10 L19.5,11.5 L22.5,8.5" stroke="#7C3AED" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <h3>라벨러</h3>
+            <div class="agent-subtitle">라벨러</div>
+          </div>
+        </div>
+        <p>사용자 피드백을 통해 패턴을 정의하고 패턴 라이브러리를 축적합니다.</p>
+        <ul class="agent-caps">
+          <li>수락 / 거부 피드백 루프</li>
+          <li>정제: 인스턴스 평균 &#8594; 개선된 형태</li>
+          <li>패턴 라이브러리 CRUD</li>
+          <li>라벨링 결과를 CSV로 내보내기</li>
+        </ul>
+        <div class="agent-io">
+          <span class="agent-io-in">결과 + 피드백</span>
+          <span class="agent-io-arrow">&#8594;</span>
+          <span class="agent-io-out">패턴 라이브러리</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent 데이터 flow diagram (SVG) -->
+    <div class="agent-collab">
+      <div class="agent-collab-title">에이전트 간 데이터 흐름</div>
+      <svg class="agent-flow-svg" viewBox="0 0 700 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="af-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#94a3b8"/></marker>
+          <marker id="af-ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#059669"/></marker>
+          <marker id="af-as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#64748b"/></marker>
+          <marker id="af-ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#7C3AED"/></marker>
+          <marker id="af-ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#D97706"/></marker>
+          <marker id="af-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,2 L9,5 L2,8" fill="#2563EB"/></marker>
+        </defs>
+
+        <!-- ═══ Main search flow ═══ -->
+        <!-- 사용자 -->
+        <rect x="10" y="30" width="68" height="36" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+        <text x="44" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">사용자</text>
+
+        <!-- Arrow: 사용자 → 인터프리터 -->
+        <line x1="78" y1="48" x2="140" y2="48" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#af-a)"/>
+
+        <!-- 인터프리터 -->
+        <rect x="144" y="28" width="116" height="40" rx="10" fill="rgba(5,150,105,.07)" stroke="#059669" stroke-width="1.4"/>
+        <text x="202" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#059669">인터프리터</text>
+        <text x="202" y="60" text-anchor="middle" font-size="7.5" fill="#6b7280">NL &#x2194; 형태</text>
+
+        <!-- Arrow: 인터프리터 → 검색기 (자동) -->
+        <line x1="260" y1="48" x2="340" y2="48" stroke="#059669" stroke-width="1.4" marker-end="url(#af-ag)"/>
+        <rect x="281" y="36" width="34" height="13" rx="4" fill="rgba(5,150,105,.14)"/>
+        <text x="298" y="46" text-anchor="middle" font-size="7.5" font-weight="700" fill="#059669">자동</text>
+
+        <!-- 검색기 -->
+        <rect x="344" y="28" width="116" height="40" rx="10" fill="rgba(37,99,235,.07)" stroke="#2563EB" stroke-width="1.4"/>
+        <text x="402" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#2563EB">검색기</text>
+        <text x="402" y="60" text-anchor="middle" font-size="7.5" fill="#6b7280">유사도 검색</text>
+
+        <!-- Arrow: 검색기 → 라벨러 (사용자) -->
+        <line x1="460" y1="48" x2="540" y2="48" stroke="#64748b" stroke-width="1.4" marker-end="url(#af-as)"/>
+        <rect x="482" y="36" width="34" height="13" rx="4" fill="rgba(100,116,139,.12)"/>
+        <text x="499" y="46" text-anchor="middle" font-size="7.5" font-weight="700" fill="#64748b">사용자</text>
+
+        <!-- 라벨러 -->
+        <rect x="544" y="28" width="116" height="40" rx="10" fill="rgba(124,58,237,.07)" stroke="#7C3AED" stroke-width="1.4"/>
+        <text x="602" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#7C3AED">라벨러</text>
+        <text x="602" y="60" text-anchor="middle" font-size="7.5" fill="#6b7280">수락 / 거부</text>
+
+        <!-- ═══ 정제 loop ═══ -->
+        <path d="M602,68 L602,96 L402,96 L402,68" stroke="#7C3AED" stroke-width="1.2" stroke-dasharray="5 3" fill="none" marker-end="url(#af-ap)"/>
+        <rect x="472" y="88" width="62" height="16" rx="5" fill="rgba(124,58,237,.1)"/>
+        <text x="503" y="100" text-anchor="middle" font-size="7.5" font-weight="700" fill="#7C3AED">정제</text>
+        <text x="503" y="116" text-anchor="middle" font-size="6.5" fill="#9a7de0">사용자 주도</text>
+
+        <!-- ═══ Curator → DB (bottom-left) ═══ -->
+        <rect x="10" y="138" width="106" height="38" rx="10" fill="rgba(217,119,6,.07)" stroke="#D97706" stroke-width="1.4"/>
+        <text x="63" y="156" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">큐레이터</text>
+        <text x="63" y="168" text-anchor="middle" font-size="7.5" fill="#6b7280">정제 &amp; 저장</text>
+
+        <!-- Arrow: Curator → DB -->
+        <line x1="116" y1="157" x2="195" y2="157" stroke="#D97706" stroke-width="1.3" marker-end="url(#af-ao)"/>
+
+        <!-- DB cylinder -->
+        <ellipse cx="228" cy="170" rx="26" ry="7" fill="rgba(217,119,6,.08)" stroke="#D97706" stroke-width="1"/>
+        <rect x="202" y="148" width="52" height="22" fill="rgba(217,119,6,.08)"/>
+        <line x1="202" y1="148" x2="202" y2="170" stroke="#D97706" stroke-width="1"/>
+        <line x1="254" y1="148" x2="254" y2="170" stroke="#D97706" stroke-width="1"/>
+        <ellipse cx="228" cy="148" rx="26" ry="7" fill="rgba(217,119,6,.14)" stroke="#D97706" stroke-width="1"/>
+        <text x="228" y="163" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">DB</text>
+
+        <!-- Arrow: DB → 검색기 (dashed) -->
+        <path d="M254,152 Q310,110 380,68" stroke="#2563EB" stroke-width="1.1" stroke-dasharray="4 3" fill="none" marker-end="url(#af-ab)"/>
+        <text x="300" y="105" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" opacity=".7">데이터</text>
+
+        <!-- ═══ 역방향 (독립적) ═══ -->
+        <rect x="310" y="140" width="350" height="30" rx="8" fill="rgba(5,150,105,.04)" stroke="rgba(5,150,105,.2)" stroke-width="1"/>
+        <rect x="316" y="147" width="52" height="16" rx="4" fill="rgba(5,150,105,.15)"/>
+        <text x="342" y="159" text-anchor="middle" font-size="7.5" font-weight="700" fill="#059669">역방향</text>
+        <text x="392" y="159" text-anchor="middle" font-size="7.5" fill="#6b7280">세그먼트 선택</text>
+        <line x1="416" y1="155" x2="436" y2="155" stroke="#059669" stroke-width="1" marker-end="url(#af-ag)"/>
+        <text x="468" y="159" text-anchor="middle" font-size="7.5" font-weight="600" fill="#059669">인터프리터</text>
+        <line x1="498" y1="155" x2="518" y2="155" stroke="#059669" stroke-width="1" marker-end="url(#af-ag)"/>
+        <text x="556" y="159" text-anchor="middle" font-size="7.5" fill="#6b7280">NL 설명</text>
+        <text x="612" y="159" text-anchor="middle" font-size="6.5" fill="#94a3b8">(독립적)</text>
+
+        <!-- ═══ Legend line ═══ -->
+        <text x="10" y="196" font-size="6.5" fill="#94a3b8">&#x25CB; 실선 = 자동 연결, 점선 = 데이터 참조 또는 사용자 제어</text>
+      </svg>
+    </div>
+  </section>
+
+  </div><!-- /sub-pipeline -->
+
+  <!-- SUB-TAB: 시스템 비교 -->
+  <div class="sub-tab-content" id="sub-compare">
+  <section class="about-section">
+    <h2 class="sec-title">시스템 비교</h2>
+    <p class="sec-desc">기존 시계열 검색·탐색 시스템과 TS-Lens를 비교합니다.</p>
+    <p class="sec-desc" style="font-size:.82rem;margin-top:6px;">제로샷은 과제별 텍스트-시계열 검색기 학습이 필요 없음을 뜻하며, 학습이 필요한 인덱스·검색기는 따로 표시합니다.</p>
+
+    <div style="overflow-x:auto; margin-top:16px;">
+      <table class="compare-table" style="width:100%; border-collapse:collapse; font-size:0.82rem;">
+        <thead>
+          <tr style="background:var(--surface2);">
+            <th style="padding:10px 12px; text-align:left; border-bottom:2px solid var(--border);">시스템</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">자연어 질의</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">TS→텍스트</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">스케치</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">제로샷</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">대화형 UI</th>
+            <th style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--border);">큐레이션</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">Qetch</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">ShapeSearch</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">구문 분석→대수식</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">DeepSketch</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border); color:var(--red);">아니오(학습형)</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">CLaSP</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">임베딩(지도 학습)</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border); color:var(--amber);">제한적</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border); color:var(--red);">학습 필요</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">LaSTR</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">임베딩(학습형)</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border); color:var(--red);">학습 필요</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border-bottom:1px solid var(--border);">Sonar-TS</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">구문 분석→SQL</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">✓</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border); color:var(--amber);">제한적 프레임워크</td>
+            <td style="padding:8px 12px; text-align:center; border-bottom:1px solid var(--border);">—</td>
+          </tr>
+          <tr style="background:linear-gradient(90deg, rgba(5,150,105,0.08), rgba(124,58,237,0.08)); font-weight:600;">
+            <td style="padding:10px 12px; border-bottom:2px solid var(--green); color:var(--green);">TS-Lens (본 시스템)</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">생성→파형</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">✓</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">✓</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">✓</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">✓</td>
+            <td style="padding:10px 12px; text-align:center; border-bottom:2px solid var(--green); color:var(--green);">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="about-callout" style="margin-top:20px;">
+      <div class="about-callout-title"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.3 1 2.1h5c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span> 핵심 차별점</div>
+      <div class="about-callout-body">
+        <ul style="margin:0; padding-left:18px;">
+          <li><strong>생성 기반 자연어 질의:</strong> 자연어를 불투명한 벡터에 숨기지 않고 <em>눈으로 확인할 수 있는 파형</em>으로 변환해, 검색 결과 및 생성 모델 출처와 함께 보여 줍니다.</li>
+          <li><strong>양방향 텍스트↔시계열:</strong> 텍스트→시계열(질의 생성)과 시계열→텍스트(구간 설명)를 하나의 작업 공간에서 함께 제공합니다.</li>
+          <li><strong>사람이 참여하는 큐레이션:</strong> 유용한 결과는 라벨 바구니에 모으고, 검토를 거친 질의 형태나 군집 대표(medoid)는 사용자 프리셋으로 저장해 일회성 조회에 그치지 않고 다시 사용할 수 있습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /sub-compare -->
+
+  </div><!-- /tab-overview -->

@@ -1,0 +1,60 @@
+# python app.py: auto | cpu | off | external. No downloads or package installs at startup.
+mode: auto
+startup_timeout: 120
+poll_interval: 1
+services:
+  verbalts:
+    priority: 10
+    enabled: true
+    python: .venv-verbalts/bin/python
+    required_paths:
+      - runtime/verbalts/model_best_loss.pth
+      - runtime/verbalts/upstream/models/conditional_generator.py
+      - runtime/verbalts/tokenizer/tokenizer.json
+    modules: [torch, flask, numpy, yaml, transformers, einops]
+    command: [tools/models/serve_verbalts.py, --device, '{device}', --port, '7012']
+    url: http://127.0.0.1:7012/health
+    model_key: verbalts-synth
+    task: text_to_ts
+  chatts:
+    # 시계열→문장. 가중치(.bin)·원격 코드가 torch>=2.6·transformers 4.5x 를 요구해 앱 환경 밖에서 돈다.
+    # 가중치는 HF 캐시(bytedance-research/ChatTS-14B, 28GB)에서만 읽고 내려받지 않는다.
+    # GPU 를 다른 작업과 나눠 쓰도록 요청이 올 때만 올리고 5분 쉬면 내린다(평소 0GB). 8비트라 올라와 있을 땐 ~15GB.
+    # 첫 요청은 로딩 때문에 수십 초~수 분 걸린다(text_ts.yaml providers.chatts.timeout).
+    priority: 15
+    enabled: true
+    # Empty python uses the app interpreter. Put a dedicated ChatTS Python path here if needed.
+    python: ''
+    required_paths: []
+    modules: [torch, transformers, flask, accelerate, numpy, bitsandbytes]
+    command: [tools/models/serve_chatts.py, --model, bytedance-research/ChatTS-14B, --device, cuda:0, --port, '7014',
+              --quant, 8bit, --idle-minutes, '5']
+    url: http://127.0.0.1:7014/health
+    model_key: chatts-14b
+    task: ts_to_text
+  vllm:
+    priority: 20
+    enabled: true
+    # Empty python uses the app interpreter. Put a dedicated vLLM Python path here if needed.
+    python: ''
+    required_paths:
+      - runtime/exaone/config.json
+      - runtime/exaone/tokenizer_config.json
+    modules: [torch, vllm]
+    command: [-m, vllm.entrypoints.openai.api_server, --model, runtime/exaone,
+              --served-model-name, LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct,
+              --host, 127.0.0.1, --port, '8000']
+    url: http://127.0.0.1:8000/v1/models
+    model_key: exaone-ko-vllm
+    tasks: [ts_to_text, text_to_ts]
+  cpu_llm:
+    priority: 30
+    # Prepared local transformers model; used for tasks without a ready GPU model.
+    enabled: true
+    python: ''
+    required_paths: [runtime/cpu_llm/config.json, runtime/cpu_llm/tokenizer_config.json]
+    modules: [torch, transformers, flask]
+    command: [tools/models/serve_cpu_llm.py, --model, runtime/cpu_llm, --port, '7013']
+    url: http://127.0.0.1:7013/v1/models
+    model_key: local-cpu-llm
+    tasks: [ts_to_text, text_to_ts]

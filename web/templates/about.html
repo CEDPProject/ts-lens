@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.about.title }}{% endblock %}
+
+{% block head_style %}
+<link rel="stylesheet" href="/static/css/about.css?v={{ cache_bust }}">
+{% if print_all %}
+<style>
+  .about-tab-content { display:block !important; }
+  .about-tab-content + .about-tab-content { page-break-before:always; margin-top:40px; padding-top:20px; border-top:2px solid var(--border); }
+  .about-tabs { display:none !important; }
+  .global-nav, .page-hero { display:none !important; }
+  .about-wrap { max-width:100% !important; padding:20px !important; }
+</style>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="about-wrap">
+
+  <h1 class="page-title">{{ t.nav.info }}</h1>
+
+  <!-- 탭 네비게이션 (6 tabs) -->
+  <div class="about-tabs" id="aboutTabs">
+    <button class="about-tab active" data-tab="tab-overview">{{ t.about.tab_overview }}</button>
+    <button class="about-tab" data-tab="tab-data-prep">{{ t.about.tab_data_prep }}</button>
+    <button class="about-tab" data-tab="tab-search">{{ t.about.tab_search }}</button>
+    <button class="about-tab" data-tab="tab-labeling">{{ t.about.tab_labeling }}</button>
+    <button class="about-tab" data-tab="tab-reference">{{ t.about.tab_reference }}</button>
+    <button class="about-tab" data-tab="tab-agent">{{ t.about.tab_agent }}</button>
+  </div>
+
+  {% if lang == 'ko' %}
+    {% include "about/_tab_overview_ko.html" %}
+    {% include "about/_tab_data_prep_ko.html" %}
+    {% include "about/_tab_search_ko.html" %}
+    {% include "about/_tab_labeling_ko.html" %}
+    {% include "about/_tab_reference_ko.html" %}
+    {% include "about/_tab_agent_ko.html" %}
+  {% else %}
+    {% include "about/_tab_overview.html" %}
+    {% include "about/_tab_data_prep.html" %}
+    {% include "about/_tab_search.html" %}
+    {% include "about/_tab_labeling.html" %}
+    {% include "about/_tab_reference.html" %}
+    {% include "about/_tab_agent.html" %}
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/about.js?v={{ cache_bust }}"></script>
+{% endblock %}

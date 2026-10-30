@@ -1,0 +1,4 @@
+<nav class="model-nav" aria-label="{{ t.data.tab_models }}">
+  <a class="ds-action-btn preview" href="{{ url_for('pages.external_models') }}"{% if model_page == 'external' %} aria-current="page"{% endif %}>{{ t.data.ext_connect }}</a>
+  <a class="ds-action-btn preview" href="{{ url_for('pages.local_models') }}"{% if model_page == 'local' %} aria-current="page"{% endif %}>{{ t.data.local_title }}</a>
+</nav>

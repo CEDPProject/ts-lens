@@ -1,0 +1,201 @@
+/**
+ * DrawQuery — Canvas drawing component styles
+ */
+
+/* Container */
+.dq-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Wrapper for canvas + preview */
+.dq-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid var(--border, #e5e7eb);
+  background: var(--surface, #fafafa);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.dq-wrapper:hover {
+  border-color: var(--border2, #d1d5db);
+}
+
+.dq-wrapper:focus-within {
+  border-color: var(--green, var(--accent));
+  box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
+}
+
+/* Canvas */
+.dq-canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* Hint overlay */
+.dq-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.dq-hint-icon {
+  font-size: 1.8rem;
+  opacity: 0.25;
+}
+
+.dq-hint-text {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text3, #9ca3af);
+  background: rgba(255,255,255,0.85);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.dq-hint-hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* Preview (mini normalized chart) */
+.dq-preview-wrap {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 6px;
+  padding: 4px 6px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.dq-preview-wrap.dq-preview-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dq-preview-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text3, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.dq-preview-canvas {
+  display: block;
+  border-radius: 3px;
+}
+
+/* Toolbar */
+.dq-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dq-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text2, #6b7280);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dq-btn svg {
+  flex-shrink: 0;
+}
+
+.dq-btn:hover:not(:disabled) {
+  background: var(--surface2, #f3f4f6);
+  border-color: var(--border2, #d1d5db);
+  color: var(--text, #374151);
+}
+
+.dq-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dq-btn-clear:hover:not(:disabled) {
+  background: var(--red-lt, #fef2f2);
+  border-color: var(--red, #dc2626);
+  color: var(--red, #dc2626);
+}
+
+.dq-btn-save:hover:not(:disabled) {
+  background: var(--green-lt, var(--accent-lt));
+  border-color: var(--green, var(--accent));
+  color: var(--green, var(--accent));
+}
+
+.dq-info {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted, #9ca3af);
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dq-info-active {
+  background: var(--green-lt, var(--accent-lt));
+  color: var(--green, var(--accent));
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .dq-hint-text {
+    font-size: 0.7rem;
+  }
+
+  .dq-preview-wrap {
+    display: none;
+  }
+
+  .dq-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dq-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+}
+

@@ -1,0 +1,14 @@
+# ==============================================================
+# Internal Foundation / Preprocessing Models
+# ==============================================================
+# These models are used by internal processing pipelines, not by the
+# user-facing query/description model selectors.
+# ==============================================================
+
+moment:
+  # small(35M) | base(125M) | large(385M) — small은 CPU에서도 충분히 동작하며
+  # 임베딩 품질 대비 로딩·메모리 비용이 가장 낮다.
+  model: "AutonLab/MOMENT-1-small"
+  device: auto                  # auto | cuda:N | cpu
+  # 시퀀스 길이(512)는 MOMENT 아키텍처가 고정 — 설정 대상이 아니라
+  # moment_imputer.py / clustering/moment_embed.py 의 WINDOW 상수.

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ t.data.ext_connect if model_page == 'external' else t.data.local_title }}{% endblock %}
+{% block head_style %}<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">{% endblock %}
+{% block body %}
+<div class="data-wrap">
+  <a href="{{ url_for('pages.data_viewer') }}#models">← {{ t.data.tab_models }}</a>
+  <h1 class="page-title">{{ t.data.ext_connect if model_page == 'external' else t.data.local_title }}</h1>
+  {% include '_model_nav.html' %}
+  {% if model_page == 'external' %}
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-icon datasets"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg></span>
+        {{ t.data.ext_title }}
+        <button class="info-btn" data-info="ext" style="margin-left:auto;">i</button>
+        <div class="info-popup"><div class="info-popup-title">{{ t.data.ext_title }}</div>{{ t.data.ext_desc }}</div>
+      </div>
+      <span class="section-count" id="extState"></span>
+    </div>
+    <form class="import-config" id="extForm" autocomplete="off" style="display:block;">
+      <div class="import-row-3">
+        <div class="import-field"><label>{{ t.data.ext_enabled }}</label>
+          <label class="toggle" style="margin-top:6px;"><input type="checkbox" id="extEnabled"><span class="slider"></span></label></div>
+        <div class="import-field"><label>{{ t.data.ext_provider }}</label>
+          <select id="extProvider"><option value="anthropic">{{ t.data.ext_provider_anthropic }}</option><option value="openai_compat">{{ t.data.ext_provider_openai }}</option></select></div>
+        <div class="import-field"><label>{{ t.data.ext_model }}</label><input type="text" id="extModel" placeholder="{{ t.data.ext_model_ph_anthropic }}"></div>
+      </div>
+      <div class="import-row-3">
+        <div class="import-field" id="extBaseUrlField" style="display:none;"><label>{{ t.data.ext_base_url }}</label><input type="text" id="extBaseUrl" placeholder="{{ t.data.ext_base_url_ph }}"></div>
+        <div class="import-field"><label>{{ t.data.ext_api_key }}</label><input type="password" id="extApiKey" placeholder="{{ t.data.ext_api_key_ph }}" autocomplete="new-password"></div>
+        <div class="import-field"><label>{{ t.data.ext_label }}</label><input type="text" id="extLabel" placeholder="{{ t.data.ext_label_ph }}"></div>
+      </div>
+      <div class="import-row-3" style="margin-top:8px;">
+        <div class="import-field"><label>{{ t.data.ext_warn_usd }}</label><input type="number" id="extWarnUsd" min="0" step="1"></div>
+        <div class="import-field"><label>{{ t.data.ext_limit_usd }}</label><input type="number" id="extLimitUsd" min="0" step="1"></div>
+        <div class="import-field"><label>{{ t.data.ext_budget }} <button type="button" class="info-btn" data-info="ext-usage">i</button><div class="info-popup">{{ t.data.ext_usage_note }}</div></label><div id="extUsage" style="font-size:.78rem;color:var(--text2);line-height:1.5;margin-top:6px;"></div></div>
+      </div>
+      <div class="import-field" style="margin-top:8px;"><label>{{ t.data.ext_use_for }}</label>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-size:.82rem;">
+          <label><input type="checkbox" id="extUseTextToTs"> {{ t.data.ext_use_text_to_ts }}</label>
+          <label><input type="checkbox" id="extUseTsToText"> {{ t.data.ext_use_ts_to_text }}</label>
+          <label><input type="checkbox" id="extUseMeta"> {{ t.data.ext_use_meta }}</label>
+        </div></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap;">
+        <button type="submit" class="btn-import" id="extSave">{{ t.data.ext_save }}</button>
+        <button type="button" class="ds-action-btn preview" id="extTest">{{ t.data.ext_test }}</button>
+        <button type="button" class="ds-action-btn delete" id="extRemove">{{ t.data.ext_remove }}</button>
+        <span id="extMsg" style="font-size:.78rem;color:var(--text3);"></span>
+      </div>
+    </form>
+  </div>
+  {% else %}
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-icon datasets"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="6" rx="1.5"/><rect x="3" y="13" width="18" height="6" rx="1.5"/><path d="M7 8h.01M7 16h.01"/></svg></span>
+        {{ t.data.local_title }}
+        <button class="info-btn" data-info="local-models" style="margin-left:auto;">i</button>
+        <div class="info-popup"><div class="info-popup-title">{{ t.data.local_title }}</div>{{ t.data.local_desc }}</div>
+      </div>
+    </div>
+    <div class="model-table-scroll"><table class="limits-table sortable" id="localModels"><thead><tr><th data-sort="key">{{ t.data.col_model }}</th><th data-sort="provider">{{ t.data.col_provider }}</th><th data-sort="device">{{ t.data.col_device }}</th><th data-sort="task">{{ t.data.col_task }}</th><th data-sort="state">{{ t.data.col_state }}</th></tr></thead><tbody><tr><td colspan="5" style="color:var(--muted)">{{ t.data.local_loading }}</td></tr></tbody></table></div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/data-info.js') }}"></script>
+<script src="{{ url_for('static', filename='js/models-' + model_page + '.js') }}"></script>
+{% endblock %}

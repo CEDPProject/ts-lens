@@ -1,0 +1,95 @@
+pattern_length_range:
+- 5
+- 2000
+default_pattern_length: 24
+preload_on_startup: auto
+fallback_to_cpu: false
+fallback_model: ''
+deterministic_first: true
+llm_control_points: 24
+active_provider: vllm
+active_model: exaone-ko-vllm
+task_active_models:
+  text_to_ts: verbalts-synth
+  ts_to_text: chatts-14b
+providers:
+  cpu_llm:
+    base_url: http://127.0.0.1:7013
+    health_timeout: 1.5
+    timeout: 180
+    max_tokens: 1024
+    temperature: 0.1
+  verbalts:
+    base_url: http://127.0.0.1:7012
+    health_timeout: 1.5
+    timeout: 90
+  vllm:
+    base_url: http://127.0.0.1:8000
+    health_timeout: 1.5
+    timeout: 60
+    max_tokens: 1024
+    temperature: 0.1
+  ollama:
+    base_url: http://localhost:11434
+    health_timeout: 1.5
+    max_tokens: 2048
+    temperature: 0.1
+  huggingface:
+    max_tokens: 2048
+    temperature: 0.1
+    device: cuda:0
+  chatts:
+    # 별도 서버(tools/models/serve_chatts.py, runtime.yaml services.chatts). 유휴 시 GPU 에서 내림.
+    base_url: http://127.0.0.1:7014
+    health_timeout: 1.5
+    timeout: 300          # 첫 요청은 모델을 다시 올리느라 길다
+    device: cuda:0
+    max_tokens: 400
+    temperature: 0.2
+  vlm:
+    device: cuda:0
+    max_tokens: 2048
+    temperature: 0.2
+models:
+  local-cpu-llm:
+    inference_devices: [cpu]
+    provider: cpu_llm
+    model_id: local-cpu-llm
+    description: CPU 언어모델 · 로컬 가중치 필요
+    cpu_compatible: true
+    supports: [text_to_ts, ts_to_text]
+  cpu-basic:
+    inference_devices: [cpu]
+    provider: builtin
+    model_id: cpu-basic
+    description: CPU 기본 · 규칙 파형·통계 해석 (LLM 아님)
+    cpu_compatible: true
+    supports: [text_to_ts, ts_to_text]
+  verbalts-synth:
+    inference_devices: [cuda, cpu]
+    provider: verbalts
+    model_id: VerbalTS/Synth-M-run0
+    description: VerbalTS · 영어 파형 생성 (실험)
+    supports:
+    - text_to_ts
+  chatts-14b:
+    inference_devices: [cuda]
+    provider: chatts
+    model_id: bytedance-research/ChatTS-14B
+    description: ChatTS-14B · 시계열을 그대로 읽고 모양·사건을 서술(영어). 숫자는 앱 통계로 보강
+    supports:
+    - ts_to_text
+  exaone-ko-vllm:
+    inference_devices: [cuda]
+    provider: vllm
+    model_id: LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct
+    description: 한국어 검색 · 해석 (vLLM, 빠른 기본 모델)
+    supports:
+    - text_to_ts
+    - ts_to_text
+  gemma3-en:
+    provider: ollama
+    model_id: gemma3:12b
+    description: English / multilingual text search
+    supports:
+    - text_to_ts

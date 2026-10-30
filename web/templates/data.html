@@ -1,0 +1,1477 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.data.title }}{% endblock %}
+
+{% block head_style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="data-wrap">
+
+  <h1 class="page-title">{{ t.data.hero_title }}</h1>
+
+  <!-- Sub-tab navigation -->
+  <div class="data-sub-tabs" id="dataSubTabs">
+    <button class="data-sub-tab active" data-dtab="dtab-list">{{ t.data.tab_list }}</button>
+    {% if current_user and current_user.role == 'admin' %}<button class="data-sub-tab" data-dtab="dtab-upload">{{ t.data.tab_upload }}</button><button class="data-sub-tab" data-dtab="dtab-models">{{ t.data.tab_models }}</button>{% endif %}
+  </div>
+
+  <!-- TAB: Data Upload (관리자) -->
+  {% if current_user and current_user.role == 'admin' %}
+  <div class="data-tab-content" id="dtab-upload" style="display:none;">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-icon upload"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+        {{ t.data.csv_upload }}
+        <button class="info-btn" data-info="upload" style="margin-left:auto;">i</button>
+        <div class="info-popup">
+          <div class="info-popup-title">{{ t.data.upload_info_title }}</div>
+          {{ t.data.upload_info_desc }}
+          <ul>
+            <li><strong>{{ t.data.file_one }}</strong> — {{ t.data.upload_single }}</li>
+            <li><strong>{{ t.data.folder_multi }}</strong> — {{ t.data.upload_folder }}</li>
+            <li>{{ t.data.upload_auto }}</li>
+            <li>{{ t.data.upload_dup }}</li>
+            <li>{{ t.data.upload_ai }}</li>
+            <li>{{ t.data.upload_meta_opt }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="upload-panel" id="uploadPanel">
+
+      <div id="aiInferStatus" class="ai-status"><span class="ai-status-dot"></span><span class="ai-status-label">AI</span><span id="aiInferStatusText"></span>
+        <label class="ai-toggle" id="aiUseWrap"><span>{{ t.data.ai_use_toggle }}</span><span class="toggle"><input type="checkbox" id="aiUseToggle"><span class="slider"></span></span></label></div>
+      <div class="upload-mode-tabs">
+        <button class="upload-mode-tab active" data-mode="file">{{ t.data.file_one }}</button>
+        <button class="upload-mode-tab" data-mode="folder">{{ t.data.folder_multi }}</button>
+      </div>
+
+      <!-- File mode drop area -->
+      <div id="fileDropArea">
+        <div class="upload-drop" id="uploadDrop">
+          <input type="file" accept=".csv,.tsv,.txt" id="fileInput" class="upload-file-input">
+          <div class="upload-drop-icon">&#8593;</div>
+          <div class="upload-drop-text" id="uploadText">{{ t.data.drag_csv }}</div>
+          <div class="upload-drop-hint">.csv, .tsv, .txt</div>
+        </div>
+      </div>
+
+      <!-- Folder mode drop area -->
+      <div id="folderDropArea" style="display:none;">
+        <div class="upload-drop" id="folderDrop">
+          <input type="file" accept=".csv,.tsv,.txt" id="folderInput" class="upload-file-input" multiple webkitdirectory>
+          <div class="upload-drop-icon">&#128193;</div>
+          <div class="upload-drop-text" id="folderText">{{ t.data.drag_folder }}</div>
+          <div class="upload-drop-hint">{{ t.data.folder_hint }}</div>
+        </div>
+        <div id="folderFileList" class="folder-file-list" style="display:none;"></div>
+        <div id="folderModeOpts" style="display:none;">
+          <div class="folder-mode-opts">
+            <button class="folder-mode-opt active" data-fmode="individual">{{ t.data.individual }}</button>
+            <button class="folder-mode-opt" data-fmode="merge">{{ t.data.merge }}</button>
+          </div>
+          <div id="folderMergeDesc" style="font-size:.72rem;color:var(--text3);margin-top:6px;line-height:1.6;">
+            {{ t.data.individual_desc }}
+          </div>
+        </div>
+      </div>
+
+      <div id="importConfig" style="display:none;">
+        <div class="import-config">
+
+          <!-- 읽기 방식: 자동으로 알아낸 것을 보여주고, 틀렸으면 손으로 바꾼다 -->
+          <div class="import-config-title">{{ t.data.read_options }}</div>
+          <div class="import-row-3">
+            <div class="import-field">
+              <label>{{ t.data.encoding }}</label>
+              <select id="readEncoding">
+                <option value="">{{ t.data.read_auto }}</option>
+                <option value="utf-8">UTF-8</option>
+                <option value="utf-8-sig">UTF-8 (BOM)</option>
+                <option value="cp949">CP949</option>
+                <option value="euc-kr">EUC-KR</option>
+                <option value="utf-16">UTF-16</option>
+                <option value="latin-1">Latin-1</option>
+              </select>
+            </div>
+            <div class="import-field">
+              <label>{{ t.data.delimiter }}</label>
+              <select id="readDelimiter">
+                <option value="">{{ t.data.read_auto }}</option>
+                <option value=",">{{ t.data.delim_comma }}</option>
+                <option value="\t">{{ t.data.delim_tab }}</option>
+                <option value=";">{{ t.data.delim_semicolon }}</option>
+                <option value="|">{{ t.data.delim_pipe }}</option>
+              </select>
+            </div>
+            <div class="import-field">
+              <label>{{ t.data.dup_policy }}</label>
+              <select id="readDupPolicy">
+                <option value="error">{{ t.data.dup_error }}</option>
+                <option value="first">{{ t.data.dup_first }}</option>
+                <option value="last">{{ t.data.dup_last }}</option>
+                <option value="mean">{{ t.data.dup_mean }}</option>
+                <option value="shift">{{ t.data.dup_shift }}</option>
+              </select>
+            </div>
+          </div>
+          <div id="readAsInfo" class="read-as-info"></div>
+
+          <div class="import-config-title" style="margin-top:16px;display:flex;align-items:center;gap:10px;">{{ t.data.dataset_info }}
+            <button type="button" class="ds-action-btn preview" id="btnAiInfer" style="display:none;margin-left:auto;">{{ t.data.ai_infer }}</button>
+          </div>
+          <div id="aiInferNote" class="read-as-info" style="display:none;"></div>
+          <div class="import-row-3">
+            <div class="import-field">
+              <label>{{ t.data.dataset_key }} <button type="button" class="info-btn mi" data-info="mi_key">i</button><div class="info-popup">{{ t.data.mi_key }}</div></label>
+              <input type="text" id="importKey" placeholder="e.g. solar_continuous">
+            </div>
+            <div class="import-field">
+              <label>{{ t.data.dataset_name }} <button type="button" class="info-btn mi" data-info="mi_name">i</button><div class="info-popup">{{ t.data.mi_name }}</div></label>
+              <input type="text" id="importName" placeholder="e.g. Solar 2-year continuous">
+            </div>
+            <div class="import-field">
+              <label>{{ t.data.base_column }} <span class="lbl-sub">({{ t.data.time_order }})</span> <button type="button" class="info-btn mi" data-info="mi_base">i</button><div class="info-popup">{{ t.data.mi_base }}</div></label>
+              <select id="importTimeCol"></select>
+              <span id="indexTypeHint" style="font-size:.7rem;margin-top:2px;display:block;"></span>
+            </div>
+          </div>
+          <div class="import-row">
+            <div class="import-field">
+              <label>{{ t.data.dataset_desc }} <button type="button" class="info-btn mi" data-info="mi_desc">i</button><div class="info-popup">{{ t.data.mi_desc }}</div></label>
+              <input type="text" id="importDesc" placeholder="e.g. Solar plant 2-year data">
+            </div>
+          </div>
+
+          <!-- Metadata section -->
+          <div class="import-config-title" style="margin-top:16px;">{{ t.data.metadata }} <span style="font-weight:400;color:var(--muted);font-size:.72rem;">({{ t.data.optional }})</span></div>
+          <div id="metaSection" class="meta-section">
+            <div class="import-row">
+              <div class="import-field">
+                <label>{{ t.data.location }} <button type="button" class="info-btn mi" data-info="mi_location">i</button><div class="info-popup">{{ t.data.mi_location }}</div></label>
+                <div class="meta-combo">
+                  <input type="text" id="metaLocation" placeholder="{{ t.data.enter_or_select }}" list="dlLocation">
+                  <datalist id="dlLocation"></datalist>
+                </div>
+              </div>
+              <div class="import-field">
+                <label>{{ t.data.facility }} <button type="button" class="info-btn mi" data-info="mi_facility">i</button><div class="info-popup">{{ t.data.mi_facility }}</div></label>
+                <div class="meta-combo">
+                  <input type="text" id="metaFacility" placeholder="{{ t.data.enter_or_select }}" list="dlFacility">
+                  <datalist id="dlFacility"></datalist>
+                </div>
+              </div>
+            </div>
+            <div class="import-row-3">
+              <div class="import-field">
+                <label>{{ t.data.capacity }} <button type="button" class="info-btn mi" data-info="mi_capacity">i</button><div class="info-popup">{{ t.data.mi_capacity }}</div></label>
+                <div class="meta-combo">
+                  <input type="text" id="metaCapacity" placeholder="e.g. 100kW" list="dlCapacity">
+                  <datalist id="dlCapacity"></datalist>
+                </div>
+              </div>
+              <div class="import-field">
+                <label>{{ t.data.interval }} <button type="button" class="info-btn mi" data-info="mi_interval">i</button><div class="info-popup">{{ t.data.mi_interval }}</div></label>
+                <div class="meta-combo">
+                  <input type="text" id="metaInterval" placeholder="e.g. 1 hour" list="dlInterval">
+                  <datalist id="dlInterval"></datalist>
+                </div>
+              </div>
+              <div class="import-field">
+                <label>{{ t.data.characteristics }} <button type="button" class="info-btn mi" data-info="mi_chars">i</button><div class="info-popup">{{ t.data.mi_chars }}</div></label>
+                <div class="meta-combo">
+                  <input type="text" id="metaCharacteristics" placeholder="e.g. includes seasonal variation" list="dlCharacteristics">
+                  <datalist id="dlCharacteristics"></datalist>
+                </div>
+              </div>
+            </div>
+            <div class="import-field" style="margin-bottom:8px;">
+              <label>{{ t.data.tags }} <button type="button" class="info-btn mi" data-info="mi_tags">i</button><div class="info-popup">{{ t.data.mi_tags }}</div></label>
+              <div class="meta-tag-picker" id="metaTagPicker"></div>
+              <div class="meta-tag-selected" id="metaTagSelected"></div>
+            </div>
+          </div>
+
+          <div class="import-config-title">{{ t.data.column_settings }}</div>
+          <div style="overflow-x:auto;">
+            <table class="col-config-table" id="colConfigTable">
+              <thead>
+                <tr>
+                  <th style="width:30px;">{{ t.data.select_col }}</th>
+                  <th>{{ t.data.col_name }}</th>
+                  <th>{{ t.data.col_type }}</th>
+                  <th>{{ t.data.col_label }} <button type="button" class="info-btn mi" data-info="mi_col_label">i</button><div class="info-popup">{{ t.data.mi_col_label }}</div></th>
+                  <th>{{ t.data.col_unit }} <button type="button" class="info-btn mi" data-info="mi_col_unit">i</button><div class="info-popup">{{ t.data.mi_col_unit }}</div></th>
+                  <th>{{ t.data.col_desc }} <button type="button" class="info-btn mi" data-info="mi_col_desc">i</button><div class="info-popup">{{ t.data.mi_col_desc }}</div></th>
+                  <th style="width:96px;">{{ t.data.col_min }} <button type="button" class="info-btn mi" data-info="mi_col_min">i</button><div class="info-popup">{{ t.data.mi_col_min }}</div></th>
+                  <th style="width:96px;">{{ t.data.col_max }} <button type="button" class="info-btn mi" data-info="mi_col_max">i</button><div class="info-popup">{{ t.data.mi_col_max }}</div></th>
+                  <th style="width:120px;">{{ t.data.col_sample }}</th>
+                </tr>
+              </thead>
+              <tbody id="colConfigBody"></tbody>
+            </table>
+          </div>
+
+          <div class="import-options">
+            <label class="import-opt">
+              <input type="checkbox" id="chkReplace">
+              {{ t.data.replace_existing }}
+            </label>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn-import" id="btnImport">{{ t.data.save_to_db }}</button>
+            <button class="btn-cancel" id="btnCancelImport">{{ t.common.cancel }}</button>
+          </div>
+          <div id="importResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /dtab-upload -->
+
+  
+
+  <!-- TAB: Models (관리자) -->
+  <div class="data-tab-content" id="dtab-models" style="display:none;">
+    {% include '_model_nav.html' %}
+  </div><!-- /dtab-models -->
+  {% endif %}<!-- TAB: Data List -->
+  <div class="data-tab-content" id="dtab-list">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-icon datasets"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+        {{ t.data.datasets }}
+        <button class="info-btn" data-info="datasets">i</button>
+        <div class="info-popup">
+          <div class="info-popup-title">{{ t.data.ds_list_title }}</div>
+          {{ t.data.ds_list_desc }}
+          <ul>
+            <li><strong>Single</strong> — {{ t.data.ds_single_desc }}</li>
+            <li><strong>Collection</strong> — {{ t.data.ds_collection_desc }}</li>
+            <li>{{ t.data.ds_preview_csv }}</li>
+            <li>{{ t.data.ds_auto_detect }}</li>
+            <li>{{ t.data.ds_delete }}</li>
+          </ul>
+        </div>
+      </div>
+      <span class="section-count" id="dsCount"></span>
+    </div>
+    <div class="card-grid" id="datasetGrid">
+      <div class="ds-empty">
+        <div class="ds-empty-icon">~</div>
+        <div class="ds-empty-text">{{ t.data.loading }}</div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /dtab-list -->
+
+</div>
+
+<!-- Preview Modal -->
+<div class="preview-modal" id="previewModal">
+  <div class="preview-box">
+    <div class="preview-header">
+      <div class="preview-title" id="previewTitle"></div>
+      <button class="preview-close" id="btnClosePreview">&times;</button>
+    </div>
+    <div class="preview-body" id="previewContent"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/data-info.js') }}"></script>
+<script>
+// Data Management sub-tab switching
+(function() {
+  var tabs = document.querySelectorAll('.data-sub-tab');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      document.querySelectorAll('.data-tab-content').forEach(function(c) { c.style.display = 'none'; });
+      var target = document.getElementById(this.dataset.dtab);
+      if (target) target.style.display = '';
+    });
+  });
+  if (window.location.hash === '#models') {
+    var modelsTab = document.querySelector('[data-dtab="dtab-models"]');
+    if (modelsTab) modelsTab.click();
+  }
+})();
+
+(function() {
+  var uploadMode = 'file';
+  var folderMode = 'individual';   // 기본은 파일마다 소스 — 합치기는 같은 지점의 기간 분할 파일일 때만 사용자가 고른다
+  var uploadedFile = null;
+  var uploadedFiles = [];
+  var parsedCols = [];
+
+  var COLORS = ['#059669','#2563EB','#D97706','#7C3AED','#0891B2','#DC2626'];
+  var metaPresets = {};
+  var selectedTags = [];
+  var uploadSids = [];   // /api/upload 미리보기 세션 — AI 메타 추정이 이 표본을 읽는다
+
+  // ── Load meta presets ──
+  fetch('/api/meta_presets').then(function(r){return r.json()}).then(function(data) {
+    metaPresets = data;
+    // Fill datalists
+    fillDatalist('dlLocation', data.locations || []);
+    fillDatalist('dlFacility', data.facilities || []);
+    fillDatalist('dlCapacity', data.capacities || []);
+    fillDatalist('dlInterval', data.intervals || []);
+    fillDatalist('dlCharacteristics', data.characteristics || []);
+    // Fill tag picker
+    var picker = document.getElementById('metaTagPicker');
+    if (picker && data.tags) {
+      picker.innerHTML = data.tags.map(function(t) {
+        return '<span class="meta-tag-opt" data-tag="' + esc(t) + '">' + esc(t) + '</span>';
+      }).join('');
+      picker.addEventListener('click', function(e) {
+        var el = e.target.closest('.meta-tag-opt');
+        if (!el) return;
+        var tag = el.dataset.tag;
+        if (el.classList.contains('selected')) {
+          el.classList.remove('selected');
+          selectedTags = selectedTags.filter(function(t){ return t !== tag; });
+        } else {
+          el.classList.add('selected');
+          selectedTags.push(tag);
+        }
+        renderSelectedTags();
+      });
+    }
+  }).catch(function(){});
+
+  function fillDatalist(id, items) {
+    var dl = document.getElementById(id);
+    if (!dl) return;
+    dl.innerHTML = items.map(function(v) {
+      return '<option value="' + esc(v) + '">';
+    }).join('');
+  }
+
+  function renderSelectedTags() {
+    var el = document.getElementById('metaTagSelected');
+    if (!el) return;
+    el.innerHTML = selectedTags.map(function(t) {
+      return '<span class="meta-tag-sel">' + esc(t) +
+        '<span class="meta-tag-x" data-tag="' + esc(t) + '">&times;</span></span>';
+    }).join('');
+    el.querySelectorAll('.meta-tag-x').forEach(function(x) {
+      x.addEventListener('click', function() {
+        var tag = this.dataset.tag;
+        selectedTags = selectedTags.filter(function(t){ return t !== tag; });
+        var opt = Array.from(document.querySelectorAll('.meta-tag-opt')).find(function(node) { return node.dataset.tag === tag; });
+        if (opt) opt.classList.remove('selected');
+        renderSelectedTags();
+      });
+    });
+  }
+
+  function collectMetadata() {
+    var meta = {};
+    var loc = (document.getElementById('metaLocation') || {}).value;
+    var fac = (document.getElementById('metaFacility') || {}).value;
+    var cap = (document.getElementById('metaCapacity') || {}).value;
+    var intv = (document.getElementById('metaInterval') || {}).value;
+    var chars = (document.getElementById('metaCharacteristics') || {}).value;
+    if (loc && loc.trim()) meta.location = loc.trim();
+    if (fac && fac.trim()) meta.facility = fac.trim();
+    if (cap && cap.trim()) meta.capacity = cap.trim();
+    if (intv && intv.trim()) meta.interval = intv.trim();
+    if (chars && chars.trim()) meta.characteristics = chars.trim();
+    if (selectedTags.length > 0) meta.tags = selectedTags.slice();
+    return meta;
+  }
+
+  function resetMetaFields() {
+    ['metaLocation','metaFacility','metaCapacity','metaInterval','metaCharacteristics'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    selectedTags = [];
+    document.querySelectorAll('.meta-tag-opt.selected').forEach(function(el) {
+      el.classList.remove('selected');
+    });
+    renderSelectedTags();
+  }
+
+  // ── Load datasets ──
+  function loadDatasets() {
+    fetch('/api/db/datasets').then(function(r){return r.json()}).then(function(data){
+      var grid = document.getElementById('datasetGrid');
+      var countEl = document.getElementById('dsCount');
+      if (!data.datasets || data.datasets.length === 0) {
+        countEl.textContent = '';
+        grid.innerHTML = '<div class="ds-empty">' +
+          '<div class="ds-empty-icon">~</div>' +
+          '<div class="ds-empty-text">' + {{ t.data.empty_dataset | tojson }} + '</div>' +
+          '<div class="ds-empty-sub">' + {{ t.data.empty_dataset_hint | tojson }} + '</div></div>';
+        return;
+      }
+
+      // Group datasets by demo/benchmark
+      var demoDatasets = [];
+      var benchmarkDatasets = [];
+      data.datasets.forEach(function(ds) {
+        var meta = ds.metadata || {};
+        if (meta.benchmark) {
+          benchmarkDatasets.push(ds);
+        } else {
+          demoDatasets.push(ds);
+        }
+      });
+
+      countEl.textContent = data.datasets.length;
+
+      var renderDataset = function(ds, isDemoBadge) {
+        var isCol = ds.type === 'collection';
+        var typeClass = isCol ? 'collection' : 'single';
+        var typeLabel = isCol ? _t('data.type_collection') : _t('data.type_single');
+        if (isCol && ds.source_count) typeLabel += ' · ' + ds.source_count + ' ' + _t('data.seg');
+
+        // Stats pills — same format for both single and collection
+        var stats = [];
+        var totalPts = (ds.columns.length > 0 && ds.columns[0].total_points) ? ds.columns[0].total_points : 0;
+        if (ds.columns.length > 0) {
+          stats.push('<span class="ds-stat-num">' + ds.columns.length + '</span> ' + _t('data.columns_header'));
+        }
+        if (isCol && ds.source_count > 0 && totalPts) {
+          var perSeg = Math.round(totalPts / ds.source_count);
+          stats.push('<span class="ds-stat-num">' + perSeg.toLocaleString() + '</span>' + _t('data.per_seg'));
+        }
+        if (totalPts) {
+          stats.push(_t('data.total_prefix') + ' <span class="ds-stat-num">' + totalPts.toLocaleString() + '</span>' + _t('data.pt'));
+        }
+        var statsHtml = stats.map(function(s) {
+          return '<span class="ds-stat-pill">' + s + '</span>';
+        }).join('');
+
+        // Column list
+        var colsHtml = ds.columns.map(function(c, i) {
+          var unitHtml = c.unit ? '<span class="ds-col-unit">' + esc(c.unit) + '</span>' : '';
+          var limHtml = '';
+          if (c.val_min != null || c.val_max != null) {
+            var minStr = c.val_min != null ? c.val_min : '–';
+            var maxStr = c.val_max != null ? c.val_max : '–';
+            limHtml = '<span class="ds-col-limit">[' + minStr + ' ~ ' + maxStr + ']</span>';
+          }
+          var descHtml2 = c.description ? '<div class="ds-col-desc">' + esc(c.description) + '</div>' : '';
+          return '<div class="ds-col-item">' +
+            '<span class="ds-col-dot"></span>' +
+            '<div class="ds-col-info">' +
+              '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                '<span class="ds-col-name">' + esc(c.col_name) + '</span>' +
+                '<span class="ds-col-label">' + esc(c.label) + '</span>' +
+                unitHtml + limHtml +
+              '</div>' +
+              descHtml2 +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        // Source preview for collection
+        var srcHtml = '';
+        if (isCol && ds.sources.length > 0) {
+          var tags = ds.sources.slice(0, 4).map(function(s) {
+            var label = s.description || s.key.split('/').pop();
+            return '<span class="ds-src-tag">' + esc(label) + '</span>';
+          }).join('');
+          var more = ds.source_count > 4 ? '<span class="ds-src-more">+' + (ds.source_count - 4) + '</span>' : '';
+          srcHtml = '<div class="ds-sources-wrapper">' +
+            '<div class="ds-sources-header">' + _t('data.sources_header') + ' (' + ds.source_count + ')</div>' +
+            '<div class="ds-sources-preview">' + tags + more + '</div>' +
+          '</div>';
+        }
+
+        // Labels section
+        var labelsHtml = '';
+        if (ds.label_types && ds.label_types.length > 0) {
+          var labelPills = ds.label_types.map(function(lt) {
+            return '<div class="ds-label-type-pill">' +
+              '<span class="ds-label-type-name">' + esc(lt.type) + '</span>' +
+              '<span class="ds-label-type-count">' + lt.count + '</span>' +
+            '</div>';
+          }).join('');
+          labelsHtml = '<div class="ds-labels-wrapper">' +
+            '<div class="ds-labels-header">' + _t('data.gt_header') + ' (' + ds.label_count + ')</div>' +
+            '<div class="ds-labels-list">' + labelPills + '</div>' +
+          '</div>';
+        }
+
+        var descHtml = ds.description ? '<div class="ds-card-desc">' + esc(ds.description) + '</div>' : '';
+        var nameHtml = (ds.name && ds.name !== ds.key)
+          ? '<div class="ds-card-name">' + esc(ds.name) + '</div>' : '';
+
+        // Metadata grid
+        var meta = ds.metadata || {};
+        var metaRows = [];
+        if (meta.location) metaRows.push([_t('data.meta_location'), meta.location]);
+        if (meta.facility) metaRows.push([_t('data.meta_facility'), meta.facility]);
+        if (meta.capacity) metaRows.push([_t('data.meta_capacity'), meta.capacity]);
+        if (meta.interval) metaRows.push([_t('data.meta_interval'), meta.interval]);
+        if (meta.sampling_interval) metaRows.push([_t('data.meta_sampling'), meta.sampling_interval]);
+        // Auto-detected time range
+        if (meta.time_start && meta.time_end) {
+          var ts = meta.time_start.split(' ')[0] + ' ~ ' + meta.time_end.split(' ')[0];
+          metaRows.push([_t('data.meta_period'), ts]);
+        }
+        if (meta.characteristics) metaRows.push([_t('data.meta_characteristics'), meta.characteristics]);
+
+        var metaHtml = '';
+        if (metaRows.length > 0) {
+          metaHtml = '<div class="ds-meta-grid">' +
+            metaRows.map(function(r) {
+              return '<span class="ds-meta-label">' + esc(r[0]) + '</span>' +
+                     '<span class="ds-meta-val">' + esc(r[1]) + '</span>';
+            }).join('') +
+          '</div>';
+        }
+
+        // 적재 출처: 어떤 파일을 어떻게 읽어 들였는지. 출처 추적·감사에서 쓴다.
+        var ingestHtml = '';
+        var ing = meta.ingest;
+        if (ing) {
+          var ingRows = [];
+          ingRows.push(['{{ t.data.read_as }}',
+            (ing.encodings || []).join(', ') + '  ·  ' + (ing.delimiters || []).join(' ')]);
+          ingRows.push(['{{ t.data.rows_read }} / {{ t.data.rows_stored }}',
+            (ing.rows_read || 0).toLocaleString() + ' / ' + (ing.rows_stored || 0).toLocaleString()]);
+          if (ing.time_start) ingRows.push(['{{ t.data.time_range }}',
+            ing.time_start + ' ~ ' + ing.time_end +
+            (ing.sampling_interval ? '  (' + ing.sampling_interval + ')' : '')]);
+          if (ing.file_count > 1) ingRows.push(['{{ t.data.source_files }}',
+            ing.file_count + ' files · ' + ing.mode]);
+          if (ing.duplicates_found) ingRows.push(['{{ t.data.dup_found }}',
+            ing.duplicates_found.toLocaleString() + ' (' + ing.duplicate_policy + ')']);
+          if (ing.rows_dropped_bad_time) ingRows.push(['{{ t.data.rows_dropped }}',
+            ing.rows_dropped_bad_time.toLocaleString()]);
+          ingestHtml = '<div class="ds-meta-grid">' +
+            ingRows.map(function(r) {
+              return '<span class="ds-meta-label">' + esc(r[0]) + '</span>' +
+                     '<span class="ds-meta-val">' + esc(r[1]) + '</span>';
+            }).join('') + '</div>';
+        }
+
+        // Tags
+        var tagsHtml = '';
+        if (meta.tags && meta.tags.length > 0) {
+          tagsHtml = '<div class="ds-tag-list">' +
+            meta.tags.map(function(t) { return '<span class="ds-tag">' + esc(t) + '</span>'; }).join('') +
+          '</div>';
+        }
+
+        var firstSrcKey = ds.sources.length > 0 ? ds.sources[0].key : '';
+
+        // Compact summary for header
+        var colCount = ds.columns ? ds.columns.length : 0;
+        var ptStr = ds.total_points ? ds.total_points.toLocaleString() : '';
+        var summaryChips = '<span class="ds-chip">' + _t('data.chip_cols', colCount) + '</span>';
+        if (ptStr) summaryChips += '<span class="ds-chip">' + _t('data.chip_pts', ptStr) + '</span>';
+        if (ds.source_count > 1) summaryChips += '<span class="ds-chip">' + _t('data.chip_sources', ds.source_count) + '</span>';
+
+        // Badge
+        var meta = ds.metadata || {};
+        var badgeHtml = '';
+        var badgeClass = 'ds-badge-demo';
+        var badgeText = _t('js.badge_demo');
+        if (meta.benchmark) {
+          badgeClass = 'ds-badge-benchmark';
+          badgeText = _t('js.badge_benchmark');
+        }
+        badgeHtml = '<span class="ds-badge ' + badgeClass + '">' + badgeText + '</span>';
+
+        // Ground truth icon
+        var gtIconHtml = '';
+        var labelCount = 0;
+        // Count labels from dataset (assuming it's passed in ds object)
+        if (ds.label_count && ds.label_count > 0) {
+          labelCount = ds.label_count;
+          gtIconHtml = '<span class="ds-gt-icon" title="' + _t('data.gt_tip', labelCount) + '"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span>';
+        }
+
+        return '<div class="ds-card ds-accordion">' +
+          '<div class="ds-card-accent ' + typeClass + '"></div>' +
+          // ── Accordion Header (always visible) ──
+          '<div class="ds-accordion-header" onclick="this.parentElement.classList.toggle(\'ds-open\')">' +
+            '<div class="ds-accordion-left">' +
+              '<span class="ds-accordion-arrow">&#9656;</span>' +
+              '<div style="min-width:0;">' +
+                '<div style="display:flex;align-items:center;gap:8px;">' +
+                  '<div class="ds-card-key">' + esc(ds.key) + '</div>' +
+                  badgeHtml + gtIconHtml +
+                '</div>' +
+                (ds.name && ds.name !== ds.key ? '<div class="ds-card-name">' + esc(ds.name) + '</div>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="ds-accordion-right">' +
+              '<div class="ds-accordion-chips">' + summaryChips + '</div>' +
+              '<span class="ds-card-type ' + typeClass + '">' +
+                '<span class="ds-card-type-dot"></span>' + typeLabel +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+          // ── Accordion Body (hidden by default) ──
+          '<div class="ds-accordion-body"><div class="ds-accordion-inner">' +
+            '<div class="ds-card-body">' +
+              descHtml +
+              metaHtml +
+              ingestHtml +
+              tagsHtml +
+              '<div class="ds-card-stats">' + statsHtml + '</div>' +
+              '<div class="ds-col-list-wrapper">' +
+                '<div class="ds-col-list-header">' +
+                  _t('data.columns_header') + ' ' +
+                  '<span style="font-weight:500;color:var(--text3);">(' + _t('data.chip_cols', colCount) + ', ' + _t('data.chip_pts', totalPts ? totalPts.toLocaleString() : '0') + ')</span>' +
+                '</div>' +
+                '<div class="ds-col-list">' + colsHtml + '</div>' +
+              '</div>' +
+              srcHtml +
+              labelsHtml +
+            '</div>' +
+            '<div class="ds-card-footer">' +
+              '<span class="ds-card-date">' + _t('data.registered') + ' ' + (ds.created_at ? ds.created_at.split(' ')[0] : '') + '</span>' +
+              '<div class="ds-card-actions">' +
+                (firstSrcKey ? '<button class="ds-action-btn preview" data-dataset-action="previewSource" data-key="' + esc(firstSrcKey) + '" title="' + _t('data.tip_preview') + '">' + _t('data.btn_preview') + '</button>' : '') +
+                '<button class="ds-action-btn limits" data-dataset-action="openLimitsModal" data-key="' + esc(ds.key) + '" title="' + _t('data.tip_settings') + '">' + _t('data.btn_settings') + '</button>' +
+                '<button class="ds-action-btn csv" data-dataset-action="toggleFiles" data-key="' + esc(ds.key) + '" title="' + _t('data.tip_csv') + '">' + _t('data.btn_csv') + '</button>' +
+                ((window.USER && window.USER.role === 'admin') ? '<button class="ds-action-btn delete" data-dataset-action="deleteDataset" data-key="' + esc(ds.key) + '" title="' + _t('data.tip_delete') + '">' + _t('data.btn_delete') + '</button>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div id="files-' + esc(ds.key) + '" class="file-list" style="display:none;"></div>' +
+          '</div></div>' +
+        '</div>';
+      }; // end renderDataset
+
+      // Render grouped datasets
+      var html = '';
+
+      if (demoDatasets.length > 0) {
+        html += '<div class="ds-group">' +
+          '<div class="ds-group-header">' +
+            '<span class="ds-group-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>' +
+            '<span class="ds-group-title">' + _t('data.group_demo') + '</span>' +
+            '<span class="ds-group-count">' + demoDatasets.length + '</span>' +
+          '</div>' +
+          '<div class="ds-group-grid">' +
+            demoDatasets.map(function(ds) { return renderDataset(ds, true); }).join('') +
+          '</div>' +
+        '</div>';
+      }
+
+      if (benchmarkDatasets.length > 0) {
+        html += '<div class="ds-group">' +
+          '<div class="ds-group-header">' +
+            '<span class="ds-group-icon"><svg viewBox="0 0 24 24"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg></span>' +
+            '<span class="ds-group-title">' + _t('data.group_benchmark') + '</span>' +
+            '<span class="ds-group-count">' + benchmarkDatasets.length + '</span>' +
+          '</div>' +
+          '<div class="ds-group-grid">' +
+            benchmarkDatasets.map(function(ds) { return renderDataset(ds, false); }).join('') +
+          '</div>' +
+        '</div>';
+      }
+
+      grid.innerHTML = html;
+      grid.querySelectorAll('[data-dataset-action]').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+          event.stopPropagation();
+          var actions = {previewSource: window.previewSource, openLimitsModal: window.openLimitsModal,
+                         toggleFiles: window.toggleFiles, deleteDataset: window.deleteDataset};
+          actions[button.dataset.datasetAction](button.dataset.key);
+        });
+      });
+    });
+  }
+
+  loadDatasets();
+
+  // ── Upload mode tabs ──
+  document.querySelectorAll('.upload-mode-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.upload-mode-tab').forEach(function(t){ t.classList.remove('active'); });
+      this.classList.add('active');
+      uploadMode = this.dataset.mode;
+      resetUpload();
+      document.getElementById('fileDropArea').style.display = uploadMode === 'file' ? '' : 'none';
+      document.getElementById('folderDropArea').style.display = uploadMode === 'folder' ? '' : 'none';
+    });
+  });
+
+  // ── Folder mode opts ──
+  document.querySelectorAll('.folder-mode-opt').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.folder-mode-opt').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      folderMode = this.dataset.fmode;
+      var desc = document.getElementById('folderMergeDesc');
+      desc.textContent = folderMode === 'merge' ? _t('data.merge_desc') : _t('data.individual_desc');
+      if (uploadedFiles.length > 0) handleFolderFiles(uploadedFiles);
+    });
+  });
+
+  // ── File mode handlers ──
+  var dropEl = document.getElementById('uploadDrop');
+  var fileInput = document.getElementById('fileInput');
+  var panel = document.getElementById('uploadPanel');
+
+  dropEl.addEventListener('click', function(e) {
+    if (e.target.closest('#importConfig')) return;
+    fileInput.click();
+  });
+  panel.addEventListener('dragover', function(e) { e.preventDefault(); panel.classList.add('dragging'); });
+  panel.addEventListener('dragleave', function(e) {
+    if (!panel.contains(e.relatedTarget)) panel.classList.remove('dragging');
+  });
+  panel.addEventListener('drop', function(e) {
+    e.preventDefault(); panel.classList.remove('dragging');
+    var items = e.dataTransfer.items;
+    if (items && items.length > 0) {
+      var entry = items[0].webkitGetAsEntry && items[0].webkitGetAsEntry();
+      if (entry && entry.isDirectory) {
+        document.querySelectorAll('.upload-mode-tab').forEach(function(t){ t.classList.remove('active'); });
+        document.querySelector('[data-mode="folder"]').classList.add('active');
+        uploadMode = 'folder';
+        document.getElementById('fileDropArea').style.display = 'none';
+        document.getElementById('folderDropArea').style.display = '';
+        readDirectoryFiles(entry);
+        return;
+      }
+    }
+    if (uploadMode === 'file' && e.dataTransfer.files.length) {
+      handleSingleFile(e.dataTransfer.files[0]);
+    } else if (uploadMode === 'folder' && e.dataTransfer.files.length) {
+      var files = Array.from(e.dataTransfer.files).filter(function(f) {
+        return /\.(csv|tsv|txt)$/i.test(f.name);
+      });
+      if (files.length) handleFolderFiles(files);
+    }
+  });
+
+  fileInput.addEventListener('change', function() {
+    if (this.files.length) handleSingleFile(this.files[0]);
+  });
+
+  // ── Folder mode handlers ──
+  var folderDrop = document.getElementById('folderDrop');
+  var folderInput = document.getElementById('folderInput');
+
+  folderDrop.addEventListener('click', function(e) {
+    if (e.target.closest('#importConfig')) return;
+    folderInput.click();
+  });
+
+  folderInput.addEventListener('change', function() {
+    var files = Array.from(this.files).filter(function(f) {
+      return /\.(csv|tsv|txt)$/i.test(f.name);
+    });
+    if (files.length) handleFolderFiles(files);
+  });
+
+  function readDirectoryFiles(dirEntry) {
+    var reader = dirEntry.createReader();
+    var allFiles = [];
+    function readBatch() {
+      reader.readEntries(function(entries) {
+        if (entries.length === 0) {
+          var csvEntries = allFiles.filter(function(f) { return /\.(csv|tsv|txt)$/i.test(f.name); });
+          if (csvEntries.length === 0) { alert('No CSV files in folder.'); return; }
+          var pending = csvEntries.length;
+          var files = [];
+          csvEntries.forEach(function(fe) {
+            fe.file(function(f) {
+              files.push(f);
+              pending--;
+              if (pending === 0) {
+                files.sort(function(a,b){ return a.name.localeCompare(b.name); });
+                handleFolderFiles(files);
+              }
+            });
+          });
+          return;
+        }
+        entries.forEach(function(e) { if (e.isFile) allFiles.push(e); });
+        readBatch();
+      });
+    }
+    readBatch();
+  }
+
+  // ── 읽기 선택 (비어 있으면 서버가 자동 감지) ──
+  function readOpts() {
+    return {
+      encoding: (document.getElementById('readEncoding') || {}).value || '',
+      delimiter: (document.getElementById('readDelimiter') || {}).value || '',
+      duplicate_policy: (document.getElementById('readDupPolicy') || {}).value || ''
+    };
+  }
+
+  function applyReadOpts(fd) {
+    var o = readOpts();
+    if (o.encoding) fd.append('encoding', o.encoding);
+    if (o.delimiter) fd.append('delimiter', o.delimiter);
+    return fd;
+  }
+
+  // ── Handle single file ──
+  function handleSingleFile(file) {
+    uploadedFile = file;
+    uploadedFiles = [];
+    var fd = new FormData();
+    fd.append('file', file);
+    applyReadOpts(fd);
+    fetch('/api/upload', { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { showReadError(data); return; }
+        parsedCols = data.columns;
+        uploadSids = [data.sid]; window._uploadSids = uploadSids;
+        showImportConfig(file.name, data);
+        if (window._aiInferAuto) window._aiInferAuto();
+      })
+      .catch(function(err) { alert('File parsing failed: ' + err.message); });
+  }
+
+  // ── Handle folder files ──
+  function handleFolderFiles(files) {
+    uploadedFiles = files;
+    uploadedFile = null;
+
+    var listEl = document.getElementById('folderFileList');
+    listEl.style.display = '';
+    listEl.innerHTML = files.map(function(f) {
+      return '<div class="folder-file-item">' + esc(f.name) + ' (' + (f.size / 1024).toFixed(1) + ' KB)</div>';
+    }).join('');
+    document.getElementById('folderModeOpts').style.display = '';
+    document.getElementById('folderText').textContent = files.length + ' CSV files selected';
+
+    // 파일마다 미리보기 세션을 연다 — 첫 파일이 컬럼·미리보기 기준, 전체 sid 는 AI 메타 추정이 묶음 전체를 보고
+    // 이름·설명을 짓는 데 쓴다(첫 파일만 보내면 '해상 연방' 같은 한 지역 이름이 묶음 이름이 돼 버린다).
+    var previews = files.map(function (f) {
+      var fd = new FormData(); fd.append('file', f); applyReadOpts(fd);
+      return fetch('/api/upload', { method: 'POST', body: fd }).then(function (r) { return r.json(); });
+    });
+    Promise.all(previews)
+      .then(function(all) {
+        var data = all[0];
+        if (data.error) { showReadError(data); return; }
+        parsedCols = data.columns;
+        uploadSids = all.filter(function (d) { return d && d.sid; }).map(function (d) { return d.sid; }); window._uploadSids = uploadSids;
+        var modeLabel = folderMode === 'merge' ? _t('data.mode_merge') : _t('data.mode_individual');
+        var totalName = files.length + ' files (' + modeLabel + ' mode)';
+        showImportConfig(totalName, data);
+        var folderKey = files[0].webkitRelativePath
+          ? files[0].webkitRelativePath.split('/')[0]
+          : 'folder_' + files.length + 'files';
+        document.getElementById('importKey').value = folderKey.toLowerCase().replace(/[\s-]/g, '_');
+        document.getElementById('importKey').dataset.autoKey = document.getElementById('importKey').value;
+        document.getElementById('importKey').disabled = false;
+        if (window._aiInferAuto) window._aiInferAuto();
+      })
+      .catch(function(err) { alert('File parsing failed: ' + err.message); });
+  }
+
+  // ── 읽기 결과·경고 표시 ──
+  function esc(v) {
+    return String(v).replace(/[&<>"]/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function chip(label, value, byUser) {
+    return '<span class="read-as-chip' + (byUser ? ' user' : '') + '">' +
+           esc(label) + ' ' + esc(value) + '</span>';
+  }
+
+  function renderReadAs(data) {
+    var el = document.getElementById('readAsInfo');
+    if (!el) return;
+    var r = data.read_as || {};
+    var html = '<div class="read-as-line">' +
+      chip('{{ t.data.encoding }}', r.encoding || '?', r.encoding_source === 'user') +
+      chip('{{ t.data.delimiter }}', r.delimiter || '?', r.delimiter_source === 'user') +
+      chip('{{ t.data.rows_read }}', (data.rows || 0).toLocaleString(), false) +
+      '</div>';
+
+    if (r.warnings && r.warnings.length) {
+      html += '<div class="read-as-warn"><strong>{{ t.data.ingest_warnings }}</strong><ul>' +
+        r.warnings.map(function(w) { return '<li>' + esc(w) + '</li>'; }).join('') +
+        '</ul></div>';
+    }
+
+    var d = data.duplicates;
+    if (d && d.rows) {
+      var ex = (d.examples || []).map(function(e) {
+        return esc(e.timestamp) + ' x' + e.count;
+      }).join(', ');
+      html += '<div class="read-as-dup"><strong>{{ t.data.dup_found }}</strong> — ' +
+        d.timestamps.toLocaleString() + ' / ' + d.rows.toLocaleString() +
+        (ex ? '<br><span style="font-family:\'DM Mono\',monospace;font-size:.7rem;">' + ex + '</span>' : '') +
+        '</div>';
+    }
+
+    html += '<button type="button" class="btn-reread" id="btnReread">{{ t.data.reread }}</button>';
+    el.innerHTML = html;
+
+    var btn = document.getElementById('btnReread');
+    if (btn) btn.addEventListener('click', function() {
+      if (uploadMode === 'folder' && uploadedFiles.length) handleFolderFiles(uploadedFiles);
+      else if (uploadedFile) handleSingleFile(uploadedFile);
+    });
+  }
+
+  // 읽기 실패는 선택지를 그대로 둔 채 자리에서 보여준다 — 바꿔서 다시 읽으라고
+  function showReadError(data) {
+    document.getElementById('importConfig').style.display = 'block';
+    var el = document.getElementById('readAsInfo');
+    if (!el) { alert(data.error); return; }
+    var detail = '';
+    if (data.detail) {
+      detail = '<br><span style="font-family:\'DM Mono\',monospace;font-size:.7rem;">' +
+               esc(JSON.stringify(data.detail)) + '</span>';
+    }
+    el.innerHTML = '<div class="read-as-dup">' + esc(data.error) + detail + '</div>' +
+      '<button type="button" class="btn-reread" id="btnReread">{{ t.data.reread }}</button>';
+    var btn = document.getElementById('btnReread');
+    if (btn) btn.addEventListener('click', function() {
+      if (uploadMode === 'folder' && uploadedFiles.length) handleFolderFiles(uploadedFiles);
+      else if (uploadedFile) handleSingleFile(uploadedFile);
+    });
+  }
+
+  // ── Show import config ──
+  function showImportConfig(titleText, data) {
+    renderReadAs(data);
+    document.getElementById('uploadText').textContent = titleText + ' (' + data.rows.toLocaleString() + ' rows)';
+    if (uploadMode === 'folder') {
+      document.getElementById('folderText').textContent = titleText;
+    }
+    document.getElementById('importConfig').style.display = 'block';
+
+    if (uploadMode === 'file') {
+      var key = (uploadedFile ? uploadedFile.name : 'data').replace(/\.\w+$/, '').toLowerCase().replace(/[\s-]/g, '_');
+      document.getElementById('importKey').value = key; document.getElementById('importKey').dataset.autoKey = key;
+      document.getElementById('importKey').disabled = false;
+    }
+
+    var timeSelect = document.getElementById('importTimeCol');
+    timeSelect.innerHTML = '';
+    var textCols = data.columns.filter(function(c) { return c.dtype !== 'numeric'; });
+    var allCols = textCols.concat(data.columns.filter(function(c) { return c.dtype === 'numeric'; }));
+    var suggested = data.suggested_time_col || '';
+    var suggestedIdxType = data.suggested_index_type || 'datetime';
+    allCols.forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c.name;
+      var label = c.name + (c.dtype === 'numeric' ? ' (numeric)' : '');
+      if (c.name === suggested) label += ' *';
+      opt.textContent = label;
+      if (c.name === suggested) opt.selected = true;
+      timeSelect.appendChild(opt);
+    });
+
+    // Index type hint display
+    var hintEl = document.getElementById('indexTypeHint');
+    var typeLabels = { datetime: 'datetime', numeric: 'sequential/numeric', text: 'text' };
+    var typeColors = { datetime: 'var(--blue)', numeric: 'var(--green)', text: 'var(--text3)' };
+    hintEl.textContent = _t('data.detected', typeLabels[suggestedIdxType] || suggestedIdxType);
+    hintEl.style.color = typeColors[suggestedIdxType] || 'var(--text3)';
+    hintEl.dataset.indexType = suggestedIdxType;
+
+    var tbody = document.getElementById('colConfigBody');
+    tbody.innerHTML = '';
+    data.columns.forEach(function(c) {
+      if (c.dtype !== 'numeric') return;
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="text-align:center;"><input type="checkbox" class="col-chk" data-col="' + c.name + '" checked></td>' +
+        '<td style="font-family:DM Mono,monospace;font-weight:600;color:var(--text);">' + c.name + '</td>' +
+        '<td style="font-size:.72rem;color:var(--text3);">' + c.dtype + '</td>' +
+        '<td><input type="text" class="col-label-input" data-col="' + c.name + '" placeholder="' + _t('data.ph_label') + '" value="' + c.name + '"></td>' +
+        '<td><input type="text" class="col-unit-input" data-col="' + c.name + '" placeholder="' + _t('data.ph_unit') + '" style="width:60px;"></td>' +
+        '<td><input type="text" class="col-desc-input" data-col="' + c.name + '" placeholder="' + _t('data.ph_desc') + '"></td>' +
+        '<td><input type="number" step="any" class="col-min-input" data-col="' + c.name + '" placeholder="' + _t('data.col_ph_none') + '" style="width:76px;"></td>' +
+        '<td><input type="number" step="any" class="col-max-input" data-col="' + c.name + '" placeholder="' + _t('data.col_ph_none') + '" style="width:76px;"></td>' +
+        '<td><span class="col-sample">' + c.sample.join(', ') + '</span></td>';
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('importName').value = '';
+    document.getElementById('importDesc').value = '';
+    document.getElementById('importResult').innerHTML = '';
+  }
+
+  function resetUpload() {
+    document.getElementById('importConfig').style.display = 'none';
+    document.getElementById('uploadText').textContent = 'Drag CSV file or click to select';
+    document.getElementById('folderText').textContent = 'Drag folder or click to select';
+    document.getElementById('folderFileList').style.display = 'none';
+    document.getElementById('folderModeOpts').style.display = 'none';
+    document.getElementById('importKey').disabled = false;
+    uploadedFile = null;
+    uploadedFiles = [];
+    resetMetaFields();
+  }
+
+  document.getElementById('btnCancelImport').addEventListener('click', function() {
+    resetUpload();
+  });
+
+  // ── Collect form data helper ──
+  function collectFormMeta() {
+    var datasetKey = document.getElementById('importKey').value.trim();
+    var datasetName = document.getElementById('importName').value.trim();
+    var timeCol = document.getElementById('importTimeCol').value;
+    var desc = document.getElementById('importDesc').value.trim();
+
+    var selectedCols = [];
+    document.querySelectorAll('.col-chk:checked').forEach(function(cb) {
+      selectedCols.push(cb.dataset.col);
+    });
+
+    var labels = {};
+    document.querySelectorAll('.col-label-input').forEach(function(inp) {
+      var col = inp.dataset.col;
+      var unitInput = document.querySelector('.col-unit-input[data-col="' + col + '"]');
+      labels[col] = [inp.value.trim() || col, unitInput ? unitInput.value.trim() : ''];
+    });
+
+    // 칸별 설명·허용 범위 — dataset_columns.description / val_min / val_max 로 저장
+    var colMeta = {};
+    document.querySelectorAll('.col-desc-input').forEach(function(inp) {
+      var col = inp.dataset.col, mn = document.querySelector('.col-min-input[data-col="' + col + '"]'), mx = document.querySelector('.col-max-input[data-col="' + col + '"]');
+      var m = { description: inp.value.trim() };
+      if (mn && mn.value.trim() !== '') m.val_min = Number(mn.value);
+      if (mx && mx.value.trim() !== '') m.val_max = Number(mx.value);
+      if (m.description || 'val_min' in m || 'val_max' in m) colMeta[col] = m;
+    });
+
+    return {
+      datasetKey: datasetKey,
+      datasetName: datasetName,
+      timeCol: timeCol,
+      datasetDesc: desc,
+      columns: selectedCols,
+      labels: labels,
+      colMeta: colMeta,
+      replace: document.getElementById('chkReplace').checked,
+    };
+  }
+
+  function buildImportFormData(meta) {
+    var fd = new FormData();
+    fd.append('dataset_key', meta.datasetKey);
+    fd.append('dataset_name', meta.datasetName);
+    fd.append('dataset_desc', meta.datasetDesc);
+    fd.append('time_col', meta.timeCol);
+    fd.append('columns', JSON.stringify(meta.columns));
+    fd.append('labels', JSON.stringify(meta.labels));
+    fd.append('col_meta', JSON.stringify(meta.colMeta || {}));
+    fd.append('replace', meta.replace ? 'true' : 'false');
+    fd.append('metadata', JSON.stringify(collectMetadata()));
+    applyReadOpts(fd);
+    var dp = readOpts().duplicate_policy;
+    if (dp) fd.append('duplicate_policy', dp);
+    // Pass index type
+    var hintEl = document.getElementById('indexTypeHint');
+    if (hintEl && hintEl.dataset.indexType) {
+      fd.append('index_type', hintEl.dataset.indexType);
+    }
+    return fd;
+  }
+
+  // ── Import to DB ──
+  document.getElementById('btnImport').addEventListener('click', function() {
+    var btn = this;
+    var meta = collectFormMeta();
+    if (!meta.datasetKey) { alert('Please enter a dataset key.'); return; }
+
+    btn.disabled = true;
+
+    if (uploadMode === 'file') {
+      if (!uploadedFile) { btn.disabled = false; return; }
+      btn.textContent = 'Saving...';
+      var fd = buildImportFormData(meta);
+      fd.append('file', uploadedFile);
+      fd.append('mode', 'single');
+      doImport(fd, btn);
+
+    } else if (uploadMode === 'folder' && folderMode === 'merge') {
+      if (uploadedFiles.length === 0) { btn.disabled = false; return; }
+      btn.textContent = 'Merging...';
+      var fd = buildImportFormData(meta);
+      fd.append('mode', 'merge');
+      uploadedFiles.forEach(function(f) { fd.append('files', f); });
+      doImport(fd, btn);
+
+    } else if (uploadMode === 'folder' && folderMode === 'individual') {
+      if (uploadedFiles.length === 0) { btn.disabled = false; return; }
+      btn.textContent = 'Saving...';
+      var fd = buildImportFormData(meta);
+      fd.append('mode', 'collection');
+      uploadedFiles.forEach(function(f) { fd.append('files', f); });
+      doImport(fd, btn);
+    }
+  });
+
+  function doImport(fd, btn) {
+    fetch('/api/import', { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled = false;
+        btn.textContent = 'Save to DB';
+        showImportResult(data);
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = 'Save to DB';
+        showImportError(err.message);
+      });
+  }
+
+  function showImportResult(data) {
+    var resultEl = document.getElementById('importResult');
+    if (data.error) {
+      // 거부 사유는 고칠 수 있게 근거까지 보여준다
+      var ex = '';
+      if (data.detail && data.detail.examples) {
+        ex = '<br><span style="font-family:\'DM Mono\',monospace;font-size:.7rem;">' +
+             data.detail.examples.map(function(e) {
+               return esc(e.timestamp) + ' x' + e.count;
+             }).join(', ') + '</span>';
+      } else if (data.detail && data.detail.files) {
+        ex = '<br><span style="font-family:\'DM Mono\',monospace;font-size:.7rem;">' +
+             data.detail.files.map(esc).join(', ') + '</span>';
+      }
+      resultEl.innerHTML = '<div class="import-result error">' + esc(data.error) + ex + '</div>';
+      return;
+    }
+    var detail = '';
+    if (data.dataset_type === 'collection') {
+      var segLen = data.seg_length || '?';
+      detail = _t('data.import_detail_collection', data.source_count, segLen, data.rows_imported.toLocaleString(), data.columns.length);
+    } else {
+      detail = _t('data.import_detail_rows', data.rows_imported.toLocaleString(), data.columns.length);
+    }
+    var extra = '';
+    var ing = data.ingest;
+    if (ing) {
+      var bits = [];
+      if (ing.rows_read !== ing.rows_stored) {
+        bits.push('{{ t.data.rows_read }} ' + ing.rows_read.toLocaleString() +
+                  ' / {{ t.data.rows_stored }} ' + ing.rows_stored.toLocaleString());
+      }
+      if ((ing.encodings || []).length) bits.push(ing.encodings.join(', '));
+      if ((ing.delimiters || []).length) bits.push(ing.delimiters.join(' '));
+      if (ing.sampling_interval_label || ing.sampling_interval) bits.push(ing.sampling_interval_label || ing.sampling_interval);
+      if (bits.length) {
+        extra += '<div style="margin-top:6px;font-size:.72rem;color:var(--text3);">' +
+                 esc(bits.join('  ·  ')) + '</div>';
+      }
+    }
+    if (data.warnings && data.warnings.length) {
+      extra += '<div class="read-as-warn" style="margin-top:8px;"><strong>' +
+        '{{ t.data.ingest_warnings }}</strong><ul>' +
+        data.warnings.map(function(w) { return '<li>' + esc(w) + '</li>'; }).join('') +
+        '</ul></div>';
+    }
+    resultEl.innerHTML = '<div class="import-result success">' +
+      _t('data.import_saved', esc(data.dataset_key), esc(data.dataset_type), detail) + '</div>' + extra;
+    loadDatasets();
+  }
+
+  function showImportError(msg) {
+    document.getElementById('importResult').innerHTML =
+      '<div class="import-result error">' + _t('data.import_error', esc(msg)) + '</div>';
+  }
+
+  // ── Preview & Delete ──
+  window.previewSource = function(key) {
+    document.getElementById('previewTitle').textContent = key + ' — Data preview (first 100 rows)';
+    document.getElementById('previewContent').innerHTML = '<div style="padding:24px;text-align:center;color:var(--text3);font-size:.84rem;">' + _t('data.loading') + '</div>';
+    document.getElementById('previewModal').classList.add('open');
+    fetch('/api/db/sources/' + encodeURIComponent(key) + '/preview?limit=100')
+      .then(function(r){return r.json()})
+      .then(function(data) {
+        if (data.error) { document.getElementById('previewContent').innerHTML = '<div style="padding:20px;color:var(--red);">' + esc(data.error) + '</div>'; return; }
+        var cols = [data.time_col].concat(data.col_names);
+        var thead = '<tr>' + cols.map(function(c){return '<th>'+esc(c)+'</th>'}).join('') + '</tr>';
+        var tbody = data.rows.map(function(row) {
+          return '<tr>' + cols.map(function(c) {
+            var v = (c === data.time_col) ? row.timestamp : row[c];
+            if (v === undefined || v === null) return '<td style="color:#ccc;">-</td>';
+            if (typeof v === 'number') return '<td>' + v.toFixed(2) + '</td>';
+            return '<td>' + esc(v) + '</td>';
+          }).join('') + '</tr>';
+        }).join('');
+        document.getElementById('previewContent').innerHTML =
+          '<table class="preview-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
+      });
+  };
+
+  window.toggleFiles = function(dsKey) {
+    var el = document.getElementById('files-' + dsKey);
+    if (!el) return;
+    if (el.style.display !== 'none') {
+      el.style.display = 'none';
+      return;
+    }
+    el.style.display = '';
+    el.innerHTML = '<span style="padding:4px;color:var(--text3);">' + _t('data.loading') + '</span>';
+    fetch('/api/db/datasets/' + encodeURIComponent(dsKey) + '/files')
+      .then(function(r){return r.json()})
+      .then(function(data) {
+        if (!data.files || data.files.length === 0) {
+          el.innerHTML = '<span style="color:var(--text3);">stored CSV files not found</span>';
+          return;
+        }
+        el.innerHTML = data.files.map(function(f) {
+          var sizeKB = (f.file_size / 1024).toFixed(1);
+          var dlUrl = '/api/db/datasets/' + encodeURIComponent(dsKey) + '/files/' + encodeURIComponent(f.filename) + '/download';
+          return '<div class="file-item">' +
+            '<span class="file-name">' + esc(f.filename) + '</span>' +
+            '<span><span class="file-size">' + sizeKB + ' KB</span>' +
+            '<a href="' + dlUrl + '" class="ds-action-btn preview" style="text-decoration:none;display:inline-flex;">download</a></span>' +
+          '</div>';
+        }).join('');
+      });
+  };
+
+  // 지우기 전에 무엇이 몇 건 사라지는지 보이고, 키를 직접 쳐야 지워진다.
+  window.deleteDataset = function(key) {
+    fetch('/api/db/datasets/' + encodeURIComponent(key) + '/delete_summary')
+      .then(function(r) { return r.json(); })
+      .then(function(sum) {
+        if (sum.error) { alert(sum.error); return; }
+        var rows = [
+          [_t('data.del_sources'), sum.sources], [_t('data.del_points'), sum.points],
+          [_t('data.del_pp_points'), sum.preprocessed_points],
+          [_t('data.del_labels'), sum.labels], [_t('data.del_basket'), sum.basket_items],
+          [_t('data.del_patterns'), sum.patterns], [_t('data.del_files'), sum.stored_files]
+        ].filter(function(r) { return r[1] > 0; }).map(function(r) {
+          return '<tr><td>' + r[0] + '</td><td class="del-count">' + r[1].toLocaleString() + '</td></tr>';
+        }).join('');
+        var warn = sum.stored_files > 0
+          ? _t('data.del_warn_files')
+          : _t('data.del_warn_nofile');
+        var overlay = document.createElement('div');
+        overlay.className = 'limits-modal-overlay';
+        overlay.innerHTML =
+          '<div class="limits-modal del-modal">' +
+            '<h3>' + _t('data.del_title') + ' — ' + esc(key) + '</h3>' +
+            '<table class="limits-table"><tbody>' + rows + '</tbody></table>' +
+            '<p class="del-warn">' + warn + '</p>' +
+            '<label class="del-confirm-label">' + _t('data.del_type_confirm', '<code>' + esc(key) + '</code>') +
+              '<input type="text" class="del-confirm-input" autocomplete="off" spellcheck="false"></label>' +
+            '<div class="limits-modal-actions">' +
+              '<button class="limits-btn-cancel" data-del="cancel">' + _t('data.del_cancel') + '</button>' +
+              '<button class="del-btn-confirm" data-del="ok" disabled>' + _t('data.del_confirm') + '</button>' +
+            '</div>' +
+          '</div>';
+        document.body.appendChild(overlay);
+        var input = overlay.querySelector('.del-confirm-input');
+        var okBtn = overlay.querySelector('[data-del="ok"]');
+        var close = function() { overlay.remove(); };
+        input.focus();
+        input.addEventListener('input', function() { okBtn.disabled = input.value !== key; });
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+        overlay.querySelector('[data-del="cancel"]').addEventListener('click', close);
+        okBtn.addEventListener('click', function() {
+          okBtn.disabled = true;
+          okBtn.textContent = _t('data.del_deleting');
+          fetch('/api/db/datasets/' + encodeURIComponent(key) + '?confirm=' + encodeURIComponent(key), { method: 'DELETE' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.error) { alert(data.error); okBtn.textContent = _t('data.del_confirm'); okBtn.disabled = false; return; }
+              close();
+              loadDatasets();
+            })
+            .catch(function(err) { alert(_t('data.del_failed', err.message)); close(); });
+        });
+      });
+  };
+
+  // ── Column Limits Modal ──
+  window.openLimitsModal = function(dsKey) {
+    fetch('/api/column_limits/' + encodeURIComponent(dsKey))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { alert(data.error); return; }
+        var cols = data.columns;
+        var overlay = document.createElement('div');
+        overlay.className = 'limits-modal-overlay';
+        var rows = cols.map(function(c) {
+          var descVal = (c.description || '').replace(/"/g, '&quot;');
+          return '<tr>' +
+            '<td style="font-weight:600;">' + esc(c.col_name) +
+              '<div style="font-weight:400;font-size:.68rem;color:var(--muted);">' + esc(c.label || '') + (c.unit ? ' (' + esc(c.unit) + ')' : '') + '</div>' +
+            '</td>' +
+            '<td><textarea class="limits-desc" data-col="' + esc(c.col_name) + '" data-field="desc" rows="2" placeholder="' + _t('data.col_ph_desc') + '">' + esc(c.description || '') + '</textarea></td>' +
+            '<td><input type="number" step="any" data-col="' + esc(c.col_name) + '" data-field="min" value="' + (c.val_min != null ? c.val_min : '') + '" placeholder="' + _t('data.col_ph_none') + '"></td>' +
+            '<td><input type="number" step="any" data-col="' + esc(c.col_name) + '" data-field="max" value="' + (c.val_max != null ? c.val_max : '') + '" placeholder="' + _t('data.col_ph_none') + '"></td>' +
+          '</tr>';
+        }).join('');
+        overlay.innerHTML =
+          '<div class="limits-modal">' +
+            '<h3>' + _t('data.col_settings_title', esc(dsKey)) + '</h3>' +
+            '<table class="limits-table">' +
+              '<thead><tr><th>' + _t('data.col_th_column') + '</th><th>' + _t('data.col_th_desc') + mi('mi_col_desc') + '</th><th>' + _t('data.col_th_min') + mi('mi_col_min') + '</th><th>' + _t('data.col_th_max') + mi('mi_col_max') + '</th></tr></thead>' +
+              '<tbody>' + rows + '</tbody>' +
+            '</table>' +
+            '<div class="limits-modal-actions">' +
+              '<button class="limits-btn-cancel" id="limitsCancel">' + _t('data.col_cancel') + '</button>' +
+              '<button class="limits-btn-save" id="limitsSave">' + _t('data.col_save') + '</button>' +
+            '</div>' +
+          '</div>';
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) overlay.remove();
+        });
+        overlay.querySelector('#limitsCancel').addEventListener('click', function() { overlay.remove(); });
+        overlay.querySelector('#limitsSave').addEventListener('click', function() {
+          var updates = [];
+          overlay.querySelectorAll('[data-col]').forEach(function(el) {
+            var colName = el.dataset.col;
+            var field = el.dataset.field;
+            var existing = updates.find(function(u) { return u.col_name === colName; });
+            if (!existing) { existing = { col_name: colName }; updates.push(existing); }
+            if (field === 'desc') {
+              existing.description = el.value;
+            } else {
+              var v = el.value.trim();
+              existing['val_' + field] = v !== '' ? parseFloat(v) : null;
+            }
+          });
+          fetch('/api/column_limits/' + encodeURIComponent(dsKey), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ columns: updates })
+          })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+              if (res.error) { alert(res.error); return; }
+              overlay.remove();
+              loadDatasets();
+            });
+        });
+      });
+  };
+
+  document.getElementById('btnClosePreview').addEventListener('click', function() {
+    document.getElementById('previewModal').classList.remove('open');
+  });
+  document.getElementById('previewModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  function mi(key) { return ' <button type="button" class="info-btn mi" data-info="' + key + '">i</button><div class="info-popup">' + esc(_t('data.' + key)) + '</div>'; }
+
+})();
+
+  // ── AI 메타 추정 (외부 LLM 이 켜져 있고 '업로드 메타 추정' 이 체크됐을 때만) ──
+  (function () {
+    var btn = document.getElementById('btnAiInfer'), note = document.getElementById('aiInferNote');
+    var status = document.getElementById('aiInferStatus'), statusText = document.getElementById('aiInferStatusText');
+    if (!btn) return;
+    var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    var timer = null;
+    function setStatus(state, text) { status.className = 'ai-status ' + state; statusText.textContent = text || ''; }
+    function modelLabel(s) { return (s && (s.label || s.model)) || 'LLM'; }
+    // 설정은 올릴 때마다 서버에서 다시 읽는다 — 모델 탭에서 켠 직후에도 새로고침 없이 반영되게
+    function settings() {
+      return fetch('/api/external_llm').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { return j && j.settings; }).catch(function () { return null; });
+    }
+    function usable(s) { return !!(s && s.enabled && s.api_key_set && s.use_for && s.use_for.meta_inference); }
+    var useWrap = document.getElementById('aiUseWrap'), useChk = document.getElementById('aiUseToggle');
+    var lastModel = 'LLM';
+    var LS_KEY = 'tslens.aiMetaInfer';
+    try { useChk.checked = localStorage.getItem(LS_KEY) === '1'; } catch (e) { useChk.checked = false; }
+    function showIdle() { setStatus(useChk.checked ? 'ready' : '', useChk.checked ? _t('data.ai_status_ready', lastModel) : _t('data.ai_status_ask', lastModel)); }
+    setStatus('', _t('data.ai_status_ask', lastModel));   // 설정 응답 전에도 먼저 보인다
+    settings().then(function (s) {
+      if (usable(s)) { lastModel = modelLabel(s); btn.style.display = ''; showIdle(); }
+      else { useWrap.style.display = 'none'; setStatus('', _t('data.ai_status_off')); }
+    });
+    // 업로드마다 켜고 끈다 — 파일을 이미 올린 상태에서 켜면 그 자리에서 추정
+    useChk.addEventListener('change', function () {
+      try { localStorage.setItem(LS_KEY, useChk.checked ? '1' : '0'); } catch (e) {}
+      if (useChk.checked && (window._uploadSids || []).length && !btn.disabled) runInfer(true); else showIdle();
+    });
+    function mark(el) {
+      if (!el) return;
+      el.classList.remove('ai-filled'); void el.offsetWidth; el.classList.add('ai-filled');   // 다시 채워도 또 깜빡이게
+      var clear = function () { el.classList.remove('ai-filled'); el.removeEventListener('input', clear); el.removeEventListener('click', clear); };
+      el.addEventListener('input', clear); if (el.classList.contains('meta-tag-opt')) el.addEventListener('click', clear);
+    }
+    function setVal(id, v) { var el = document.getElementById(id); if (el && v && !el.value.trim()) { el.value = v; mark(el); } }
+    function setKey(v) {
+      var el = document.getElementById('importKey'); if (!el || !v) return;
+      var clean = String(v).toLowerCase().replace(/[^a-z0-9_]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
+      if (!clean) return;
+      if (!el.value.trim() || el.value === el.dataset.autoKey) { el.value = clean; el.dataset.autoKey = clean; mark(el); }
+    }
+    function pick(lang, v) { return typeof v === 'object' && v ? (v[lang] || v.ko || v.en || '') : (v || ''); }
+    window._aiInferAuto = function () { if (useChk.checked) runInfer(true); else showIdle(); };   // 미리보기 직후 자동(토글 켜졌을 때만)
+    btn.addEventListener('click', function () { runInfer(false); });
+    function runInfer(auto) {
+      var uploadSids = window._uploadSids || [];
+      if (!uploadSids.length || btn.disabled) return;
+      settings().then(function (s) {
+        if (!usable(s)) { btn.style.display = 'none'; setStatus('', _t('data.ai_status_off')); return; }
+        btn.style.display = ''; btn.disabled = true;
+        var label = modelLabel(s), t0 = Date.now();
+        note.style.display = 'none';
+        setStatus('querying', _t('data.ai_status_querying', label, 0));
+        clearInterval(timer); timer = setInterval(function () { setStatus('querying', _t('data.ai_status_querying', label, Math.round((Date.now() - t0) / 1000))); }, 500);
+        fetch('/api/external_llm/infer_meta', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sids: uploadSids, lang: window.LANG,
+            tags: [].map.call(document.querySelectorAll('.meta-tag-opt'), function (o) { return o.dataset.tag; }) }) })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            clearInterval(timer); btn.disabled = false;
+            var secs = Math.round((Date.now() - t0) / 10) / 100;
+            if (!j.ok) { setStatus('fail', _t('data.ai_status_fail', label, j.error || '')); return; }
+            var sg = j.suggestion || {}, lang = window.LANG || 'ko';
+            setKey(sg.dataset_key);
+            setVal('importName', pick(lang, sg.dataset_name)); setVal('importDesc', pick(lang, sg.description));
+            setVal('metaInterval', sg.sampling);
+            setVal('metaLocation', pick(lang, sg.location)); setVal('metaFacility', pick(lang, sg.facility)); setVal('metaCapacity', sg.capacity);
+            var chars = pick(lang, sg.characteristics) || (sg.caveats || []).map(function (c) { return pick(lang, c); }).join(' · ');
+            setVal('metaCharacteristics', chars);
+            (sg.domain_tags || []).forEach(function (t) {
+              var want = String(t).toLowerCase();
+              var opt = [].slice.call(document.querySelectorAll('.meta-tag-opt')).filter(function (o) { return (o.dataset.tag || '').toLowerCase() === want; })[0];
+              if (opt && !opt.classList.contains('selected')) { opt.click(); mark(opt); }
+            });
+            var ranges = [];
+            (sg.columns || []).forEach(function (c) {
+              var q = '[data-col="' + String(c.name).replace(/"/g, '\\"') + '"]';
+              var lab = document.querySelector('.col-label-input' + q), unit = document.querySelector('.col-unit-input' + q), desc = document.querySelector('.col-desc-input' + q);
+              if (lab && c.label && (lab.value === c.name || !lab.value)) { lab.value = pick(lang, c.label); mark(lab); }
+              if (unit && c.unit && !unit.value) { unit.value = c.unit; mark(unit); }
+              if (desc && c.description && !desc.value) { desc.value = pick(lang, c.description); mark(desc); }
+              var mn = document.querySelector('.col-min-input' + q), mx = document.querySelector('.col-max-input' + q);
+              if (mn && c.val_min != null && mn.value === '') { mn.value = c.val_min; mark(mn); }
+              if (mx && c.val_max != null && mx.value === '') { mx.value = c.val_max; mark(mx); }
+              if (c.val_min != null || c.val_max != null) ranges.push(esc(c.name) + ': ' + (c.val_min != null ? c.val_min : '−∞') + ' ~ ' + (c.val_max != null ? c.val_max : '∞'));
+            });
+            setStatus('done', _t('data.ai_status_done', (j.model || label), secs) + ' · ' + _t('data.ai_filled_legend'));
+            var html = '';
+            if (sg.basis) html += '<div style="font-size:.74rem;color:var(--text3)"><b>' + _t('data.ai_infer_basis') + '</b> · ' + esc(pick(lang, sg.basis)) + '</div>';
+            if (sg.caveats && sg.caveats.length) html += '<div style="margin-top:4px;font-size:.74rem;color:var(--text3)"><b>' + _t('data.ai_infer_caveats') + '</b> · ' + sg.caveats.map(function (c) { return esc(pick(lang, c)); }).join(' / ') + '</div>';
+            if (ranges.length) html += '<div style="margin-top:4px;font-size:.74rem;color:var(--text3)"><b>' + _t('data.ai_infer_ranges') + '</b> · ' + ranges.join(', ') + '</div>';
+            if (html) { note.style.display = ''; note.innerHTML = html; }
+          })
+          .catch(function (e) { clearInterval(timer); btn.disabled = false; setStatus('fail', _t('data.ai_status_fail', label, e.message)); });
+      });
+    }
+  })();
+</script>
+{% endblock %}

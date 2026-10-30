@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.nav.discovery }}{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="discovery-shell">
+
+  <section class="discovery-topbar">
+    <h1 class="page-title">{{ t.finder.discovery_studio_title }}</h1>
+    <div class="discovery-context" id="discoveryContextBlock">
+      <div class="ds-context-item">
+        <span class="ds-context-label">{{ t.finder.discovery_ctx_dataset }}</span>
+        <span class="ds-context-value" id="discoveryDatasetName">-</span>
+      </div>
+      <div class="ds-context-item">
+        <span class="ds-context-label">{{ t.finder.discovery_ctx_columns }}</span>
+        <span class="ds-context-value" id="discoveryColumns">-</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="discovery-empty discovery-empty-warn" id="discoveryEmptyState" hidden role="alert">
+    <span class="discovery-empty-mark">!</span>
+    <strong>{{ t.finder.discovery_no_selection }}</strong>
+    <a href="/finder" class="btn btn-primary btn-sm">{{ t.finder.discovery_go_finder }}</a>
+  </div>
+
+  <section class="discovery-command" id="discoveryConfig" hidden>
+    <div class="discovery-command-main">
+      <div class="discovery-field">
+        <label>{{ t.finder.discovery_seg_unit }}</label>
+        <select class="form-select form-input-sm" id="cfgUnit">
+          <option value="auto">{{ t.finder.discovery_unit_auto }}</option>
+          <option value="hour">hour</option>
+          <option value="day">day</option>
+          <option value="week">week</option>
+          <option value="month">month</option>
+        </select>
+      </div>
+      <div class="discovery-field">
+        <label>{{ t.finder.discovery_krange }}</label>
+        <div class="discovery-range">
+          <input type="number" class="form-input form-input-sm" id="cfgKMin" value="3" min="2" max="20">
+          <span>-</span>
+          <input type="number" class="form-input form-input-sm" id="cfgKMax" value="12" min="2" max="20">
+        </div>
+      </div>
+      <div class="discovery-field">
+        <label>{{ t.finder.discovery_normalize }}</label>
+        <select class="form-select form-input-sm" id="cfgNormalize" title="{{ t.finder.discovery_normalize_hint }}">
+          <option value="on" selected>{{ t.finder.discovery_normalize_on }}</option>
+          <option value="off">{{ t.finder.discovery_normalize_off }}</option>
+        </select>
+      </div>
+      <div class="discovery-field">
+        <label>{{ t.finder.discovery_ranking }}</label>
+        <select class="form-select form-input-sm" id="cfgRank">
+          <option value="balanced">balanced</option>
+          <option value="distinct" selected>distinct shape</option>
+          <option value="frequent">frequent regime</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnDiscoverStart">{{ t.finder.discovery_run }}</button>
+  </section>
+
+  <section class="discovery-run" id="discoverPanel" hidden>
+    <div class="discovery-run-head">
+      <div class="discovery-progress-wrap">
+        <div class="discovery-progress-meta">
+          <span id="agentPhaseChip">{{ t.finder.discovery_ready }}</span>
+          <span id="discoveryProgressLabel">{{ t.finder.discovery_progress_init }}</span>
+        </div>
+        <div class="discovery-progress-track">
+          <div class="discovery-progress-fill" id="discoveryProgressFill" style="width:0%;"></div>
+        </div>
+      </div>
+      <div class="discovery-run-actions">
+        <button class="btn btn-secondary btn-sm" id="btnAgentRetry">{{ t.finder.discovery_rerun }}</button>
+        <button class="btn btn-secondary btn-sm" id="btnDiscoverBack">{{ t.nav.finder }}</button>
+      </div>
+    </div>
+
+    <div class="discovery-notice" id="discoveryNotice" hidden></div>
+
+    <div class="discovery-grid">
+      <aside class="discovery-left" id="discoveryLeft">
+        <div class="discovery-panel discovery-collapsible">
+          <button type="button" class="discovery-panel-title discovery-collapse-toggle">{{ t.finder.discovery_run_map }}</button>
+          <div class="discovery-collapse-body">
+            <div class="discovery-steps" id="discoverySteps">
+              <div class="discovery-step" data-step="periodicity"><span>01</span><strong>{{ t.finder.discovery_step_periodicity }}</strong><small>waiting</small></div>
+              <div class="discovery-step" data-step="cluster"><span>02</span><strong>{{ t.finder.discovery_step_cluster }}</strong><small>waiting</small></div>
+              <div class="discovery-step" data-step="interpret"><span>03</span><strong>{{ t.finder.discovery_step_interpret }}</strong><small>waiting</small></div>
+              <div class="discovery-step" data-step="rank"><span>04</span><strong>{{ t.finder.discovery_step_rank }}</strong><small>waiting</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="discovery-panel discovery-collapsible">
+          <button type="button" class="discovery-panel-title discovery-collapse-toggle">{{ t.finder.discovery_k_sweep }}</button>
+          <div class="discovery-collapse-body">
+            <div class="discovery-k-list" id="trialList">
+              <div class="discovery-muted">{{ t.finder.discovery_no_run }}</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="discovery-main">
+        <div class="discovery-summary" id="discoverySummary">
+          <div><span>{{ t.finder.discovery_sum_unit }}</span><strong>-</strong></div>
+          <div><span>{{ t.finder.discovery_sum_bestk }}</span><strong>-</strong></div>
+          <div><span>{{ t.finder.discovery_sum_patterns }}</span><strong>-</strong></div>
+          <div><span>{{ t.finder.discovery_sum_coverage }}</span><strong>-</strong></div>
+        </div>
+
+        <div class="discovery-panel discovery-results-panel discovery-collapsible" id="portfolioPanel">
+          <div class="discovery-panel-head discovery-portfolio-head" id="portfolioHead">
+            <div>
+              <div class="discovery-panel-title">{{ t.finder.discovery_portfolio }}</div>
+              <div class="discovery-panel-sub">{{ t.finder.discovery_portfolio_sub }}</div>
+            </div>
+            <div class="discovery-portfolio-head-right">
+              <button type="button" class="discovery-matrix-btn" id="btnMatrix" hidden>{{ t.finder.discovery_matrix_btn }}</button>
+              <span class="chip chip-green" id="agentResultCount" hidden></span>
+              <span class="discovery-portfolio-chevron"></span>
+            </div>
+          </div>
+          <div class="discovery-collapse-body">
+            <div class="discovery-placeholder" id="agentResultPlaceholder">{{ t.finder.discovery_portfolio_placeholder }}</div>
+            <div class="discovery-card-grid" id="recommendedClusters"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="discovery-right">
+        <div class="discovery-panel discovery-inspector">
+          <div class="discovery-panel-title">{{ t.finder.discovery_inspector }}</div>
+          <div class="discovery-inspector-empty" id="inspectorEmpty">{{ t.finder.discovery_select_pattern }}</div>
+          <div id="inspectorBody" hidden>
+            <div class="discovery-inspector-head">
+              <input id="inspectorLabel" class="discovery-inspector-label" value="">
+              <div class="discovery-inspector-meta" id="inspectorMeta"></div>
+            </div>
+
+            <div class="discovery-tabs" id="inspectorTabs">
+              <button type="button" class="discovery-tab is-active" data-tab="pattern">{{ t.finder.discovery_tab_pattern }}</button>
+              <button type="button" class="discovery-tab" data-tab="columns">{{ t.finder.discovery_tab_columns }}</button>
+            </div>
+
+            <div class="discovery-tab-panel" data-tabpanel="pattern">
+              <div class="discovery-inspector-chart" id="inspectorChart"></div>
+              <div class="discovery-members-head">
+                <span id="inspectorMembersTitle">{{ t.finder.discovery_members_default }}</span>
+                <span class="chip chip-green" id="inspectorMemberCount"></span>
+              </div>
+              <div class="discovery-members" id="inspectorMembers"></div>
+            </div>
+
+            <div class="discovery-tab-panel" data-tabpanel="columns" hidden>
+              <div class="discovery-col-insight" id="inspectorColInsight"></div>
+              <div class="discovery-col-profiles" id="inspectorColProfiles"></div>
+            </div>
+
+            <div class="discovery-inspector-actions">
+              <button class="btn btn-secondary btn-sm" id="btnFindMore">{{ t.finder.discovery_find_more }}</button>
+              <button class="btn btn-secondary btn-sm" id="btnSubdivide">{{ t.finder.discovery_subdivide }}</button>
+              <button class="btn btn-secondary btn-sm" id="btnExclude">{{ t.finder.discovery_exclude }}</button>
+            </div>
+            <hr class="discovery-inspector-hr">
+            <div class="discovery-inspector-save-row">
+              <button class="btn btn-primary" id="btnSaveRecommended">{{ t.finder.discovery_save_preset_one }}</button>
+              <button class="btn btn-secondary" id="btnAddToBasket">{{ t.finder.discovery_add_basket_one }}</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="discovery-modal" id="matrixModal" hidden>
+    <div class="discovery-modal-backdrop" data-close="1"></div>
+    <div class="discovery-modal-box">
+      <div class="discovery-modal-head">
+        <span>{{ t.finder.discovery_matrix_title }}</span>
+        <button type="button" class="discovery-modal-close" id="matrixClose" data-close="1">&#10005;</button>
+      </div>
+      <div class="discovery-modal-body" id="matrixBody"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/discovery.js?v={{ cache_bust }}"></script>
+{% endblock %}

@@ -1,0 +1,50 @@
+# ──────────────────────────────────────────────────────────────
+# Finder 첫 화면 시작 카드
+# ──────────────────────────────────────────────────────────────
+# 데이터를 고르기 전 화면은 비어 있다. 그 자리에 "이 데이터로 무엇을
+# 찾는가"를 한 줄로 보여주는 카드를 깔아 첫 클릭까지의 거리를 줄인다.
+#
+# 카드 문구는 여기서만 바꾼다. 코드에는 문구를 넣지 않는다.
+# dataset 키가 DB에 없으면 그 카드는 화면에서 자동으로 빠진다.
+# query 는 Text 모드 입력창에 그대로 채워지는 예시 질의다.
+# ──────────────────────────────────────────────────────────────
+
+enabled: true
+max_cards: 4          # 화면에 노출할 최대 카드 수
+
+cards:
+  - dataset: ett_h1
+    column: OT
+    ko:
+      headline: "변압기가 식지 않는 구간"
+      query: "높게 유지되다 갑자기 떨어지고 천천히 회복하는 구간"
+    en:
+      headline: "When the transformer will not cool down"
+      query: "stays high, drops suddenly, then recovers slowly"
+
+  - dataset: nrel_solar_2023
+    column: ghi_w_m2
+    ko:
+      headline: "구름이 지나간 흔적"
+      query: "짧게 급락했다가 곧바로 원래 수준으로 돌아오는 구간"
+    en:
+      headline: "Traces of a passing cloud"
+      query: "drops sharply for a short while, then returns to the previous level"
+
+  - dataset: uci_air_quality
+    column: co_mg_m3
+    ko:
+      headline: "매일 같은 시간에 오르는 농도"
+      query: "하루에 두 번 봉우리가 생기는 구간"
+    en:
+      headline: "Concentration that rises at the same hour every day"
+      query: "two peaks within a single day"
+
+  - dataset: wind_err_2024
+    column: err_AI_ws_lag1
+    ko:
+      headline: "예측이 크게 빗나간 국면"
+      query: "오차가 평소보다 크게 벌어졌다가 줄어드는 구간"
+    en:
+      headline: "Where the forecast went badly wrong"
+      query: "error widens far beyond usual, then narrows again"

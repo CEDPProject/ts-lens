@@ -218,3 +218,43 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ──────────────────────────────────────────────────────────────
+# TS-Lens
+# ──────────────────────────────────────────────────────────────
+# App state: SQLite database, journals and copies (TS_PATTERN_DB_PATH)
+*.db
+*.db-wal
+*.db-shm
+*.db.bak*
+
+# Upload originals and local working folders (TS_PATTERN_DATA_DIR)
+/data/
+/var/
+
+# Model runtime: checkpoints, model folders and server logs (config/runtime.yaml)
+/runtime/
+
+# Extra virtual environments for model servers, e.g. .venv-verbalts
+.venv*/
+
+# Machine-local accounts (tools/set_password.py) and external LLM key
+/config/local/
+
+# Presets saved from the UI stay local; only the shipped files are tracked
+/config/custom_presets/*
+!/config/custom_presets/README.md
+!/config/custom_presets/ett_h1.yaml
+!/config/custom_presets/nrel_solar_2023.yaml
+!/config/custom_presets/uci_air_quality.yaml
+
+# Model weights are never part of the repository
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
+
+# Synthetic upload fixtures belong to the test suite
+!/tests/fixtures/**

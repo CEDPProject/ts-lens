@@ -1,0 +1,731 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.landing.title }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/landing.css?v={{ cache_bust }}">
+{% endblock %}
+
+{% block hero %}
+<div class="landing-hero">
+  <div class="landing-hero-inner">
+    <div class="landing-story" data-landing-story>
+      <div class="landing-story-nav">
+        <button class="landing-story-arrow" type="button" data-story-prev aria-label="{{ t.landing.nav_prev }}">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <div class="landing-story-tabs">
+          <button class="landing-story-tab is-active" type="button" data-story-button="0"><span>00</span>{{ t.landing.tab_0 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="1"><span>01</span>{{ t.landing.tab_1 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="2"><span>02</span>{{ t.landing.tab_2 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="3"><span>03</span>{{ t.landing.tab_3 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="4"><span>04</span>{{ t.landing.tab_4 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="5"><span>05</span>{{ t.landing.tab_5 }}</button>
+          <button class="landing-story-tab" type="button" data-story-button="6"><span>06</span>{{ t.landing.tab_6 }}</button>
+        </div>
+        <button class="landing-story-arrow" type="button" data-story-next aria-label="{{ t.landing.nav_next }}">
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
+
+      <div class="landing-story-stage" style="min-height:600px">
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             00 PROBLEM: 패턴의 개념은 알지만, 예제가 없다
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel is-active" data-story-panel="0">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_0 }}</div>
+            <h2>{{ t.landing.s0_title|safe }}</h2>
+            <p>{{ t.landing.s0_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art landing-story-art-data" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g0-panel" x1="36" y1="22" x2="596" y2="455" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1F5F9"/>
+              </linearGradient>
+              <linearGradient id="g0-series" x1="78" y1="242" x2="536" y2="172" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#94A3B8"/><stop offset=".5" stop-color="#0D9488"/><stop offset="1" stop-color="#2563EB"/>
+              </linearGradient>
+              <linearGradient id="g0-cut" x1="276" y1="78" x2="378" y2="338" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#A7F3D0" stop-opacity=".18"/><stop offset="1" stop-color="#60A5FA" stop-opacity=".14"/>
+              </linearGradient>
+              <filter id="f0-card"><feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#0F172A" flood-opacity=".09"/></filter>
+              <filter id="f0-glow"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#34D399" flood-opacity=".35"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="url(#g0-panel)" stroke="#DDE5EF"/>
+            <g transform="translate(54 70)" filter="url(#f0-card)">
+              <rect width="512" height="280" rx="18" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+              <rect x="18" y="18" width="476" height="34" rx="9" fill="#F8FAFC" stroke="#E2E8F0"/>
+              <text x="32" y="40" fill="#64748B" font-family="DM Mono, monospace" font-size="11" font-weight="700">{{ t.landing.s0_fig_label_raw }}</text>
+              <g stroke="#E2E8F0" stroke-width="1">
+                <line x1="42" y1="88" x2="470" y2="88"/>
+                <line x1="42" y1="128" x2="470" y2="128"/>
+                <line x1="42" y1="168" x2="470" y2="168"/>
+                <line x1="42" y1="208" x2="470" y2="208"/>
+                <line x1="102" y1="70" x2="102" y2="236"/>
+                <line x1="162" y1="70" x2="162" y2="236"/>
+                <line x1="222" y1="70" x2="222" y2="236"/>
+                <line x1="282" y1="70" x2="282" y2="236"/>
+                <line x1="342" y1="70" x2="342" y2="236"/>
+                <line x1="402" y1="70" x2="402" y2="236"/>
+              </g>
+              <rect x="220" y="68" width="102" height="170" rx="8" fill="url(#g0-cut)" stroke="#10B981" stroke-width="2" stroke-dasharray="6 5"/>
+              <path d="M44 184 C70 156 87 174 110 138 C134 100 155 117 178 151 C200 184 218 171 238 128 C258 86 282 93 303 133 C326 176 348 190 371 154 C394 119 412 132 433 108 C449 91 462 96 472 118" stroke="url(#g0-series)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+              <path d="M225 128 C246 86 280 93 303 133 C314 153 322 166 334 174" stroke="#10B981" stroke-width="7" stroke-linecap="round" fill="none" filter="url(#f0-glow)"/>
+              <g transform="translate(221 250)">
+                <rect width="100" height="22" rx="11" fill="#ECFDF5" stroke="#A7F3D0"/>
+                <text x="50" y="15" text-anchor="middle" fill="#047857" font-family="DM Mono, monospace" font-size="10" font-weight="800">{{ t.landing.s0_fig_label_segment }}</text>
+              </g>
+            </g>
+            <g transform="translate(252 96)">
+              <path d="M0 0 V254" stroke="#0F766E" stroke-width="1.4" stroke-dasharray="5 6" opacity=".42"/>
+              <path d="M102 0 V254" stroke="#0F766E" stroke-width="1.4" stroke-dasharray="5 6" opacity=".42"/>
+              <path d="M102 120 C146 121 171 132 194 156" stroke="#0F766E" stroke-width="2.3" stroke-linecap="round" stroke-dasharray="7 6"/>
+            </g>
+            <g transform="translate(380 270)" filter="url(#f0-card)">
+              <rect width="168" height="94" rx="16" fill="#0F172A"/>
+              <rect x="14" y="14" width="140" height="18" rx="9" fill="#172554"/>
+              <path d="M22 61 C38 42 50 48 64 36 C82 21 94 43 106 51 C120 61 132 48 145 38" stroke="#6EE7B7" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+              <text x="84" y="83" text-anchor="middle" fill="#A7F3D0" font-family="DM Mono, monospace" font-size="10" font-weight="800">{{ t.landing.s0_fig_label_candidate }}</text>
+            </g>
+            <g transform="translate(72 382)">
+              <rect width="476" height="48" rx="14" fill="#F8FAFC" stroke="#CBD5E1"/>
+              <path d="M22 24 H116" stroke="#94A3B8" stroke-width="2"/>
+              <path d="M138 24 H234" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+              <path d="M256 24 H454" stroke="#94A3B8" stroke-width="2"/>
+              <text x="186" y="18" text-anchor="middle" fill="#047857" font-family="DM Mono, monospace" font-size="9" font-weight="800">{{ t.landing.s0_fig_label_window }}</text>
+            </g>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             01 EXISTING APPROACHES: 기존 방식의 한계
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="1">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_1 }}</div>
+            <h2>{{ t.landing.s1_title|safe }}</h2>
+            <p>{{ t.landing.s1_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1-bg" x1="15" y1="15" x2="605" y2="465" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#F3F6FA"/>
+              </linearGradient>
+              <filter id="f1-shadow"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity=".06"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="url(#g1-bg)" stroke="#DDE5EF"/>
+            <!-- Approach 1: Query-by-Example -->
+            <g transform="translate(35 50)">
+              <rect width="170" height="175" rx="14" fill="#fff" stroke="#CBD5E1" stroke-width="1.6" filter="url(#f1-shadow)"/>
+              <rect x="15" y="15" width="140" height="28" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+              <text x="85" y="34" text-anchor="middle" fill="#475569" font-size="11" font-weight="800">{{ t.landing.s1_fig_qbe }}</text>
+              <!-- Example segment needed -->
+              <rect x="25" y="60" width="120" height="50" rx="8" fill="#E2E8F0" stroke="#94A3B8" stroke-dasharray="4 2"/>
+              <text x="85" y="90" text-anchor="middle" fill="#94A3B8" font-size="10" font-weight="600">{{ t.landing.s1_fig_qbe_note }}</text>
+              <!-- Limitation -->
+              <g transform="translate(25 125)">
+                <rect width="20" height="20" rx="6" fill="#FFF7ED" stroke="#FDBA74"/>
+                <path d="M10 5 V11 M10 15 V15.5" stroke="#C2410C" stroke-width="2" stroke-linecap="round"/>
+                <text x="28" y="14" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_qbe_limit1 }}</text>
+              </g>
+              <text x="53" y="158" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_qbe_limit2 }}</text>
+            </g>
+            <!-- Approach 2: Sketch-based -->
+            <g transform="translate(225 50)">
+              <rect width="170" height="175" rx="14" fill="#fff" stroke="#CBD5E1" stroke-width="1.6" filter="url(#f1-shadow)"/>
+              <rect x="15" y="15" width="140" height="28" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+              <text x="85" y="34" text-anchor="middle" fill="#475569" font-size="11" font-weight="800">{{ t.landing.s1_fig_sketch }}</text>
+              <!-- Sketch canvas -->
+              <rect x="25" y="60" width="120" height="50" rx="8" fill="#fff" stroke="#94A3B8"/>
+              <path d="M35 90 Q55 70 75 85 T115 75 T130 85" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="3 2"/>
+              <!-- Limitation -->
+              <g transform="translate(25 125)">
+                <rect width="20" height="20" rx="6" fill="#FFF7ED" stroke="#FDBA74"/>
+                <path d="M10 5 V11 M10 15 V15.5" stroke="#C2410C" stroke-width="2" stroke-linecap="round"/>
+                <text x="28" y="14" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_sketch_limit1 }}</text>
+              </g>
+              <text x="53" y="158" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_sketch_limit2 }}</text>
+            </g>
+            <!-- Approach 3: Language-based -->
+            <g transform="translate(415 50)">
+              <rect width="170" height="175" rx="14" fill="#fff" stroke="#CBD5E1" stroke-width="1.6" filter="url(#f1-shadow)"/>
+              <rect x="15" y="15" width="140" height="28" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+              <text x="85" y="34" text-anchor="middle" fill="#475569" font-size="11" font-weight="800">{{ t.landing.s1_fig_lang }}</text>
+              <!-- Training data -->
+              <g transform="translate(25 55)">
+                <rect width="55" height="25" rx="4" fill="#E2E8F0"/>
+                <rect x="65" y="0" width="55" height="25" rx="4" fill="#E2E8F0"/>
+                <rect x="0" y="30" width="55" height="25" rx="4" fill="#E2E8F0"/>
+                <rect x="65" y="30" width="55" height="25" rx="4" fill="#E2E8F0"/>
+                <text x="27" y="17" text-anchor="middle" fill="#64748B" font-size="8">{{ t.landing.s1_fig_lang_text }}</text>
+                <text x="92" y="17" text-anchor="middle" fill="#64748B" font-size="8">{{ t.landing.s1_fig_lang_series }}</text>
+                <text x="27" y="47" text-anchor="middle" fill="#64748B" font-size="8">{{ t.landing.s1_fig_lang_text }}</text>
+                <text x="92" y="47" text-anchor="middle" fill="#64748B" font-size="8">{{ t.landing.s1_fig_lang_series }}</text>
+              </g>
+              <!-- Limitation -->
+              <g transform="translate(25 125)">
+                <rect width="20" height="20" rx="6" fill="#FFF7ED" stroke="#FDBA74"/>
+                <path d="M10 5 V11 M10 15 V15.5" stroke="#C2410C" stroke-width="2" stroke-linecap="round"/>
+                <text x="28" y="14" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_lang_limit1 }}</text>
+              </g>
+              <text x="53" y="158" fill="#9A3412" font-size="10" font-weight="600">{{ t.landing.s1_fig_lang_limit2 }}</text>
+            </g>
+            <!-- The Gap -->
+            <g transform="translate(80 260)">
+              <rect width="460" height="100" rx="16" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.8"/>
+              <text x="230" y="35" text-anchor="middle" fill="#92400E" font-size="14" font-weight="800">{{ t.landing.s1_fig_gap_title }}</text>
+              <text x="230" y="60" text-anchor="middle" fill="#78350F" font-size="12">{{ t.landing.s1_fig_gap_line1 }}</text>
+              <text x="230" y="80" text-anchor="middle" fill="#78350F" font-size="12">{{ t.landing.s1_fig_gap_line2 }}</text>
+            </g>
+            <!-- Arrow to solution -->
+            <g transform="translate(280 375)">
+              <path d="M30 0 L30 30" stroke="#10B981" stroke-width="3"/>
+              <path d="M20 22 L30 35 L40 22" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- Solution hint -->
+            <g transform="translate(180 400)">
+              <rect width="260" height="45" rx="12" fill="#0F172A" stroke="#1E293B" stroke-width="1.5"/>
+              <text x="130" y="29" text-anchor="middle" fill="#A7F3D0" font-size="13" font-weight="700">{{ t.landing.s1_fig_zeroshot }}</text>
+            </g>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             02 TS-LENS: 우리의 해결책
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="2">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_2 }}</div>
+            <h2>{{ t.landing.s2_title|safe }}</h2>
+            <p>{{ t.landing.s2_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g2-bg" x1="0" y1="0" x2="620" y2="480">
+                <stop stop-color="#FFFFFF"/><stop offset=".52" stop-color="#F0FDFA"/><stop offset="1" stop-color="#EFF6FF"/>
+              </linearGradient>
+              <linearGradient id="g2-brand" x1="0" y1="0" x2="200" y2="50" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0F172A"/><stop offset=".52" stop-color="#0F766E"/><stop offset="1" stop-color="#1D4ED8"/>
+              </linearGradient>
+              <filter id="f2-shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity=".08"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="url(#g2-bg)" stroke="#DDE5EF"/>
+            <!-- TS-Lens Logo/Title -->
+            <g transform="translate(210 35)">
+              <rect width="200" height="50" rx="14" fill="url(#g2-brand)" filter="url(#f2-shadow)"/>
+              <text x="100" y="33" text-anchor="middle" fill="#fff" font-size="18" font-weight="800" letter-spacing="0">TS-Lens</text>
+            </g>
+            <!-- Three pillars -->
+            <!-- Pillar 1: Zero-Shot -->
+            <g transform="translate(45 110)">
+              <rect width="170" height="190" rx="20" fill="#fff" stroke="#10B981" stroke-width="2.5" filter="url(#f2-shadow)"/>
+              <circle cx="85" cy="55" r="35" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+              <text x="85" y="50" text-anchor="middle" fill="#10B981" font-size="28" font-weight="900">0</text>
+              <text x="85" y="70" text-anchor="middle" fill="#10B981" font-size="10" font-weight="700">{{ t.landing.s2_fig_training }}</text>
+              <text x="85" y="115" text-anchor="middle" fill="#10B981" font-size="14" font-weight="800">{{ t.landing.s2_fig_zeroshot }}</text>
+              <text x="85" y="140" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_zeroshot_1 }}</text>
+              <text x="85" y="155" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_zeroshot_2 }}</text>
+              <text x="85" y="170" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_zeroshot_3 }}</text>
+            </g>
+            <!-- Pillar 2: Inspectable -->
+            <g transform="translate(225 110)">
+              <rect width="170" height="190" rx="20" fill="#fff" stroke="#3B82F6" stroke-width="2.5" filter="url(#f2-shadow)"/>
+              <circle cx="85" cy="55" r="35" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+              <path d="M70 55 L80 55 L80 45 L90 55 L80 65 L80 55" fill="#3B82F6"/>
+              <circle cx="95" cy="55" r="12" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+              <text x="85" y="115" text-anchor="middle" fill="#3B82F6" font-size="14" font-weight="800">{{ t.landing.s2_fig_inspect }}</text>
+              <text x="85" y="140" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_inspect_1 }}</text>
+              <text x="85" y="155" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_inspect_2 }}</text>
+              <text x="85" y="170" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_inspect_3 }}</text>
+            </g>
+            <!-- Pillar 3: Human-in-the-Loop -->
+            <g transform="translate(405 110)">
+              <rect width="170" height="190" rx="20" fill="#fff" stroke="#8B5CF6" stroke-width="2.5" filter="url(#f2-shadow)"/>
+              <circle cx="85" cy="55" r="35" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="2"/>
+              <rect x="64" y="38" width="42" height="34" rx="7" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="2"/>
+              <path d="M72 49 H95 M72 60 H88" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"/>
+              <path d="M58 56 C49 50 49 39 58 33" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <path d="M54 33 H62 V41" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M112 54 C121 60 121 71 112 77" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <path d="M116 77 H108 V69" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <text x="85" y="115" text-anchor="middle" fill="#8B5CF6" font-size="13" font-weight="800">{{ t.landing.s2_fig_hitl }}</text>
+              <text x="85" y="140" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_hitl_1 }}</text>
+              <text x="85" y="155" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_hitl_2 }}</text>
+              <text x="85" y="170" text-anchor="middle" fill="#64748B" font-size="10">{{ t.landing.s2_fig_hitl_3 }}</text>
+            </g>
+            <!-- Multi-modal input -->
+            <g transform="translate(100 330)">
+              <rect width="420" height="80" rx="16" fill="#fff" stroke="#10B981" stroke-width="2" filter="url(#f2-shadow)"/>
+              <text x="210" y="28" text-anchor="middle" fill="#10B981" font-size="12" font-weight="800">{{ t.landing.s2_fig_modes }}</text>
+              <!-- Mode chips -->
+              <g transform="translate(30 42)">
+                <rect width="55" height="26" rx="13" fill="#ECFDF5" stroke="#10B981"/><text x="27" y="18" text-anchor="middle" fill="#10B981" font-size="9" font-weight="700">Text</text>
+              </g>
+              <g transform="translate(95 42)">
+                <rect width="55" height="26" rx="13" fill="#EFF6FF" stroke="#3B82F6"/><text x="27" y="18" text-anchor="middle" fill="#3B82F6" font-size="9" font-weight="700">Sketch</text>
+              </g>
+              <g transform="translate(160 42)">
+                <rect width="55" height="26" rx="13" fill="#F5F3FF" stroke="#8B5CF6"/><text x="27" y="18" text-anchor="middle" fill="#8B5CF6" font-size="9" font-weight="700">Select</text>
+              </g>
+              <g transform="translate(225 42)">
+                <rect width="55" height="26" rx="13" fill="#ECFEFF" stroke="#06B6D4"/><text x="27" y="18" text-anchor="middle" fill="#06B6D4" font-size="9" font-weight="700">Sample</text>
+              </g>
+              <g transform="translate(290 42)">
+                <rect width="55" height="26" rx="13" fill="#FEF3C7" stroke="#F59E0B"/><text x="27" y="18" text-anchor="middle" fill="#F59E0B" font-size="9" font-weight="700">Preset</text>
+              </g>
+              <g transform="translate(355 42)">
+                <rect width="55" height="26" rx="13" fill="#CCFBF1" stroke="#14B8A6"/><text x="27" y="18" text-anchor="middle" fill="#14B8A6" font-size="9" font-weight="700">Cluster</text>
+              </g>
+            </g>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             03 DGS PIPELINE: Describe → Generate → Search
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="3">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_3 }}</div>
+            <h2>{{ t.landing.s3_title|safe }}</h2>
+            <p>{{ t.landing.s3_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g3-bg" x1="0" y1="0" x2="620" y2="480">
+                <stop stop-color="#F0FDF4"/><stop offset=".5" stop-color="#EFF6FF"/><stop offset="1" stop-color="#FEF3C7"/>
+              </linearGradient>
+              <filter id="f3-shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity=".08"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="url(#g3-bg)" stroke="#E2E8F0"/>
+            <!-- D: Describe -->
+            <g transform="translate(40 55)">
+              <rect width="155" height="185" rx="20" fill="#fff" stroke="#10B981" stroke-width="2.5" filter="url(#f3-shadow)"/>
+              <rect x="20" y="15" width="115" height="32" rx="16" fill="#10B981"/>
+              <text x="77" y="37" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">{{ t.landing.s3_fig_describe }}</text>
+              <rect x="22" y="62" width="110" height="10" rx="5" fill="#10B981" fill-opacity=".2"/>
+              <rect x="22" y="80" width="90" height="8" rx="4" fill="#10B981" fill-opacity=".15"/>
+              <rect x="22" y="96" width="100" height="8" rx="4" fill="#10B981" fill-opacity=".1"/>
+              <rect x="22" y="118" width="110" height="50" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-dasharray="4 2"/>
+              <text x="77" y="143" text-anchor="middle" fill="#10B981" font-size="10" font-weight="600">{{ t.landing.s3_fig_example1 }}</text>
+              <text x="77" y="158" text-anchor="middle" fill="#10B981" font-size="10" font-weight="600">{{ t.landing.s3_fig_example2 }}</text>
+            </g>
+            <!-- Arrow D→G -->
+            <g transform="translate(205 138)">
+              <path d="M0 10 L38 10" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+              <path d="M30 3 L43 10 L30 17" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- G: Generate -->
+            <g transform="translate(255 55)">
+              <rect width="155" height="185" rx="20" fill="#fff" stroke="#3B82F6" stroke-width="2.5" filter="url(#f3-shadow)"/>
+              <rect x="20" y="15" width="115" height="32" rx="16" fill="#3B82F6"/>
+              <text x="77" y="37" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">{{ t.landing.s3_fig_generate }}</text>
+              <circle cx="77" cy="90" r="30" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+              <text x="77" y="95" text-anchor="middle" fill="#3B82F6" font-size="14" font-weight="900">{{ t.landing.s3_fig_model }}</text>
+              <rect x="22" y="130" width="110" height="45" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
+              <path d="M32 158 Q52 148 65 135 T95 130 T120 150" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" fill="none"/>
+            </g>
+            <!-- Arrow G→S -->
+            <g transform="translate(420 138)">
+              <path d="M0 10 L38 10" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+              <path d="M30 3 L43 10 L30 17" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- S: Search -->
+            <g transform="translate(470 55)">
+              <rect width="135" height="185" rx="20" fill="#fff" stroke="#8B5CF6" stroke-width="2.5" filter="url(#f3-shadow)"/>
+              <rect x="10" y="15" width="115" height="32" rx="16" fill="#8B5CF6"/>
+              <text x="67" y="37" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">{{ t.landing.s3_fig_search }}</text>
+              <circle cx="67" cy="88" r="24" fill="none" stroke="#8B5CF6" stroke-width="3"/>
+              <path d="M84 105 L100 121" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"/>
+              <g transform="translate(12 125)">
+                <rect width="110" height="24" rx="8" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.5"/>
+                <text x="55" y="16" text-anchor="middle" fill="#8B5CF6" font-size="10" font-weight="700">{{ t.landing.s3_fig_match1 }}</text>
+              </g>
+              <g transform="translate(12 155)">
+                <rect width="110" height="20" rx="8" fill="#F5F3FF" stroke="#8B5CF6" stroke-opacity=".5"/>
+                <text x="55" y="14" text-anchor="middle" fill="#8B5CF6" fill-opacity=".7" font-size="9" font-weight="600">{{ t.landing.s3_fig_match2 }}</text>
+              </g>
+            </g>
+            <!-- Arrow down to Curate -->
+            <path d="M540 245 L540 275" stroke="#64748B" stroke-width="2.5" stroke-dasharray="5 3"/>
+            <path d="M533 268 L540 282 L547 268" stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <!-- Curate -->
+            <g transform="translate(40 290)">
+              <rect width="560" height="115" rx="20" fill="#fff" stroke="#F59E0B" stroke-width="2.5" filter="url(#f3-shadow)"/>
+              <rect x="20" y="15" width="90" height="32" rx="16" fill="#F59E0B"/>
+              <text x="65" y="37" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">{{ t.landing.s3_fig_curate }}</text>
+              <text x="130" y="37" fill="#64748B" font-size="11" font-weight="500">{{ t.landing.s3_fig_curate_desc }}</text>
+              <g transform="translate(30 58)">
+                <rect width="150" height="44" rx="12" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+                <circle cx="30" cy="22" r="13" fill="#fff" stroke="#F59E0B" stroke-width="2"/>
+                <path d="M24 22 L28 26 L37 17" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="95" y="26" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="700">{{ t.landing.s3_fig_basket }}</text>
+              </g>
+              <g transform="translate(200 58)">
+                <rect width="155" height="44" rx="12" fill="#ECFDF5" stroke="#10B981" stroke-width="1.5"/>
+                <path d="M30 30 L45 15 L60 30" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="107" y="26" text-anchor="middle" fill="#10B981" font-size="11" font-weight="700">{{ t.landing.s3_fig_preset }}</text>
+              </g>
+              <g transform="translate(375 58)">
+                <rect width="130" height="44" rx="12" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+                <rect x="20" y="10" width="28" height="24" rx="4" fill="#fff" stroke="#3B82F6" stroke-width="1.5"/>
+                <text x="34" y="26" text-anchor="middle" fill="#3B82F6" font-size="8" font-weight="700">CSV</text>
+                <text x="88" y="26" text-anchor="middle" fill="#3B82F6" font-size="11" font-weight="700">{{ t.landing.s3_fig_export }}</text>
+              </g>
+            </g>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             04 6 QUERY MODES: 다양한 입력 방식
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="4">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_4 }}</div>
+            <h2>{{ t.landing.s4_title|safe }}</h2>
+            <p>{{ t.landing.s4_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="f4-shadow"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity=".06"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="#FAFBFC" stroke="#E2E8F0"/>
+            <!-- Text mode -->
+            <g transform="translate(30 45)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#10B981" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="60" height="26" rx="13" fill="#10B981"/>
+              <text x="42" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">TEXT</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_text }}</text>
+              <rect x="20" y="70" width="135" height="40" rx="8" fill="#ECFDF5" stroke="#10B981" stroke-dasharray="4 2"/>
+              <text x="87" y="95" text-anchor="middle" fill="#10B981" font-size="10">{{ t.landing.s4_fig_text_example }}</text>
+            </g>
+            <!-- Sketch mode -->
+            <g transform="translate(220 45)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#3B82F6" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="70" height="26" rx="13" fill="#3B82F6"/>
+              <text x="47" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">SKETCH</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_sketch }}</text>
+              <rect x="20" y="70" width="135" height="40" rx="8" fill="#EFF6FF" stroke="#3B82F6"/>
+              <path d="M35 95 Q60 75 85 90 T130 80" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" fill="none"/>
+            </g>
+            <!-- Select mode -->
+            <g transform="translate(410 45)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#8B5CF6" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="70" height="26" rx="13" fill="#8B5CF6"/>
+              <text x="47" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">SELECT</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_select }}</text>
+              <rect x="20" y="70" width="135" height="40" rx="8" fill="#F5F3FF"/>
+              <path d="M30 95 Q55 80 80 90 T130 75" stroke="#CBD5E1" stroke-width="2" fill="none"/>
+              <rect x="55" y="72" width="50" height="36" rx="4" fill="#8B5CF6" fill-opacity=".15" stroke="#8B5CF6" stroke-width="2" stroke-dasharray="4 2"/>
+            </g>
+            <!-- Sample mode -->
+            <g transform="translate(30 190)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#06B6D4" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="75" height="26" rx="13" fill="#06B6D4"/>
+              <text x="50" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">SAMPLE</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_sample }}</text>
+              <g transform="translate(20 68)">
+                <rect width="60" height="42" rx="8" fill="#ECFEFF" stroke="#06B6D4"/>
+                <path d="M10 32 Q25 20 35 28 T50 22" stroke="#06B6D4" stroke-width="2" fill="none"/>
+              </g>
+              <g transform="translate(90 68)">
+                <rect width="60" height="42" rx="8" fill="#ECFEFF" stroke="#06B6D4" stroke-opacity=".5"/>
+                <path d="M10 25 Q25 32 35 22 T50 28" stroke="#06B6D4" stroke-width="2" stroke-opacity=".5" fill="none"/>
+              </g>
+            </g>
+            <!-- Preset mode -->
+            <g transform="translate(220 190)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#F59E0B" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="70" height="26" rx="13" fill="#F59E0B"/>
+              <text x="47" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">PRESET</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_preset }}</text>
+              <g transform="translate(25 68)">
+                <path d="M20 40 L35 15 L50 40" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="35" y="55" text-anchor="middle" fill="#F59E0B" font-size="9" font-weight="600">{{ t.landing.s4_fig_preset_rise }}</text>
+              </g>
+              <g transform="translate(85 68)">
+                <path d="M20 15 L35 40 L50 15" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="35" y="55" text-anchor="middle" fill="#F59E0B" font-size="9" font-weight="600">{{ t.landing.s4_fig_preset_dip }}</text>
+              </g>
+            </g>
+            <!-- Cluster mode -->
+            <g transform="translate(410 190)">
+              <rect width="175" height="125" rx="16" fill="#fff" stroke="#14B8A6" stroke-width="2" filter="url(#f4-shadow)"/>
+              <rect x="12" y="12" width="80" height="26" rx="13" fill="#14B8A6"/>
+              <text x="52" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">CLUSTER</text>
+              <text x="88" y="55" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">{{ t.landing.s4_fig_cluster }}</text>
+              <g transform="translate(25 65)">
+                <circle cx="30" cy="25" r="12" fill="#14B8A6" fill-opacity=".4"/>
+                <circle cx="50" cy="18" r="8" fill="#14B8A6" fill-opacity=".5"/>
+                <circle cx="38" cy="42" r="6" fill="#14B8A6" fill-opacity=".3"/>
+                <circle cx="90" cy="28" r="10" fill="#14B8A6" fill-opacity=".35"/>
+                <circle cx="108" cy="20" r="7" fill="#14B8A6" fill-opacity=".25"/>
+                <circle cx="100" cy="45" r="5" fill="#14B8A6" fill-opacity=".2"/>
+              </g>
+            </g>
+            <!-- Convergence -->
+            <g transform="translate(200 350)">
+              <rect width="220" height="55" rx="27" fill="#1E293B" filter="url(#f4-shadow)"/>
+              <text x="110" y="35" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">{{ t.landing.s4_fig_shape }}</text>
+            </g>
+            <!-- Arrows -->
+            <path d="M115 170 Q180 330 310 348" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M305 170 L310 348" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M495 170 Q430 330 310 348" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M115 315 Q180 370 200 378" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M305 315 L310 348" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M495 315 Q430 370 420 378" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             05 INSPECTABLE: 검색 전 확인 가능
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="5">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_5 }}</div>
+            <h2>{{ t.landing.s5_title|safe }}</h2>
+            <p>{{ t.landing.s5_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g5-wave" x1="380" y1="100" x2="550" y2="280">
+                <stop stop-color="#10B981"/><stop offset="1" stop-color="#3B82F6"/>
+              </linearGradient>
+              <filter id="f5-shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity=".08"/></filter>
+              <filter id="f5-glow"><feGaussianBlur stdDeviation="4"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="#FFFFFF" stroke="#DDE5EF"/>
+            <!-- Input panel -->
+            <g transform="translate(40 60)">
+              <rect width="180" height="280" rx="16" fill="#fff" stroke="#CBD5E1" stroke-width="1.7" filter="url(#f5-shadow)"/>
+              <text x="90" y="35" text-anchor="middle" fill="#8B5CF6" font-size="13" font-weight="800">{{ t.landing.s5_fig_input }}</text>
+              <rect x="20" y="55" width="140" height="12" rx="6" fill="#8B5CF6" fill-opacity=".2"/>
+              <rect x="20" y="75" width="120" height="10" rx="5" fill="#8B5CF6" fill-opacity=".15"/>
+              <rect x="20" y="93" width="130" height="10" rx="5" fill="#8B5CF6" fill-opacity=".1"/>
+              <rect x="20" y="120" width="140" height="80" rx="12" fill="#F5F3FF" stroke="#8B5CF6" stroke-dasharray="5 3"/>
+              <text x="90" y="155" text-anchor="middle" fill="#8B5CF6" font-size="11" font-weight="600">{{ t.landing.s5_fig_example1 }}</text>
+              <text x="90" y="175" text-anchor="middle" fill="#8B5CF6" font-size="11" font-weight="600">{{ t.landing.s5_fig_example2 }}</text>
+              <!-- Generate button -->
+              <g transform="translate(30 215)">
+                <rect width="120" height="40" rx="10" fill="#1E1B4B"/>
+                <text x="60" y="26" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">{{ t.landing.s5_fig_generate }}</text>
+              </g>
+            </g>
+            <!-- Arrow -->
+            <g transform="translate(235 185)">
+              <path d="M0 15 L50 15" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+              <path d="M42 7 L55 15 L42 23" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- Preview panel (the key feature!) -->
+            <g transform="translate(300 60)">
+              <rect width="280" height="280" rx="16" fill="#fff" stroke="#10B981" stroke-width="2" filter="url(#f5-shadow)"/>
+              <!-- Inspectable badge -->
+              <g transform="translate(70 15)">
+                <rect width="140" height="32" rx="16" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+                <text x="70" y="22" text-anchor="middle" fill="#10B981" font-size="12" font-weight="800">{{ t.landing.s5_fig_preview }}</text>
+              </g>
+              <!-- Grid -->
+              <g stroke="#E2E8F0" stroke-width="1" opacity=".5">
+                <line x1="25" y1="90" x2="255" y2="90"/><line x1="25" y1="140" x2="255" y2="140"/>
+                <line x1="25" y1="190" x2="255" y2="190"/>
+              </g>
+              <g opacity=".9">
+                <rect x="33" y="84" width="214" height="126" rx="12" fill="#F8FAFC" stroke="#E2E8F0"/>
+                <path d="M40 182 Q72 168 102 116 T160 66 T203 73 T233 151 T247 195" stroke="#A7F3D0" stroke-width="16" stroke-linecap="round" fill="none" opacity=".34"/>
+                <path d="M58 210 H224" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="58" cy="210" r="5" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+                <circle cx="224" cy="210" r="5" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+              </g>
+              <!-- Generated waveform -->
+              <path d="M40 182 Q72 168 102 116 T160 66 T203 73 T233 151 T247 195" stroke="url(#g5-wave)" stroke-width="5" stroke-linecap="round" fill="none" filter="url(#f5-glow)"/>
+              <g transform="translate(42 198)">
+                <rect width="206" height="18" rx="9" fill="#FFFFFF" stroke="#D1FAE5"/>
+                <text x="103" y="13" text-anchor="middle" fill="#047857" font-size="9" font-weight="700">{{ t.landing.s5_fig_shape_label }}</text>
+              </g>
+              <!-- Action buttons -->
+              <g transform="translate(25 225)">
+                <rect width="105" height="38" rx="10" fill="#047857"/>
+                <text x="52" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">{{ t.landing.s5_fig_search }}</text>
+              </g>
+              <g transform="translate(145 225)">
+                <rect width="105" height="38" rx="10" fill="#fff" stroke="#CBD5E1" stroke-width="1.6"/>
+                <text x="52" y="25" text-anchor="middle" fill="#64748B" font-size="11" font-weight="700">{{ t.landing.s5_fig_revise }}</text>
+              </g>
+            </g>
+            <!-- Bottom message -->
+            <g transform="translate(120 380)">
+              <rect width="380" height="55" rx="14" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.6"/>
+              <text x="190" y="25" text-anchor="middle" fill="#10B981" font-size="13" font-weight="700">{{ t.landing.s5_fig_msg1 }}</text>
+              <text x="190" y="43" text-anchor="middle" fill="#059669" font-size="11">{{ t.landing.s5_fig_msg2 }}</text>
+            </g>
+          </svg>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════════════════
+             06 CURATE: Human-in-the-loop
+             ════════════════════════════════════════════════════════════════════════════ -->
+        <section class="landing-story-panel" data-story-panel="6">
+          <div class="landing-story-copy">
+            <div class="landing-story-kicker">{{ t.landing.kicker_6 }}</div>
+            <h2>{{ t.landing.s6_title|safe }}</h2>
+            <p>{{ t.landing.s6_desc|safe }}</p>
+          </div>
+          <svg class="landing-story-art" viewBox="0 0 620 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g6-bg" x1="15" y1="15" x2="605" y2="465">
+                <stop stop-color="#FFFFFF"/><stop offset=".55" stop-color="#F8FAFC"/><stop offset="1" stop-color="#EFF6FF"/>
+              </linearGradient>
+              <filter id="f6-shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity=".08"/></filter>
+            </defs>
+            <rect x="15" y="15" width="590" height="450" rx="24" fill="url(#g6-bg)" stroke="#DDE5EF"/>
+            <!-- Search results input -->
+            <g transform="translate(35 55)">
+              <rect width="145" height="195" rx="18" fill="#fff" stroke="#F59E0B" stroke-width="2.5" filter="url(#f6-shadow)"/>
+              <text x="72" y="28" text-anchor="middle" fill="#F59E0B" font-size="12" font-weight="800">{{ t.landing.s6_fig_results }}</text>
+              <!-- Result cards -->
+              <g transform="translate(15 42)">
+                <rect width="115" height="60" rx="10" fill="#FEF3C7" stroke="#F59E0B"/>
+                <path d="M15 45 Q35 30 50 20 T85 18 T100 35" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <text x="57" y="55" text-anchor="middle" fill="#F59E0B" font-size="9" font-weight="700">{{ t.landing.s6_fig_match1 }}</text>
+              </g>
+              <g transform="translate(15 110)">
+                <rect width="115" height="55" rx="10" fill="#FEF3C7" fill-opacity=".5" stroke="#F59E0B" stroke-opacity=".5"/>
+                <path d="M15 40 Q35 25 50 18 T85 20 T100 32" stroke="#F59E0B" stroke-width="2" stroke-opacity=".5" stroke-linecap="round" fill="none"/>
+                <text x="57" y="48" text-anchor="middle" fill="#F59E0B" fill-opacity=".7" font-size="9" font-weight="600">{{ t.landing.s6_fig_match2 }}</text>
+              </g>
+            </g>
+            <!-- Arrow 1 -->
+            <g transform="translate(190 140)">
+              <path d="M0 12 L30 12" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+              <path d="M22 5 L35 12 L22 19" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- Human review -->
+            <g transform="translate(235 55)">
+              <rect width="150" height="195" rx="16" fill="#fff" stroke="#8B5CF6" stroke-width="2" filter="url(#f6-shadow)"/>
+              <text x="75" y="28" text-anchor="middle" fill="#8B5CF6" font-size="12" font-weight="800">{{ t.landing.s6_fig_review }}</text>
+              <!-- Review matrix -->
+              <g transform="translate(24 48)">
+                <rect width="102" height="48" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+                <path d="M16 16 H82 M16 30 H72" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="88" cy="31" r="8" fill="#ECFDF5" stroke="#10B981"/>
+                <path d="M84 31 L87 34 L93 27" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <!-- Actions -->
+              <g transform="translate(20 120)">
+                <rect width="110" height="28" rx="9" fill="#ECFDF5" stroke="#A7F3D0"/>
+                <path d="M20 14 L25 19 L38 6" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="70" y="19" text-anchor="middle" fill="#10B981" font-size="10" font-weight="700">{{ t.landing.s6_fig_accept }}</text>
+              </g>
+              <g transform="translate(20 155)">
+                <rect width="110" height="28" rx="9" fill="#F8FAFC" stroke="#CBD5E1"/>
+                <path d="M20 10 L30 20 M30 10 L20 20" stroke="#64748B" stroke-width="2.2" stroke-linecap="round"/>
+                <text x="70" y="19" text-anchor="middle" fill="#64748B" font-size="10" font-weight="700">{{ t.landing.s6_fig_reject }}</text>
+              </g>
+            </g>
+            <!-- Arrow 2 -->
+            <g transform="translate(395 140)">
+              <path d="M0 12 L30 12" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+              <path d="M22 5 L35 12 L22 19" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- Accumulate -->
+            <g transform="translate(440 55)">
+              <rect width="140" height="195" rx="18" fill="#fff" stroke="#10B981" stroke-width="2.5" filter="url(#f6-shadow)"/>
+              <text x="70" y="28" text-anchor="middle" fill="#10B981" font-size="12" font-weight="800">{{ t.landing.s6_fig_accumulate }}</text>
+              <!-- Label Basket -->
+              <g transform="translate(15 45)">
+                <rect width="110" height="42" rx="10" fill="#ECFDF5" stroke="#10B981"/>
+                <circle cx="25" cy="21" r="12" fill="#fff" stroke="#10B981" stroke-width="2"/>
+                <path d="M20 21 L23 24 L31 16" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="70" y="25" text-anchor="middle" fill="#10B981" font-size="10" font-weight="700">{{ t.landing.s6_fig_basket }}</text>
+              </g>
+              <!-- Custom Preset -->
+              <g transform="translate(15 95)">
+                <rect width="110" height="42" rx="10" fill="#FEF3C7" stroke="#F59E0B"/>
+                <path d="M18 28 L28 18 L38 28" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="75" y="25" text-anchor="middle" fill="#F59E0B" font-size="10" font-weight="700">{{ t.landing.s6_fig_preset }}</text>
+              </g>
+              <!-- Export -->
+              <g transform="translate(15 145)">
+                <rect width="110" height="42" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
+                <rect x="15" y="10" width="22" height="22" rx="3" fill="#fff" stroke="#3B82F6"/>
+                <text x="26" y="25" text-anchor="middle" fill="#3B82F6" font-size="7" font-weight="700">CSV</text>
+                <text x="75" y="25" text-anchor="middle" fill="#3B82F6" font-size="10" font-weight="700">{{ t.landing.s6_fig_export }}</text>
+              </g>
+            </g>
+            <!-- Bottom: Iterative workflow -->
+            <g transform="translate(100 280)">
+              <rect width="420" height="110" rx="16" fill="#fff" stroke="#1E293B" stroke-width="1.7" filter="url(#f6-shadow)"/>
+              <text x="210" y="30" text-anchor="middle" fill="#1E293B" font-size="14" font-weight="800">{{ t.landing.s6_fig_workflow }}</text>
+              <!-- Cycle arrows -->
+              <g transform="translate(60 50)">
+                <rect width="80" height="35" rx="8" fill="#F5F3FF" stroke="#8B5CF6"/>
+                <text x="40" y="23" text-anchor="middle" fill="#8B5CF6" font-size="10" font-weight="700">{{ t.landing.s6_fig_step_search }}</text>
+              </g>
+              <path d="M150 67 L180 67" stroke="#64748B" stroke-width="2"/>
+              <path d="M173 60 L183 67 L173 74" stroke="#64748B" stroke-width="2" fill="none"/>
+              <g transform="translate(190 50)">
+                <rect width="80" height="35" rx="8" fill="#FEF3C7" stroke="#F59E0B"/>
+                <text x="40" y="23" text-anchor="middle" fill="#F59E0B" font-size="10" font-weight="700">{{ t.landing.s6_fig_step_review }}</text>
+              </g>
+              <path d="M280 67 L310 67" stroke="#64748B" stroke-width="2"/>
+              <path d="M303 60 L313 67 L303 74" stroke="#64748B" stroke-width="2" fill="none"/>
+              <g transform="translate(320 50)">
+                <rect width="80" height="35" rx="8" fill="#ECFDF5" stroke="#10B981"/>
+                <text x="40" y="23" text-anchor="middle" fill="#10B981" font-size="10" font-weight="700">{{ t.landing.s6_fig_step_refine }}</text>
+              </g>
+              <!-- Loop back arrow -->
+              <path d="M390 95 Q420 95 420 67 Q420 40 210 40 Q60 40 60 50" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            </g>
+          </svg>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="landing-footer">
+  {{ t.landing.footer }}
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-landing-story]');
+    if (!root) return;
+
+    const panels = Array.from(root.querySelectorAll('[data-story-panel]'));
+    const buttons = Array.from(root.querySelectorAll('[data-story-button]'));
+    const prev = root.querySelector('[data-story-prev]');
+    const next = root.querySelector('[data-story-next]');
+    let activeIndex = 0;
+
+    const activate = (index) => {
+      activeIndex = (index + panels.length) % panels.length;
+      panels.forEach((panel, i) => panel.classList.toggle('is-active', i === activeIndex));
+      buttons.forEach((button, i) => {
+        button.classList.toggle('is-active', i === activeIndex);
+        button.setAttribute('aria-current', i === activeIndex ? 'step' : 'false');
+      });
+    };
+
+    buttons.forEach((button, index) => {
+      button.addEventListener('click', () => activate(index));
+      button.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        const next = (index + direction + buttons.length) % buttons.length;
+        buttons[next].focus();
+        activate(next);
+      });
+    });
+
+    prev?.addEventListener('click', () => activate(activeIndex - 1));
+    next?.addEventListener('click', () => activate(activeIndex + 1));
+  })();
+</script>
+{% endblock %}

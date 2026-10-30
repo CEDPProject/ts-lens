@@ -1,0 +1,241 @@
+<div class="about-tab-content" id="tab-agent">
+
+<!-- ═══════════════════════════════════════════════════════
+     AI AGENT 로드맵 — 향후 발전 방향
+     ═══════════════════════════════════════════════════════ -->
+
+<div class="about-section">
+  <h2>AI Agent 로드맵 <span style="font-size:0.6em;color:var(--amber);font-weight:500;">(계획중)</span></h2>
+  <p class="about-lead">
+    현재 시스템은 시계열 패턴 탐색을 위한 강력한 수동 도구를 제공합니다. LLM 보조 기능 일부는 이미 동작합니다 — 구간 설명(ChatTS-14B), 문장→파형 생성, 업로드 때 데이터셋·컬럼 메타를 채우는 AI 메타 추정입니다. 외부 LLM은 모델 연결 탭에서 작업별로 켤 수 있습니다.
+    다음 단계는 <strong>자율 AI 에이전트</strong>가 최소한의 인간 개입으로 패턴을 탐색, 해석, 라벨링하되,
+    검증과 개선을 위해 <strong>인간을 루프에 유지</strong>하는 것입니다.
+  </p>
+</div>
+
+<!-- ── 아키텍처 개요 ── -->
+<div class="about-section">
+  <h3>제안 아키텍처</h3>
+  <p class="sec-desc">4개의 전문 에이전트가 공유 메시지 버스를 통해 협업하며, 각각 기존 API를 도구로 사용합니다.</p>
+
+  <div class="about-svg-wrap">
+    <svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect x="0" y="0" width="720" height="380" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Title -->
+      <text x="360" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">멀티 에이전트 협업 파이프라인</text>
+
+      <!-- User -->
+      <rect x="280" y="50" width="160" height="44" rx="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="360" y="77" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40ad">사용자 (질의 / 피드백)</text>
+
+      <!-- Arrow down -->
+      <line x1="360" y1="94" x2="360" y2="120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowGk)"/>
+
+      <!-- Orchestrator -->
+      <rect x="240" y="120" width="240" height="40" rx="8" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
+      <text x="360" y="145" text-anchor="middle" font-size="11" font-weight="700" fill="#065f46">오케스트레이터 (ReAct 루프)</text>
+
+      <!-- Arrows to 4 agents -->
+      <line x1="300" y1="160" x2="110" y2="200" stroke="#059669" stroke-width="1.2" marker-end="url(#arrowGk)"/>
+      <line x1="340" y1="160" x2="280" y2="200" stroke="#059669" stroke-width="1.2" marker-end="url(#arrowGk)"/>
+      <line x1="400" y1="160" x2="450" y2="200" stroke="#059669" stroke-width="1.2" marker-end="url(#arrowGk)"/>
+      <line x1="440" y1="160" x2="620" y2="200" stroke="#059669" stroke-width="1.2" marker-end="url(#arrowGk)"/>
+
+      <!-- Agent 1: Curator -->
+      <rect x="30" y="200" width="155" height="90" rx="10" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="107" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#7c3aed">CURATOR</text>
+      <text x="107" y="238" text-anchor="middle" font-size="8.5" fill="#6b7280">데이터 관리</text>
+      <line x1="45" y1="246" x2="170" y2="246" stroke="#e5e7eb" stroke-width="0.5"/>
+      <text x="107" y="260" text-anchor="middle" font-size="7.5" fill="#6b7280">업로드 / 전처리</text>
+      <text x="107" y="272" text-anchor="middle" font-size="7.5" fill="#6b7280">품질 진단</text>
+      <text x="107" y="284" text-anchor="middle" font-size="7.5" fill="#6b7280">메타데이터 추출</text>
+
+      <!-- Agent 2: Interpreter -->
+      <rect x="200" y="200" width="155" height="90" rx="10" fill="#fff" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="277" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#2563eb">INTERPRETER</text>
+      <text x="277" y="238" text-anchor="middle" font-size="8.5" fill="#6b7280">패턴 이해</text>
+      <line x1="215" y1="246" x2="340" y2="246" stroke="#e5e7eb" stroke-width="0.5"/>
+      <text x="277" y="260" text-anchor="middle" font-size="7.5" fill="#6b7280">시계열 LM 설명 (ChatTS)</text>
+      <text x="277" y="272" text-anchor="middle" font-size="7.5" fill="#6b7280">자연어 → 파형 생성</text>
+      <text x="277" y="284" text-anchor="middle" font-size="7.5" fill="#6b7280">통계적 사전 분석</text>
+
+      <!-- Agent 3: Retriever -->
+      <rect x="370" y="200" width="155" height="90" rx="10" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+      <text x="447" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#059669">RETRIEVER</text>
+      <text x="447" y="238" text-anchor="middle" font-size="8.5" fill="#6b7280">패턴 검색</text>
+      <line x1="385" y1="246" x2="510" y2="246" stroke="#e5e7eb" stroke-width="0.5"/>
+      <text x="447" y="260" text-anchor="middle" font-size="7.5" fill="#6b7280">유사도 검색 (DTW)</text>
+      <text x="447" y="272" text-anchor="middle" font-size="7.5" fill="#6b7280">자동 클러스터링 (K-Means)</text>
+      <text x="447" y="284" text-anchor="middle" font-size="7.5" fill="#6b7280">교차 컬럼 프로파일링</text>
+
+      <!-- Agent 4: Labeler -->
+      <rect x="540" y="200" width="155" height="90" rx="10" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
+      <text x="617" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#d97706">LABELER</text>
+      <text x="617" y="238" text-anchor="middle" font-size="8.5" fill="#6b7280">패턴 라벨링</text>
+      <line x1="555" y1="246" x2="680" y2="246" stroke="#e5e7eb" stroke-width="0.5"/>
+      <text x="617" y="260" text-anchor="middle" font-size="7.5" fill="#6b7280">라벨 제안</text>
+      <text x="617" y="272" text-anchor="middle" font-size="7.5" fill="#6b7280">패턴 라이브러리 구축</text>
+      <text x="617" y="284" text-anchor="middle" font-size="7.5" fill="#6b7280">능동 학습 루프</text>
+
+      <!-- Tool API Box -->
+      <rect x="80" y="310" width="560" height="50" rx="8" fill="#fefce8" stroke="#d97706" stroke-width="1" stroke-dasharray="4"/>
+      <text x="360" y="332" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">공유 도구 API 레이어</text>
+      <text x="360" y="348" text-anchor="middle" font-size="8" fill="#a16207">search() &middot; cluster() &middot; describe() &middot; split() &middot; label() &middot; export()</text>
+
+      <!-- Arrows from agents to API -->
+      <line x1="107" y1="290" x2="200" y2="310" stroke="#d97706" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="277" y1="290" x2="300" y2="310" stroke="#d97706" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="447" y1="290" x2="430" y2="310" stroke="#d97706" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="617" y1="290" x2="530" y2="310" stroke="#d97706" stroke-width="0.8" stroke-dasharray="3"/>
+
+      <!-- Feedback arrow -->
+      <path d="M 680 240 C 710 240, 710 72, 440 72" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowRk)"/>
+      <text x="705" y="155" font-size="7.5" fill="#ef4444" transform="rotate(90,705,155)">피드백 루프</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowGk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/>
+        </marker>
+        <marker id="arrowRk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+</div>
+
+<!-- ── 후보 유즈케이스 ── -->
+<div class="about-section">
+  <h3>후보 유즈케이스</h3>
+
+  <div class="about-card-grid">
+
+    <!-- UC1 -->
+    <div class="about-card" data-accent="purple">
+      <h4>1. 자율 패턴 발견</h4>
+      <p class="about-card-body">
+        에이전트가 전체 데이터셋을 자동 스캔: 세그먼트 클러스터링, 전 컬럼 프로파일링,
+        가장 변별력 있는 변수 식별, 구조화된 패턴 카탈로그 생성 &mdash; 사용자 입력 없이 모두 자동 수행.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> cluster() &rarr; cross_column_profile() &rarr; describe() &rarr; label()
+      </div>
+    </div>
+
+    <!-- UC2 -->
+    <div class="about-card" data-accent="blue">
+      <h4>2. 자연어 질의응답</h4>
+      <p class="about-card-body">
+        자연어로 질문: <em>"발전량이 급격히 떨어지는 시점은 언제인가요?"</em>
+        에이전트가 질의를 해석하고, 적절한 검색 도구(프리셋 매칭, 텍스트-투-셰이프, DTW)를 선택하여
+        실행한 뒤, 근거와 함께 맥락화된 답변을 반환합니다.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> interpret_query() &rarr; search() &rarr; describe() &rarr; summarize()
+      </div>
+    </div>
+
+    <!-- UC3 -->
+    <div class="about-card" data-accent="green">
+      <h4>3. 자동 보고서 생성</h4>
+      <p class="about-card-body">
+        데이터셋에 대한 종합 분석 보고서 자동 생성: 데이터 품질 요약, 지배적 패턴 유형,
+        이상치 건수, 교차 컬럼 상관관계, 권장 라벨.
+        PDF 또는 구조화된 JSON으로 내보내기 가능.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> diagnose() &rarr; cluster() &rarr; profile() &rarr; describe_all() &rarr; export_report()
+      </div>
+    </div>
+
+    <!-- UC4 -->
+    <div class="about-card" data-accent="amber">
+      <h4>4. 도메인 간 전이</h4>
+      <p class="about-card-body">
+        한 도메인(예: 태양광 일사량)에서 학습한 패턴 라이브러리를 다른 도메인(예: 풍력 발전)에 적용.
+        에이전트가 형상 템플릿을 적응시키고, 임계값을 조정하며, 도메인별 라벨 매핑을 제안합니다.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> load_library() &rarr; adapt_shapes() &rarr; search() &rarr; validate()
+      </div>
+    </div>
+
+    <!-- UC5 -->
+    <div class="about-card" data-accent="rose">
+      <h4>5. 시계열 언어 모델 해석</h4>
+      <p class="about-card-body">
+        에이전트가 시계열을 시계열 언어 모델(설명 기능에 쓰는 ChatTS-14B)에 그대로 넣고,
+        모델의 서술과 앱이 계산한 통계를 합칩니다. 모양·사건은 말로, 숫자는 계산값으로 남깁니다.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> render_chart() &rarr; vlm_analyze() &rarr; merge_with_stats() &rarr; describe()
+      </div>
+    </div>
+
+    <!-- UC6 -->
+    <div class="about-card" data-accent="cyan">
+      <h4>6. 능동 학습 루프</h4>
+      <p class="about-card-body">
+        에이전트가 모호한 세그먼트에 대한 라벨을 제안하고 사용자에게 확인 또는 수정을 요청.
+        각 수정은 패턴 라이브러리를 개선하여 향후 제안의 정확도를 향상시킵니다.
+        가장 불확실하거나 영향력 있는 샘플에 어노테이션 노력을 집중.
+      </p>
+      <div class="about-card-tools">
+        <strong>사용 도구:</strong> select_uncertain() &rarr; suggest_label() &rarr; human_review() &rarr; update_library()
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 에이전트 패턴 ── -->
+<div class="about-section">
+  <h3>구현 패턴</h3>
+
+  <table class="about-table">
+    <thead>
+      <tr><th>패턴</th><th>설명</th><th>적합한 용도</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tool-Using Agent</strong></td>
+        <td>LLM이 사용자 질의에 따라 호출할 API를 결정. 각 API는 스키마 설명과 함께 "도구"로 등록.</td>
+        <td>자연어 질의응답, 단일 단계 작업</td>
+      </tr>
+      <tr>
+        <td><strong>ReAct (추론 + 행동)</strong></td>
+        <td>Think &rarr; Act &rarr; Observe 루프. 에이전트가 다음 행동을 추론하고, 도구를 실행하고, 결과를 관찰한 후 반복.</td>
+        <td>다단계 탐색, 자율 발견</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Agent</strong></td>
+        <td>전문화된 에이전트(Curator, Interpreter, Retriever, Labeler)가 오케스트레이터를 통해 메시지 전달. 각 에이전트는 자체 도구와 컨텍스트를 보유.</td>
+        <td>복잡한 파이프라인, 병렬 처리</td>
+      </tr>
+      <tr>
+        <td><strong>Human-in-the-Loop</strong></td>
+        <td>에이전트가 의사결정 지점에서 일시 정지하여 인간의 검증을 요청. 피드백은 후속 반복에 반영.</td>
+        <td>라벨링, 품질 보증, 모호한 사례</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── 기술 스택 ── -->
+<div class="about-section">
+  <h3>예정 기술 스택</h3>
+
+  <div class="about-tag-list">
+    <span class="desc-tag">Claude Agent SDK</span>
+    <span class="desc-tag">LangGraph</span>
+    <span class="desc-tag">ChatTS-14B (8bit, 요청 시 적재)</span>
+    <span class="desc-tag">Anthropic Claude / OpenAI 호환 API</span>
+    <span class="desc-tag">Tool Calling</span>
+    <span class="desc-tag">Structured Output (JSON)</span>
+  </div>
+</div>
+
+</div>

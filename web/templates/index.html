@@ -1,0 +1,852 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.finder.title }}{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+<link rel="stylesheet" href="/static/css/draw_query.css?v={{ cache_bust }}">
+{% endblock %}
+
+{% block body %}
+<div class="wrap">
+
+  <h1 class="page-title">{{ t.finder.hero_title }}</h1>
+
+  <!-- ════ DATASET / COLUMN SELECTOR ════ -->
+  <div class="ds-selector-bar" id="dsSelectorBar">
+    <div class="ds-selector-header">
+      <span class="ds-selector-header-title">{{ t.finder.data_selection }}</span>
+      <span class="ds-selector-header-summary" id="dsSelectorSummary"></span>
+      <button class="ds-collapse-btn" id="dsCollapseBtn" title="{{ t.finder.collapse_expand }}">
+        <span class="ds-collapse-arrow">▼</span>
+      </button>
+    </div>
+    <div class="ds-selector-body" id="dsSelectorBody">
+    <div class="ds-selector-row">
+      <span class="ds-selector-label">{{ t.finder.dataset }}</span>
+      <select class="ds-select" id="datasetSelect">
+        <option value="">{{ t.finder.select_dataset }}</option>
+      </select>
+      <span class="ds-type-indicator" id="dsTypeIndicator"></span>
+      <button class="info-btn" data-info="dsSelector">i</button>
+      <div class="info-popup">
+        <div class="info-popup-title">{{ t.finder.ds_info_title }}</div>
+        {{ t.finder.ds_info_desc }}
+        <ul>
+          <li><strong>Single</strong> — {{ t.finder.ds_info_single }}</li>
+          <li><strong>Collection</strong> — {{ t.finder.ds_info_collection }}</li>
+          <li>{{ t.finder.ds_info_multi }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ds-selector-row" id="columnRow" style="display:none;">
+      <span class="ds-selector-label">{{ t.finder.column }}</span>
+      <div class="ds-chip-list" id="columnChips"></div>
+      <button class="ds-btn-load" id="btnLoadCols" disabled>{{ t.finder.load }}</button>
+    </div>
+    <!-- 전처리 적용 여부 배너 (전처리 데이터 로드 시 표시) -->
+    <div class="pp-result-banner" id="ppResultBanner" hidden></div>
+    <!-- Global Data Range (shown after data load) -->
+    <div class="ds-selector-row ds-date-range-row" id="globalDataRange" hidden>
+      <span class="ds-selector-label">{{ t.finder.range_label }}</span>
+      <span class="ds-range-info" id="globalInfoBar"></span>
+      <input type="datetime-local" id="globalDateStart" class="ds-date-input" step="1">
+      <span class="ds-range-sep">~</span>
+      <input type="datetime-local" id="globalDateEnd" class="ds-date-input" step="1">
+      <button class="btn btn-secondary btn-sm ds-date-reset" id="globalDateReset" title="{{ t.finder.reset_range }}">All</button>
+    </div>
+    </div><!-- end ds-selector-body -->
+  </div>
+
+  <div class="main-grid">
+
+    <!-- ════ SIDEBAR ════ -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- ═══ Unified Data Pattern Search Panel ═══ -->
+      <div class="panel" id="patternPanel" hidden>
+        <div class="panel-title">{{ t.finder.pattern_search }}</div>
+
+        <!-- Multi-column notice (shown when overlay columns selected) -->
+        <div id="multiColNotice" class="multi-col-notice" hidden>
+          <div class="multi-col-notice-header" onclick="this.parentElement.classList.toggle('expanded')">
+            <span class="multi-col-notice-icon">&#9432;</span>
+            {{ t.finder.mc_title }}
+            <span class="multi-col-notice-arrow">&#9656;</span>
+          </div>
+          <div class="multi-col-notice-list">
+            <div class="mc-group">
+              <span class="mc-badge mc-full">{{ t.finder.mc_full }}</span>
+              <span class="mc-modes">{{ t.finder.mode_select }} · {{ t.finder.mode_sketch }} · {{ t.finder.mode_text }} · {{ t.finder.mode_sample }} · {{ t.finder.mode_preset }}</span>
+            </div>
+            <div class="mc-group">
+              <span class="mc-badge mc-partial">{{ t.finder.mc_partial }}</span>
+              <span class="mc-modes">{{ t.finder.mode_preset }} › {{ t.js.all }}</span>
+            </div>
+            <p class="mc-note">{{ t.finder.mc_note_full }}<br>{{ t.finder.mc_note_primary }}</p>
+          </div>
+        </div>
+
+        <!-- Query Mode Pills (고정) -->
+        <div class="panel-mode-pills">
+          <div class="method-pills" id="queryModePills">
+            <button class="method-pill query-mode active" data-qmode="select">{{ t.finder.mode_select }}</button>
+            <button class="method-pill query-mode" data-qmode="sketch">{{ t.finder.mode_sketch }}</button>
+            <button class="method-pill query-mode" data-qmode="text">{{ t.finder.mode_text }}</button>
+            <span class="qmode-sep"></span>
+            <button class="method-pill query-mode" data-qmode="sample">{{ t.finder.mode_sample }}</button>
+            <button class="method-pill query-mode" data-qmode="preset">{{ t.finder.mode_preset }}</button>
+          </div>
+        </div>
+        <!-- Scrollable body -->
+        <div class="panel-body panel-body-scroll">
+
+          <!-- ═══ SELECT mode section (차트에서 드래그 선택) ═══ -->
+          <div id="modeSelectSection">
+            <div class="search-group">
+              <div class="search-group-title grp-method">{{ t.finder.chart_selection }}
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.select_from_chart }}</div>
+                  {{ t.finder.chart_select_desc }}
+                  <ul>
+                    <li>{{ t.finder.chart_select_region }}</li>
+                    <li>{{ t.finder.chart_select_query }}</li>
+                    <li>{{ t.finder.chart_select_length }}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="select-mode-hint" style="padding:12px;background:#f8fafc;border-radius:8px;text-align:center;color:#64748b;font-size:13px;">
+                <svg class="hint-icon" viewBox="0 0 32 22" aria-hidden="true">
+                  <path d="M1 16 L6 10 L10 13 L15 5 L20 11 L25 7 L31 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+                  <rect x="12" y="2" width="9" height="18" rx="1.5" fill="currentColor" opacity=".12"/>
+                  <path d="M12 2 V20 M21 2 V20" stroke="currentColor" stroke-width="1.2" opacity=".55"/>
+                </svg>
+                {{ t.finder.chart_select_hint }}
+              </div>
+              <!-- Selected segment preview (shown after selection) -->
+              <div id="selectPreview" hidden>
+                <div id="selectPreviewChart" style="width:100%;height:80px;"></div>
+                <div id="selectPreviewInfo" style="padding:6px 0;font-size:12px;color:#475569;display:flex;justify-content:space-between;">
+                  <span id="selectPreviewRange"></span>
+                  <span id="selectPreviewPoints"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fixed Length toggle -->
+            <div class="search-group">
+              <div class="toggle-row" style="padding:2px 0;">
+                <span class="toggle-label">{{ t.finder.fixed_length }}</span>
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.fixed_length_title }}</div>
+                  {{ t.finder.fixed_length_desc }}
+                  <ul>
+                    <li><strong>ON</strong> — {{ t.finder.fixed_on }}</li>
+                    <li><strong>OFF</strong> — {{ t.finder.fixed_off }}</li>
+                    <li>{{ t.finder.fixed_preset }}</li>
+                  </ul>
+                </div>
+                <label class="toggle"><input type="checkbox" id="chkFixed"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <!-- Window Settings (shown when fixed length ON) -->
+            <div id="fixedLenGroup" class="window-settings-group" hidden>
+              <div class="search-group">
+                <div class="search-group-title grp-window">{{ t.finder.window_size }}
+                  <button class="info-btn">i</button>
+                  <div class="info-popup">
+                    <div class="info-popup-title">{{ t.finder.window_size }}</div>
+                    {{ t.finder.window_size_desc }}
+                  </div>
+                </div>
+                <div class="method-pills">
+                  <button class="method-pill fixed-preset" data-minutes="1">{{ t.finder.min_1 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="60">{{ t.finder.hour_1 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="360">{{ t.finder.hour_6 }}</button>
+                  <button class="method-pill fixed-preset active" data-minutes="1440">{{ t.finder.day_1 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="10080">{{ t.finder.week_1 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="14400">{{ t.finder.day_10 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="43200">{{ t.finder.day_30 }}</button>
+                  <button class="method-pill fixed-preset" data-minutes="0">{{ t.finder.custom }}</button>
+                </div>
+                <div class="inline-field" id="customLenGroup" hidden style="margin-top:6px;">
+                  <label class="form-label" style="margin-bottom:0;">{{ t.finder.length_points }}</label>
+                  <input type="number" class="form-input form-input-sm" id="inputFixedLen" value="{{ app_config.segment.default_length }}" min="{{ app_config.segment.min_length }}" max="99999">
+                </div>
+              </div>
+
+
+              <div class="search-group" id="strideGroup">
+                <div class="inline-field">
+                  <label class="form-label" style="margin-bottom:0;">{{ t.finder.stride }}</label>
+                  <button class="info-btn" style="margin-left:4px;">i</button>
+                  <div class="info-popup">
+                    <div class="info-popup-title">{{ t.finder.stride_title }}</div>
+                    {{ t.finder.stride_desc }}
+                    <ul>
+                      <li><strong>1</strong> — {{ t.finder.stride_1 }}</li>
+                      <li><strong>{{ t.finder.stride_large_label }}</strong> — {{ t.finder.stride_big }}</li>
+                    </ul>
+                  </div>
+                  <input type="number" class="form-input form-input-sm" id="inputStride" value="1" min="1" max="10000">
+                </div>
+                <div id="strideAutoHint" class="stride-auto-hint" style="display:none;margin-top:4px;font-size:11px;color:#059669;">
+                  ✓ {{ t.finder.stride_auto }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ SKETCH mode section (캔버스에 패턴 그리기) ═══ -->
+          <div id="modeSketchSection" hidden>
+            <div class="search-group">
+              <div class="search-group-title grp-method">Sketch Pattern
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.draw_pattern_title }}</div>
+                  Draw a pattern shape with your mouse or finger.
+                  <ul>
+                    <li>{{ t.finder.draw_tip_sketch }}</li>
+                    <li>{{ t.finder.draw_tip_shape }}</li>
+                    <li>{{ t.finder.draw_tip_search }}</li>
+                  </ul>
+                </div>
+              </div>
+              <div id="drawQueryContainer"></div>
+            </div>
+
+            <!-- Sketch Window Size -->
+            <div class="search-group">
+              <div class="search-group-title grp-window">{{ t.finder.window_size }}
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.window_size }}</div>
+                  {{ t.finder.sketch_window_popup }}
+                </div>
+              </div>
+              <div class="method-pills">
+                <button class="method-pill sketch-preset" data-minutes="1">{{ t.finder.min_1 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="60">{{ t.finder.hour_1 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="360">{{ t.finder.hour_6 }}</button>
+                <button class="method-pill sketch-preset active" data-minutes="1440">{{ t.finder.day_1 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="10080">{{ t.finder.week_1 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="14400">{{ t.finder.day_10 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="43200">{{ t.finder.day_30 }}</button>
+                <button class="method-pill sketch-preset" data-minutes="0">{{ t.finder.custom }}</button>
+              </div>
+              <div class="inline-field" id="sketchCustomLenGroup" hidden style="margin-top:6px;">
+                <label class="form-label" style="margin-bottom:0;">{{ t.finder.length_points }}</label>
+                <input type="number" class="form-input form-input-sm" id="inputSketchLen" value="{{ app_config.segment.default_length }}" min="{{ app_config.segment.min_length }}" max="99999">
+              </div>
+            </div>
+
+            <!-- Sketch resolution info -->
+            <div class="search-group">
+              <div class="sketch-resolution-info" style="padding:8px 12px;background:#f0fdf4;border-radius:6px;font-size:12px;color:#166534;">
+                <span id="sketchResolutionLabel">Resolution: 24 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ SAMPLE mode section (QBE: pick a segment as query) ═══ -->
+          <div id="modeSampleSection" hidden>
+            <div class="search-group">
+              <div class="search-group-title grp-method">{{ t.finder.sample_title }}
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.sample_title }}</div>
+                  {{ t.finder.sample_desc }}
+                  <ul>
+                    <li>{{ t.finder.sample_click }}</li>
+                    <li>{{ t.finder.sample_multi }}</li>
+                    <li>{{ t.finder.sample_sort }}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="sample-hint" id="sampleHint">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:4px;">
+                  <rect x="1" y="3" width="5" height="10" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                  <rect x="8" y="1" width="5" height="14" rx="1" stroke="var(--green)" stroke-width="1.2" fill="var(--green-lt)"/>
+                  <path d="M14 5l-1.5 1.5L14 8" stroke="var(--green)" stroke-width="1" fill="none"/>
+                </svg>
+                {{ t.finder.sample_hint }}
+              </div>
+              <div class="sample-selected" id="sampleSelected" hidden>
+                <div class="sample-selected-tag">{{ t.finder.query_tag }}</div>
+                <div class="sample-selected-name" id="sampleSelName"></div>
+                <div class="sample-selected-meta" id="sampleSelMeta"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ PRESET mode section ═══ -->
+          <div id="modePresetSection" hidden>
+            <!-- Column tabs (multi-column: pick which column to assign preset) -->
+            <div id="colChipBar" hidden>
+              <div id="colChipRow"></div>
+            </div>
+            <div class="search-group">
+              <div class="search-group-title grp-method">{{ t.finder.preset_title }}
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.preset_title }}</div>
+                  {{ t.finder.preset_desc }}
+                  <ul>
+                    <li>{{ t.finder.preset_shapes }}</li>
+                    <li>{{ t.finder.preset_custom }}</li>
+                    <li>{{ t.finder.preset_classify }}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="seg-preset-grid" id="segPresetGrid"></div>
+            </div>
+          </div>
+
+          <!-- ═══ TEXT mode section ═══ -->
+          <div id="modeTextSection" hidden>
+            <div class="search-group">
+              <div class="search-group-title grp-method">{{ t.finder.text_search }}
+                <button class="info-btn">i</button>
+                <div class="info-popup">
+                  <div class="info-popup-title">{{ t.finder.text_search_title }}</div>
+                  {{ t.finder.text_search_desc }}
+                  <ul>
+                    <li>{{ t.finder.text_example }}</li>
+                    <li>{{ t.finder.text_meta }}</li>
+                    <li>{{ t.finder.text_preview }}</li>
+                    <li>{{ t.finder.text_seg_mode }}</li>
+                  </ul>
+                </div>
+              </div>
+              <input type="text" class="form-input" id="segSearchInput"
+                     placeholder="{{ t.finder.text_placeholder }}">
+              <div class="inline-field" style="margin-top:8px;align-items:center;gap:6px;">
+                <label class="form-label" style="margin-bottom:0;white-space:nowrap;">{{ t.finder.text_to_ts_model }}</label>
+                <select class="form-select form-input-sm" id="llmTextQuerySelect" style="flex:1;min-width:0;">
+                  <option value="">{{ t.finder.loading_models }}</option>
+                </select>
+              </div>
+              <div class="llm-role-note" id="textModelNote">{{ t.finder.text_to_ts_note }}</div>
+              <div id="verbaltsExamples" hidden>
+                <div class="llm-role-note">{{ t.finder.verbalts_examples }}</div>
+                <div class="text-hint-chips">
+                <button type="button" class="text-hint-chip" data-verbalts="The trend type is linear. The trend direction is up. There is 0 season cycle.">{{ t.finder.hint_ramp }}</button>
+                <button type="button" class="text-hint-chip" data-verbalts="The trend type is linear. The trend direction is down. There is 0 season cycle.">{{ t.finder.verbalts_down }}</button>
+                <button type="button" class="text-hint-chip" data-verbalts="The trend type is linear. The trend direction is up. There are 4 season cycles.">{{ t.finder.verbalts_cycles }}</button>
+                <button type="button" class="text-hint-chip" data-verbalts="The trend type is linear. The trend direction is up. There is 0 season cycle. A single peak at middle area.">{{ t.finder.verbalts_peak }}</button>
+                </div>
+                <div class="llm-role-note">{{ t.finder.verbalts_plain_examples }}</div>
+                <div class="text-hint-chips">
+                <button type="button" class="text-hint-chip" data-verbalts="Gradually increase from the beginning to the end.">{{ t.finder.hint_ramp }}</button>
+                <button type="button" class="text-hint-chip" data-verbalts="Rise gradually while oscillating exactly four times.">{{ t.finder.verbalts_cycles }}</button>
+                <button type="button" class="text-hint-chip" data-verbalts="Stay flat, spike sharply in the middle, then return to the initial level.">{{ t.finder.hint_spike }}</button>
+                </div>
+              </div>
+              <div class="model-runtime-status status-checking" id="llmTextRuntimeStatus" role="status" aria-live="polite">
+                <span class="model-runtime-dot"></span>
+                <span>{{ t.finder.checking_model }}</span>
+              </div>
+              <div class="text-hint-chips" id="textHintChips">
+                <button class="text-hint-chip" data-q-en="sudden drop to zero" data-q-ko="갑자기 0으로 떨어짐">{{ t.finder.hint_drop }}</button>
+                <button class="text-hint-chip" data-q-en="bell shaped curve" data-q-ko="종 모양 곡선">{{ t.finder.hint_bell }}</button>
+                <button class="text-hint-chip" data-q-en="gradual ramp up" data-q-ko="서서히 상승">{{ t.finder.hint_ramp }}</button>
+                <button class="text-hint-chip" data-q-en="sharp spike then return" data-q-ko="급등 후 원래로">{{ t.finder.hint_spike }}</button>
+                <button class="text-hint-chip" data-q-en="steady flat output" data-q-ko="평탄한 출력 유지">{{ t.finder.hint_flat }}</button>
+                <button class="text-hint-chip" data-q-en="drop and slow recovery" data-q-ko="급락 후 서서히 회복">{{ t.finder.hint_vrecovery }}</button>
+                <button class="text-hint-chip" data-q-en="oscillating fluctuation" data-q-ko="진동하는 불규칙 패턴">{{ t.finder.hint_oscillation }}</button>
+                <button class="text-hint-chip" data-q-en="step down level shift" data-q-ko="계단식 하락">{{ t.finder.hint_stepdown }}</button>
+              </div>
+            </div>
+            <!-- Window Settings (continuous mode only — segments are pre-split) -->
+            <div id="textWindowSettings" class="window-settings-group">
+              <div class="search-group">
+                <div class="search-group-title grp-window">{{ t.finder.window_size }}
+                  <button class="info-btn">i</button>
+                  <div class="info-popup">
+                    <div class="info-popup-title">{{ t.finder.window_size }}</div>
+                    {{ t.finder.window_size_desc }}
+                  </div>
+                </div>
+                <div class="method-pills" id="textWindowPills">
+                  <button class="method-pill text-window-preset" data-minutes="60">{{ t.finder.hour_1 }}</button>
+                  <button class="method-pill text-window-preset" data-minutes="360">{{ t.finder.hour_6 }}</button>
+                  <button class="method-pill text-window-preset active" data-minutes="1440">{{ t.finder.day_1 }}</button>
+                  <button class="method-pill text-window-preset" data-minutes="10080">{{ t.finder.week_1 }}</button>
+                  <button class="method-pill text-window-preset" data-minutes="43200">{{ t.finder.day_30 }}</button>
+                  <button class="method-pill text-window-preset" data-minutes="0">{{ t.finder.custom }}</button>
+                </div>
+                <div class="form-hint" id="textWindowHint" style="margin-top:5px;"></div>
+                <div class="inline-field" id="textCustomLenGroup" hidden style="margin-top:6px;">
+                  <label class="form-label" style="margin-bottom:0;">{{ t.finder.length_points }}</label>
+                  <input type="number" class="form-input form-input-sm" id="textWindowLen" value="{{ app_config.segment.default_length }}" min="{{ app_config.segment.min_length }}" max="99999">
+                </div>
+              </div>
+              <div class="search-group">
+                <div class="inline-field">
+                  <label class="form-label" style="margin-bottom:0;">{{ t.finder.stride }}</label>
+                  <button class="info-btn" style="margin-left:4px;">i</button>
+                  <div class="info-popup">
+                    <div class="info-popup-title">{{ t.finder.stride_title }}</div>
+                    {{ t.finder.stride_desc }}
+                    <ul>
+                      <li><strong>1</strong> — {{ t.finder.stride_1 }}</li>
+                      <li><strong>{{ t.finder.stride_large_label }}</strong> — {{ t.finder.stride_big }}</li>
+                    </ul>
+                  </div>
+                  <input type="number" class="form-input form-input-sm" id="textStride" value="36" min="1" max="10000">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Common Settings (shared across all modes) ═══ -->
+          <div id="commonSettings">
+            <!-- Time Unit removed - now in segment panel header -->
+
+            <!-- ═══ Search Settings (Draw/Sample/Preset/Text) ═══ -->
+            <div id="searchDetailSection">
+              <div class="common-detail-toggle" id="searchDetailToggle">
+                <span class="common-detail-arrow">&#9654;</span>
+                <span class="common-detail-label">{{ t.finder.search_settings }}</span>
+                {# JS updateDetailSummary() 가 곧바로 덮어씀 — 여기 값은 첫 페인트용 #}
+                {% set method_labels = {'euclidean': 'Euclidean', 'cosine': 'Cosine', 'dtw': 'DTW', 'shape': 'Shape'} %}
+                <span class="common-detail-summary" id="searchDetailSummary">{{ method_labels.get(search_config.default_method, search_config.default_method) }}{% if search_config.normalize %} &middot; Z-score{% endif %} &middot; Top {{ search_config.segment_top_k }}</span>
+              </div>
+              <div class="common-detail-body" id="searchDetailBody">
+
+                {# 시작 지점은 Select·Sketch·Describe 가 모두 쓰는 설정이라 공통으로 둔다 #}
+                <div class="search-group">
+                  <div class="search-group-title grp-window">{{ t.finder.start_mode }}
+                    <button class="info-btn">i</button>
+                    <div class="info-popup">
+                      <div class="info-popup-title">{{ t.finder.start_mode_title }}</div>
+                      {{ t.finder.start_mode_desc }}
+                      <ul>
+                        <li><strong>{{ t.finder.calendar_align }}</strong> — {{ t.finder.calendar_desc }}<br>{{ t.finder.calendar_example }}</li>
+                        <li><strong>{{ t.finder.free_start }}</strong> — {{ t.finder.free_desc }}<br>{{ t.finder.free_example }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="method-pills">
+                    <button class="method-pill align-mode active" data-align="calendar">{{ t.finder.calendar_align }}</button>
+                    <button class="method-pill align-mode" data-align="free">{{ t.finder.free_start }}</button>
+                  </div>
+                </div>
+
+                <!-- Compare Method + Z-score -->
+                <div id="searchCompare" class="search-group">
+                  <div class="search-group-title grp-method">{{ t.finder.compare_method }}
+                    <button class="info-btn">i</button>
+                    <div class="info-popup">
+                      <div class="info-popup-title">{{ t.finder.compare_title }}</div>
+                      {{ t.finder.compare_desc }}
+                      <ul>
+                        <li><strong>Euclidean</strong>: {{ t.finder.euclidean_desc }}</li>
+                        <li><strong>Cosine</strong>: {{ t.finder.cosine_desc }}</li>
+                        <li><strong>DTW</strong>: {{ t.finder.dtw_desc }}</li>
+                        <li><strong>Shape</strong>: {{ t.finder.shape_desc }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom:8px;">
+                    <div class="method-pills">
+                      {# active pill follows search.yaml default_method -- do not hardcode #}
+                      <button class="method-pill{% if search_config.default_method == 'euclidean' %} active{% endif %}" data-method="euclidean">{{ t.finder.euclidean }}</button>
+                      <button class="method-pill{% if search_config.default_method == 'cosine' %} active{% endif %}" data-method="cosine">{{ t.finder.cosine }}</button>
+                      <button class="method-pill{% if search_config.default_method == 'dtw' %} active{% endif %}" data-method="dtw">DTW</button>
+                      <button class="method-pill{% if search_config.default_method == 'shape' %} active{% endif %}" data-method="shape">{{ t.finder.shape }}</button>
+                    </div>
+                  </div>
+                  <div class="toggle-row" id="zscoreToggleRow" style="padding:2px 0;">
+                    <span class="toggle-label">{{ t.finder.zscore }}</span>
+                    <button class="info-btn" style="margin-left:4px;">i</button>
+                    <div class="info-popup">
+                      <div class="info-popup-title">{{ t.finder.zscore_title }}</div>
+                      {{ t.finder.zscore_desc }}
+                      <ul>
+                        <li>{{ t.finder.zscore_on }}</li>
+                        <li>{{ t.finder.zscore_off }}</li>
+                      </ul>
+                    </div>
+                    <label class="toggle"><input type="checkbox" id="chkNorm"{% if search_config.normalize %} checked{% endif %}><span class="slider"></span></label>
+                  </div>
+                </div>
+
+                <!-- Result Filter (Top-K / Threshold) -->
+                <div id="searchFilter" class="search-group">
+                  <div class="search-group-title grp-filter">{{ t.finder.result_filter }}
+                    <button class="info-btn">i</button>
+                    <div class="info-popup">
+                      <div class="info-popup-title">{{ t.finder.result_filter_title }}</div>
+                      {{ t.finder.result_filter_desc }}
+                      <ul>
+                        <li><strong>{{ t.finder.topk }}</strong>: {{ t.finder.topk_desc }}</li>
+                        <li><strong>{{ t.finder.threshold }}</strong>: {{ t.finder.threshold_desc }}</li>
+                      </ul>
+                      <div style="margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0;">
+                        <strong>{{ t.finder.nms_title }}</strong><br>
+                        {{ t.finder.nms_desc }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="method-pills" style="margin-bottom:6px;">
+                    <button class="method-pill filter-mode active" data-filter="topk">{{ t.finder.topk }}</button>
+                    <button class="method-pill filter-mode" data-filter="threshold">{{ t.finder.threshold }}</button>
+                  </div>
+                  <div id="filterTopK" class="slider-row">
+                    <input type="range" id="sliderTopK" min="{{ search_config.top_k_slider.min }}" max="{{ search_config.top_k_slider.max }}" value="{{ search_config.segment_top_k }}" step="{{ search_config.top_k_slider.step }}">
+                    <span class="slider-val" id="topKVal">{{ search_config.segment_top_k }}</span>
+                  </div>
+                  <div id="filterThreshold" class="slider-row" hidden>
+                    <input type="range" id="sliderThreshold" min="0" max="100" value="50" step="1">
+                    <span class="slider-val" id="thresholdVal">50%</span>
+                  </div>
+                </div>
+
+                <!-- NaN handling -->
+                <div id="searchNan" class="search-group">
+                  <div class="search-group-title grp-method">{{ t.finder.nan_interp }}
+                    <button class="info-btn">i</button>
+                    <div class="info-popup">
+                      <div class="info-popup-title">{{ t.finder.nan_title }}</div>
+                      {{ t.finder.nan_desc }}
+                      <ul>
+                        <li>{{ t.finder.nan_interp_method }}</li>
+                        <li>{{ t.finder.nan_max_ratio }}: {{ t.finder.nan_skip_hint }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <select id="selNanMethod" style="flex:1;min-width:0;padding:4px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.72rem;background:var(--surface);color:var(--text);overflow:hidden;text-overflow:ellipsis;">
+                    </select>
+                  </div>
+                  <div class="slider-row">
+                    <label class="form-label" style="margin:0;font-size:.72rem;white-space:nowrap;">{{ t.finder.max_nan_ratio }}</label>
+                    <input type="range" id="sliderNanRatio" min="10" max="90" value="50" step="5">
+                    <span class="slider-val" id="nanRatioVal">50%</span>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Unified Search Button (for Draw/Sample/Preset/Text modes) -->
+          <button class="btn btn-primary" id="btnUnifiedSearch" disabled style="margin-top:8px;width:100%;">{{ t.finder.search_btn }}</button>
+
+          <!-- 숨김 버튼 (JS delegation용) -->
+          <div hidden>
+            <button id="btnSearch" disabled>{{ t.finder.similar_search }}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Data Info — 로드 후 자동 접힘 -->
+      <div class="panel" id="dataInfoPanel" hidden>
+        <div class="panel-title">{{ t.finder.data_panel }}</div>
+        <div class="panel-body"><div id="dataInfoContent"></div></div>
+      </div>
+
+    </aside>
+
+    <!-- ════ CONTENT ════ -->
+    <main class="content" id="mainContent">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-intro">
+          <div class="empty-state-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none"><path d="M4 21c4-7 7 4 12-5s8 3 12-5"/><circle cx="16" cy="16" r="12"/></svg>
+          </div>
+          <div>
+            <div class="empty-state-kicker">{{ t.finder.empty_kicker }}</div>
+            <div class="empty-state-text">{{ t.finder.empty_state }}</div>
+          </div>
+          <div class="empty-state-steps" aria-label="{{ t.finder.empty_state_hint }}">
+            <span><b>1</b>{{ t.finder.dataset }}</span>
+            <i aria-hidden="true">→</i>
+            <span><b>2</b>{{ t.finder.column }}</span>
+            <i aria-hidden="true">→</i>
+            <span><b>3</b>{{ t.finder.load }}</span>
+          </div>
+        </div>
+
+        {% if quick_cards %}
+        <!-- 시작 카드 — 문구는 config/quick_start.yaml 이 단일 소스.
+             DB에 없는 데이터셋 카드는 04-dataset.js 가 숨긴다. -->
+        <div class="quick-start" id="quickStart" hidden>
+          <div class="quick-start-head">{{ t.finder.quick_start }}</div>
+          <div class="quick-start-grid">
+            {% for c in quick_cards %}
+            {% set txt = c[lang] or c['en'] %}
+            <button type="button" class="quick-card"
+                    data-dataset="{{ c.dataset }}" data-col="{{ c.column }}"
+                    data-query="{{ txt.query }}">
+              <span class="quick-card-title">{{ txt.headline }}</span>
+              <span class="quick-card-query">&ldquo;{{ txt.query }}&rdquo;</span>
+              <span class="quick-card-meta">
+                <span data-role="ds-name">{{ c.dataset }}</span>
+                <span class="quick-card-column">{{ c.column }}</span>
+              </span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Main Chart -->
+      <div class="chart-panel" id="mainChartPanel" hidden>
+        <button class="btn btn-secondary btn-sm drilldown-back-btn" id="btnDrilldownBack" hidden onclick="drilldownBack()"></button>
+        <div class="chart-header">
+          <div class="chart-title-row">
+            <span class="chart-title" id="chartTitleText">{{ t.finder.ts_data }}</span>
+            <span class="chip chip-blue" id="chipDataLen"></span>
+            <span class="chip chip-green" id="chipQuery" hidden></span>
+            <button class="info-btn" data-info="chartInfo" style="margin-left:8px;">i</button>
+            <div class="info-popup">
+              <div class="info-popup-title">{{ t.finder.chart_usage_title }}</div>
+              <ul>
+                <li><strong>{{ t.finder.select_mode }}</strong> {{ t.finder.chart_select }}</li>
+                <li><strong>{{ t.finder.zoom_mode }}</strong> {{ t.finder.chart_zoom }}</li>
+                <li><strong>{{ t.finder.pan_mode }}</strong> {{ t.finder.chart_pan }}</li>
+                <li>{{ t.finder.chart_scroll }}</li>
+                <li>{{ t.finder.chart_reset }}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="view-mode-btns" id="viewModeBtns" hidden>
+            <button class="view-mode-btn active" id="btnToSeg">{{ t.finder.seg_view }}</button>
+            <button class="view-mode-btn" id="btnToDiscover">{{ t.finder.discover_view }}</button>
+          </div>
+        </div>
+        <div class="chart-toolbar">
+          <button class="chart-mode-btn active" id="btnModeSelect" title="{{ t.finder.select_mode }}">{{ t.finder.select_mode }}</button>
+          <button class="chart-mode-btn" id="btnModeZoom" title="{{ t.finder.zoom_mode }}">{{ t.finder.zoom_mode }}</button>
+          <button class="chart-mode-btn" id="btnModePan" title="{{ t.finder.pan_mode }}">{{ t.finder.pan_mode }}</button>
+          <button class="chart-mode-btn" id="btnResetZoom" title="{{ t.finder.reset_zoom }}">{{ t.finder.reset_mode }}</button>
+        </div>
+        <!-- (패턴 검색 바 제거됨 — 사이드바 Text 모드로 통합) -->
+        <!-- Chart Query Bar — 쿼리 선택 시 차트 위에 표시 (info + action 통합) -->
+        <div class="chart-query-bar" id="chartQueryBar" hidden>
+          <div class="cqb-indicator"></div>
+          <div class="cqb-info">
+            <span class="cqb-range" id="cqbRange"></span>
+            <span class="cqb-dot"></span>
+            <span class="cqb-idx" id="cqbIdx"></span>
+            <span class="cqb-dot"></span>
+            <span class="cqb-len" id="cqbLen"></span>
+            <span class="cqb-cols" id="cqbCols" hidden></span>
+            <span class="cqb-gen-desc" id="cqbGenDesc" hidden></span>
+          </div>
+          <div class="cqb-actions">
+            <span class="cqb-model-label">{{ t.finder.ts_to_text_model }}</span>
+            <select class="form-select form-input-sm" id="llmDescribeSelect" style="min-width:180px;max-width:240px;">
+              <option value="">{{ t.finder.loading_models }}</option>
+            </select>
+            <button class="btn btn-secondary qab-describe-btn" id="qabDescribeBtn" title="{{ t.finder.llm_interpret_btn }}">{{ t.finder.llm_interpret_btn }}</button>
+          </div>
+        </div>
+        <!-- TS-to-Text Description (쿼리 바 바로 아래) -->
+        <div class="ts-desc-panel ts-desc-inline" id="tsDescPanel" hidden>
+          <div class="ts-desc-header">
+            <span class="ts-desc-title" id="tsDescTitle">{{ t.finder.query_analyzing }}</span>
+            <button class="btn btn-secondary btn-sm ts-desc-close" id="tsDescClose">{{ t.finder.close_btn }}</button>
+          </div>
+          <div class="ts-desc-body" id="tsDescBody"></div>
+        </div>
+        <div id="plotMain" style="width:100%;height:480px;"></div>
+        <div id="fullViewHeatmap" hidden></div>
+        <div class="chart-footer">
+          {{ t.finder.chart_footer }}
+        </div>
+      </div>
+
+      <!-- Results (continuous mode) -->
+      <div id="resultsSection" hidden>
+        <div id="contSummaryBar" class="seg-summary-bar has-results" hidden></div>
+        <div class="results-header">
+          <h3>{{ t.finder.similar_list }}</h3>
+          <button class="btn btn-secondary btn-sm" id="btnExport">{{ t.finder.csv_export }}</button>
+        </div>
+        <div class="results-grid" id="resultsGrid"></div>
+      </div>
+
+      <!-- Segment Mode Panel -->
+      <div id="segmentPanel" hidden>
+        <div class="seg-header-bar">
+          <div class="seg-header-left">
+            <span class="chart-title" id="segTitleText">{{ t.finder.seg_title_collection }}</span>
+            <span class="chip chip-blue" id="chipSegCount"></span>
+            <span class="chip chip-green" id="chipSegQuery" hidden></span>
+            <button class="info-btn" data-info="segInfo" style="margin-left:8px;">i</button>
+            <div class="info-popup">
+              <div class="info-popup-title">{{ t.finder.seg_mode_title }}</div>
+              {{ t.finder.seg_mode_desc }}
+              <ul>
+                <li>{{ t.finder.seg_click }}</li>
+                <li>{{ t.finder.seg_search }}</li>
+                <li>{{ t.finder.seg_concat }}</li>
+                <li>{{ t.finder.seg_sort }}</li>
+              </ul>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="seg-toggle-btn" id="btnSegToggle" onclick="toggleSegmentPanel()">{{ t.finder.collapse }}</button>
+            <button class="btn btn-secondary btn-sm" id="btnToDiscoverSeg" style="margin:0;">{{ t.finder.discover_view }}</button>
+            <button class="btn btn-secondary btn-sm" id="btnSegConcat" style="margin:0;">{{ t.finder.full_view }}</button>
+          </div>
+        </div>
+        <div id="segSummaryBar" class="seg-summary-bar" hidden></div>
+        <div class="seg-toolbar">
+          <div class="seg-sort-group">
+            <span class="seg-sort-label">{{ t.finder.sort }}</span>
+            <button class="method-pill seg-sort active" data-sort="date">{{ t.finder.sort_date }}</button>
+            <button class="method-pill seg-sort" data-sort="similarity">{{ t.finder.sort_similarity }}</button>
+          </div>
+          <div class="seg-hint" id="segHint">{{ t.finder.seg_hint }}</div>
+        </div>
+        <div class="segment-grid" id="segmentGrid"></div>
+      </div>
+
+      <!-- ════ SEGMENT SEARCH RESULTS (NEW) ════ -->
+      <div id="segSearchResults" hidden>
+        <div class="ssr-header">
+          <h3 class="ssr-title">{{ t.finder.seg_search_results }}</h3>
+          <span class="chip chip-blue" id="ssrCount"></span>
+          <span class="chip chip-green" id="ssrQuery"></span>
+        </div>
+        <div class="ssr-summary" id="ssrSummary"></div>
+        <div class="ssr-grid" id="ssrGrid"></div>
+      </div>
+
+      <!-- ════ PRESET CLASSIFICATION RESULTS ════ -->
+      <div id="classifyResults" hidden>
+        <div class="ssr-header">
+          <h3 class="ssr-title">{{ t.finder.preset_classification }}</h3>
+          <span class="chip chip-blue" id="clsTotal"></span>
+          <span class="chip chip-green" id="clsGroups"></span>
+        </div>
+        <div class="ssr-summary" id="clsSummary"></div>
+        <div id="clsGroupContainer"></div>
+      </div>
+
+      <!-- (tsDescPanel moved to chart query bar 아래) -->
+
+    </main>
+  </div>
+</div>
+
+
+<!-- Split to Segments Modal -->
+<div class="modal-overlay" id="splitModal" hidden>
+  <div class="modal-box">
+    <div class="modal-title">{{ t.finder.split_title }}</div>
+    <div class="modal-desc">{{ t.finder.split_desc }}</div>
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">{{ t.finder.split_length }}</label>
+      <div class="method-pills" id="splitPresetPills">
+        <button class="method-pill split-preset" data-minutes="1">{{ t.finder.min_1 }}</button>
+        <button class="method-pill split-preset" data-minutes="60">{{ t.finder.hour_1 }}</button>
+        <button class="method-pill split-preset" data-minutes="360">{{ t.finder.hour_6 }}</button>
+        <button class="method-pill split-preset active" data-minutes="1440">{{ t.finder.day_1 }}</button>
+        <button class="method-pill split-preset" data-minutes="10080">{{ t.finder.week_1 }}</button>
+        <button class="method-pill split-preset" data-minutes="14400">{{ t.finder.day_10 }}</button>
+        <button class="method-pill split-preset" data-minutes="43200">{{ t.finder.day_30 }}</button>
+        <button class="method-pill split-preset" data-minutes="525600">{{ t.finder.year_1 }}</button>
+        <button class="method-pill split-preset" data-minutes="0">{{ t.finder.custom }}</button>
+      </div>
+    </div>
+    <div class="form-group" id="splitCustomGroup" hidden>
+      <label class="form-label">{{ t.finder.length_points }}</label>
+      <input type="number" class="form-input" id="inputSplitLen" value="{{ app_config.segment.default_length }}" min="{{ app_config.segment.min_length }}" max="99999">
+      <label class="form-label" style="margin-top:8px;">{{ t.finder.split_stride_label }}</label>
+      <input type="number" class="form-input" id="inputSplitStride" value="{{ app_config.segment.default_length }}" min="1" max="99999">
+      <span class="form-hint" id="strideHint" style="font-size:.7rem;color:var(--text3);">{{ t.finder.split_stride_hint }}</span>
+    </div>
+    <div id="splitPreview" class="modal-preview"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" id="btnSplitCancel">{{ t.finder.cancel }}</button>
+      <button class="btn btn-primary btn-sm" id="btnSplitConfirm" style="margin-top:0;">{{ t.finder.split }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- (NL 확인 모달 제거됨) -->
+
+<!-- Result Detail Modal (click card to enlarge) -->
+<div class="modal-overlay" id="resultDetailModal" hidden>
+  <div class="result-detail-box">
+    <div class="result-detail-topbar">
+      <div class="result-detail-info">
+        <span class="ssr-card-rank" id="rdRank"></span>
+        <span class="ssr-card-sim" id="rdSim"></span>
+        <span class="result-detail-meta" id="rdMeta"></span>
+      </div>
+      <div class="result-detail-actions">
+        <button class="btn btn-secondary btn-sm" id="rdResetZoom" title="{{ t.finder.reset_zoom }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+          <span>{{ t.finder.reset_zoom }}</span>
+        </button>
+        <button class="btn btn-secondary btn-sm" id="rdFullscreen" title="{{ t.finder.fullscreen }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+          <span>{{ t.finder.fullscreen }}</span>
+        </button>
+        <button class="btn btn-secondary btn-sm rd-close-btn" id="rdClose" title="{{ t.common.close }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span>{{ t.finder.go_back }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="result-detail-chart" id="rdChart"></div>
+    <div class="result-detail-legend" id="rdLegend"></div>
+    <div class="result-detail-cols" id="rdCols"></div>
+  </div>
+</div>
+
+<!-- Basket Slide-out Panel -->
+<div id="basketPanel" class="basket-panel" hidden>
+  <div class="basket-panel-header">
+    <h3>{{ t.basket.title }}</h3>
+    <span class="basket-panel-counts"><span id="bpDraftCount">0</span> {{ t.basket.draft }} / <span id="bpConfirmedCount">0</span> {{ t.basket.confirmed }}</span>
+    <button id="bpClose" class="basket-panel-close">&times;</button>
+  </div>
+  <div class="basket-panel-body" id="bpBody">
+    <div class="bp-empty">{{ t.basket.no_draft }}</div>
+  </div>
+  <div class="basket-panel-footer">
+    <a href="/labeler">{{ t.basket.open_labeler }} &rarr;</a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/draw_query.js?v={{ cache_bust }}"></script>
+<!-- Finder 화면 스크립트 — 로드 순서가 곧 의존 순서다 (원본: app.js 를 기능별로 분할) -->
+<script src="/static/js/finder/01-core.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/02-basket.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/03-toast.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/04-dataset.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/05-chart.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/06-search.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/07-results.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/08-describe.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/09-settings.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/10-segment.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/11-split.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/12-query-mode.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/20-ss-core.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/21-ss-presets.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/22-ss-columns.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/23-ss-search.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/24-ss-detail.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/25-ss-text.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/26-ss-classify.js?v={{ cache_bust }}"></script>
+<script src="/static/js/finder/27-ss-init.js?v={{ cache_bust }}"></script>
+{% endblock %}

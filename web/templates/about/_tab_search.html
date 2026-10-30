@@ -1,0 +1,1299 @@
+  <div class="about-tab-content" id="tab-search">
+
+  <!-- Unified Pattern Search Panel Overview -->
+  <section class="about-section">
+    <div class="feat-item" style="border-left:3px solid var(--green);padding-left:16px;">
+      <h3 style="margin-top:0;">Unified Pattern Search Panel</h3>
+      <p>Six query modes and bidirectional Text↔TS conversion. Available modes switch automatically with the data view. <strong>Continuous view</strong> offers <strong>Select, Sketch and Text</strong> (sliding window over the full timeline); <strong>Segment view</strong> offers <strong>Sample, Sketch, Preset, Cluster and Text</strong> (segment-level comparison). Common settings such as comparison method, result filter and missing-value handling are configured once under "Advanced Settings".</p>
+
+      <!-- Panel mockup + 6 mode flows -->
+      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;">
+        <div class="about-sidebar-mock">
+          <div class="about-sidebar-title">Pattern Search</div>
+          <div class="about-sidebar-pills">
+            <span class="about-sidebar-pill active">Select</span>
+            <span class="about-sidebar-pill">Sketch</span>
+            <span class="about-sidebar-pill">Sample</span>
+            <span class="about-sidebar-pill">Preset</span>
+            <span class="about-sidebar-pill">Cluster</span>
+            <span class="about-sidebar-pill">Text</span>
+          </div>
+          <div class="about-sidebar-body">
+            <div style="font-size:.6rem;color:var(--text3);margin-bottom:4px;">&#9656; Mode-specific settings</div>
+            <div style="height:32px;background:var(--surface3);border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text3);">Fixed length / Preset grid / Text input</div>
+            <div style="font-size:.6rem;color:var(--text3);margin-bottom:4px;">&#9656; Advanced settings (common)</div>
+            <div style="display:flex;gap:3px;">
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">Comparison</span>
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">Filter</span>
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">NaN</span>
+            </div>
+          </div>
+          <div class="about-sidebar-footer">
+            <div class="about-sidebar-btn">Search</div>
+          </div>
+        </div>
+
+        <!-- 6 mode flows (Both → Full → Segment) -->
+        <div style="flex:1;min-width:min(100%,280px);display:flex;flex-direction:column;gap:8px;">
+          <!-- Both: Sketch -->
+          <div class="about-flow-row" data-color="cyan">
+            <div class="about-flow-label">Sketch</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Freehand sketch</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Normalize</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Similar-region search</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Results</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:4px;">Segment</span>
+          </div>
+          <!-- Both: Text -->
+          <div class="about-flow-row" data-color="purple">
+            <div class="about-flow-label">Text</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Natural language input</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Rule pre-pass · model generation</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Similar-region search</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Results</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:4px;">Segment</span>
+          </div>
+          <!-- Full only: Select -->
+          <div class="about-flow-row" data-color="green">
+            <div class="about-flow-label">Select</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Chart drag</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Actual waveform query</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Sliding window</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Results</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+          </div>
+          <!-- Segment only: Sample -->
+          <div class="about-flow-row" data-color="amber">
+            <div class="about-flow-label">Sample</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Click segment card</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Actual segment as query</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">1:1 comparison</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Results</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+          <!-- Segment only: Preset -->
+          <div class="about-flow-row" data-color="blue">
+            <div class="about-flow-label">Preset</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Pick a shape</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Synthetic shape (7 + custom)</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Segment comparison</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Results</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+          <!-- Segment only: Cluster -->
+          <div class="about-flow-row" data-color="red">
+            <div class="about-flow-label">Cluster</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Fast / Shape / Semantic AI</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Auto-grouping</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">Column profiles</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">Correlation map</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode availability table -->
+      <table class="about-table" style="margin:12px 0;font-size:.75rem;border-collapse:collapse;width:100%;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border);">
+            <th style="text-align:left;padding:6px 12px;">Mode</th>
+            <th style="padding:6px 12px;">Continuous</th>
+            <th style="padding:6px 12px;">Segment</th>
+            <th style="text-align:left;padding:6px 12px;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:4px 12px;font-weight:600;">Select</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="padding:4px 12px;">Drag on chart to select query waveform</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Sketch</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">Freehand drawing to create query shape</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Text</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">Natural language &rarr; rule pre-pass / model shape &rarr; search</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Sample</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">Click segment card as query (QBE)</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Preset</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">7 built-in + saved custom presets</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Cluster</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">Unsupervised grouping (Fast/Shape/Semantic AI), save centroids</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Sub-tab navigation (5) -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="searchSubTabs">
+      <button class="sub-tab active" data-subtab="sub-search-modes">Modes</button>
+      <button class="sub-tab" data-subtab="sub-search-compare">Similarity</button>
+      <button class="sub-tab" data-subtab="sub-search-options">Search Options</button>
+      <button class="sub-tab" data-subtab="sub-search-reverse">Reverse TS→Text</button>
+      <button class="sub-tab" data-subtab="sub-search-scenarios">Scenarios</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: Modes
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-search-modes">
+  <section class="about-section">
+    <p class="sec-desc">Six query generation modes. Choose by data characteristics and purpose.</p>
+
+    <!-- Mode cards (3x2 grid) with SVG illustrations -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px;margin:16px 0;">
+
+      <!-- Sketch -->
+      <div style="padding:16px;background:rgba(236,72,153,.04);border:1px solid rgba(236,72,153,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="2" y="2" width="46" height="36" rx="4" fill="#fff" stroke="#ec4899" stroke-width="1.5"/>
+            <path d="M8,30 Q15,28 22,18 Q30,8 38,12 Q44,16 44,20" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="0"/>
+            <circle cx="44" cy="20" r="2.5" fill="#ec4899"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#ec4899;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sketch</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">Draw the <strong>pattern in your head</strong> freehand</p>
+            <div style="font-size:.68rem;color:var(--text3);">Zero-shot · Intuitive shape expression</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text -->
+      <div style="padding:16px;background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="2" y="2" width="22" height="36" rx="3" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="1"/>
+            <text x="13" y="22" text-anchor="middle" font-size="6" fill="#7c3aed" font-weight="600">NL</text>
+            <path d="M28,20 L34,20" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-t)"/>
+            <rect x="38" y="10" width="10" height="20" rx="2" fill="rgba(34,197,94,.15)" stroke="#22c55e" stroke-width="1"/>
+            <polyline points="40,22 43,16 46,20" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <defs><marker id="arr-t" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M1,1 L5,3 L1,5" fill="#8b5cf6"/></marker></defs>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#8b5cf6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Text</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">Natural language → <strong>rule pre-pass, then a local model or external LLM generates the shape</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">Zero-shot · Asymmetric and compound patterns</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Select -->
+      <div style="padding:16px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <polyline points="4,30 12,25 20,28 28,15 36,18 44,10" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="18" y="12" width="16" height="20" rx="2" fill="rgba(34,197,94,.25)" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="2,1"/>
+            <polyline points="20,28 28,15 34,18" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#22c55e;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Select</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">Drag a region of interest on the chart to use the <strong>actual waveform</strong> as query</p>
+            <div style="font-size:.68rem;color:var(--text3);">Sliding window · Most accurate search</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample -->
+      <div style="padding:16px;background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="4" y="6" width="18" height="28" rx="3" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+            <polyline points="7,24 11,18 15,22 19,14" stroke="#9ca3af" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="28" y="6" width="18" height="28" rx="3" fill="rgba(245,158,11,.2)" stroke="#f59e0b" stroke-width="1.5"/>
+            <polyline points="31,24 35,18 39,22 43,14" stroke="#f59e0b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="37" cy="20" r="6" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,1"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#f59e0b;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sample</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">Click a segment card → <strong>one-click QBE</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">Based on actual data · 1:1 segment comparison</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preset -->
+      <div style="padding:16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="4" y="4" width="14" height="14" rx="2" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>
+            <polyline points="6,14 11,8 16,14" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="22" y="4" width="14" height="14" rx="2" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>
+            <path d="M24,14 Q29,6 34,14" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="4" y="22" width="14" height="14" rx="2" fill="rgba(59,130,246,.25)" stroke="#3b82f6" stroke-width="1.5"/>
+            <polyline points="6,26 18,34" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="22" y="22" width="14" height="14" rx="2" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="2,1"/>
+            <text x="29" y="31" text-anchor="middle" font-size="7" fill="#8b5cf6">+</text>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">7 built-in shapes + <strong>custom presets</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">No LLM needed · "Classify All" automation</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cluster -->
+      <div style="padding:16px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <circle cx="12" cy="12" r="6" fill="rgba(239,68,68,.2)" stroke="#ef4444" stroke-width="1"/>
+            <circle cx="10" cy="10" r="1.5" fill="#ef4444"/><circle cx="14" cy="11" r="1.5" fill="#ef4444"/><circle cx="11" cy="14" r="1.5" fill="#ef4444"/>
+            <circle cx="36" cy="14" r="7" fill="rgba(59,130,246,.2)" stroke="#3b82f6" stroke-width="1"/>
+            <circle cx="33" cy="12" r="1.5" fill="#3b82f6"/><circle cx="38" cy="11" r="1.5" fill="#3b82f6"/><circle cx="35" cy="16" r="1.5" fill="#3b82f6"/><circle cx="39" cy="15" r="1.5" fill="#3b82f6"/>
+            <circle cx="20" cy="30" r="6" fill="rgba(34,197,94,.2)" stroke="#22c55e" stroke-width="1"/>
+            <circle cx="18" cy="28" r="1.5" fill="#22c55e"/><circle cx="22" cy="29" r="1.5" fill="#22c55e"/><circle cx="20" cy="32" r="1.5" fill="#22c55e"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">Unsupervised grouping — <strong>3 algorithms</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">Fast · Shape · Semantic AI (MOMENT)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode comparison table -->
+    <div class="method-compare-table">
+      <table>
+        <thead><tr><th>Mode</th><th>Query generation method</th><th>Advantages</th><th>Limitations / Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mct-label">Select</td>
+            <td>Drag a region of interest directly on the chart (Continuous view)</td>
+            <td>The actual waveform is the query, so it is the most accurate. The sliding window scans the whole timeline</td>
+            <td>Continuous view only. The region must already exist in the data. Short selections are noise-sensitive</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Sketch</td>
+            <td>Freehand drawing of the desired shape</td>
+            <td>Express a shape intuitively without data. Both views</td>
+            <td>Exact waveforms are hard to reproduce. Text mode is recommended for detailed shapes</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Sample</td>
+            <td>Click a segment card to use its actual waveform as the query</td>
+            <td>One-click QBE. Most accurate since it is based on actual data</td>
+            <td>Segment view only. The segment must already exist in the data</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Preset</td>
+            <td>Click one of 7 built-in shapes or a saved centroid custom preset</td>
+            <td>Fast and consistent. No LLM required (offline). "Classify All" enables automatic classification</td>
+            <td>Segment view only. Complex shapes not in the presets cannot be represented</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Cluster</td>
+            <td>Three algorithms: Fast (K-Means), Shape (k-Shape), Semantic AI (MOMENT)</td>
+            <td>No predefined labels. Auto-K selection. MOMENT excels at multivariate joint clustering</td>
+            <td>Segment view only. Meaningful clusters need enough segments</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Text</td>
+            <td>Natural language &rarr; rule-based pre-pass, then a local model or external LLM generates the shape</td>
+            <td>Starts without data or presets (zero-shot). Describes asymmetric and compound patterns</td>
+            <td>Both views. Simple phrases are handled by rules; others by a local model or an external LLM. Results may vary slightly</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Preset shape catalog (SVG) -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>Built-in Preset Shapes (7)</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:16px;">
+        <!-- rise -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,25 55,5" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Rise</strong> <span style="color:var(--text3);">rise</span></div>
+        </div>
+        <!-- fall -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 55,25" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Fall</strong> <span style="color:var(--text3);">fall</span></div>
+        </div>
+        <!-- flat -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,15 55,15" stroke="#6b7280" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Flat</strong> <span style="color:var(--text3);">flat</span></div>
+        </div>
+        <!-- bell -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <path d="M5,25 Q15,25 20,18 Q30,2 40,18 Q45,25 55,25" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Bell</strong> <span style="color:var(--text3);">bell</span></div>
+        </div>
+        <!-- v_shape -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 30,25 55,5" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>V-shape</strong> <span style="color:var(--text3);">v_shape</span></div>
+        </div>
+        <!-- spike -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,25 25,25 30,3 35,25 55,25" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Spike</strong> <span style="color:var(--text3);">spike</span></div>
+        </div>
+        <!-- dip -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 25,5 30,27 35,5 55,5" stroke="#06b6d4" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>Dip</strong> <span style="color:var(--text3);">dip</span></div>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:.75rem;color:var(--text3);">The selected shape is resampled automatically to the segment length. A saved cluster centroid (Medoid) becomes a reusable <span style="color:#8b5cf6;font-weight:600;">custom preset</span>.</p>
+    </div>
+
+    <!-- Text → Shape (NL-to-Shape) demo -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>Text → Shape Conversion (NL-to-Shape)</h3></div>
+      <p>Describe the pattern in natural language. A rule-based pre-pass turns simple phrases directly into waveforms; otherwise a local model or the selected external LLM generates the synthetic series.</p>
+      <div class="nl-to-shape-demo">
+        <div class="nts-input">
+          <div class="nts-label">Natural language input</div>
+          <div class="nts-text">"Gradually rises then suddenly drops midway"</div>
+          <div class="nts-meta">Column: <strong>power_kw</strong> (power generation, kW)</div>
+        </div>
+        <div class="nts-arrow">→</div>
+        <div class="nts-output">
+          <div class="nts-label">Generated shape</div>
+          <canvas class="nts-canvas" id="ntsShapeDemo" height="70"></canvas>
+          <div class="nts-desc">Rising segment held → drops at midpoint with no recovery</div>
+        </div>
+        <div class="nts-arrow">→</div>
+        <div class="nts-result">
+          <div class="nts-label">Search results</div>
+          <div class="nts-result-text">
+            <strong>23</strong> matches<br>
+            <span class="nts-result-sub">Similarity 72-91%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clustering algorithm comparison -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>Clustering Algorithm Comparison</h3></div>
+      <div class="method-compare-table" style="margin-top:12px;">
+        <table>
+          <thead><tr><th>Algorithm</th><th>Method</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td class="mct-label">Fast (K-Means)</td><td>Euclidean distance</td><td>General use, large datasets, fast results</td></tr>
+            <tr><td class="mct-label">Shape (k-Shape)</td><td>SBD, scale/shift invariant</td><td>Series with amplitude or phase variation</td></tr>
+            <tr><td class="mct-label">Semantic AI</td><td>MOMENT embeddings + K-Means</td><td>Multivariate joint clustering</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cluster follow-up features -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>Using Cluster Results</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;margin-top:14px;">
+
+        <!-- Centroid → custom preset -->
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:32px;height:32px;background:rgba(139,92,246,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 20 20" style="width:18px;height:18px;">
+                <circle cx="10" cy="10" r="6" fill="none" stroke="#a78bfa" stroke-width="1.2"/>
+                <circle cx="10" cy="10" r="2" fill="#8b5cf6"/>
+                <path d="M10,4 L10,2" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M10,18 L10,16" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M4,10 L2,10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M18,10 L16,10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:.82rem;color:var(--text1);">Centroid → Custom Preset</div>
+              <div style="font-size:.68rem;color:var(--text3);">Reuse discovered patterns</div>
+            </div>
+          </div>
+          <ul style="margin:0;padding-left:16px;font-size:.72rem;line-height:1.6;color:var(--text2);">
+            <li>Pick a cluster's representative shape (Medoid)</li>
+            <li><strong>Save as a custom preset</strong> → shown in purple in Preset mode, reusable</li>
+            <li>"Classify All" enables automatic labeling</li>
+          </ul>
+        </div>
+
+        <!-- Per-column pattern correlation -->
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:32px;height:32px;background:rgba(59,130,246,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 20 20" style="width:18px;height:18px;">
+                <rect x="2" y="2" width="6" height="6" rx="1.5" fill="rgba(34,197,94,.3)" stroke="#22c55e" stroke-width=".8"/>
+                <rect x="12" y="2" width="6" height="6" rx="1.5" fill="rgba(59,130,246,.3)" stroke="#3b82f6" stroke-width=".8"/>
+                <rect x="2" y="12" width="6" height="6" rx="1.5" fill="rgba(245,158,11,.3)" stroke="#f59e0b" stroke-width=".8"/>
+                <rect x="12" y="12" width="6" height="6" rx="1.5" fill="rgba(239,68,68,.3)" stroke="#ef4444" stroke-width=".8"/>
+                <line x1="8" y1="5" x2="12" y2="5" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+                <line x1="5" y1="8" x2="5" y2="12" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+                <line x1="15" y1="8" x2="15" y2="12" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:.82rem;color:var(--text1);">Per-Column Pattern Correlation</div>
+              <div style="font-size:.68rem;color:var(--text3);">Multivariate insight</div>
+            </div>
+          </div>
+          <ul style="margin:0;padding-left:16px;font-size:.72rem;line-height:1.6;color:var(--text2);">
+            <li>Column profiling for every cluster</li>
+            <li><strong>Correlation map</strong> visualizes pattern relations between columns</li>
+            <li>Reveals relations such as "irradiance↑ → power↑"</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Cluster follow-up flow -->
+      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;">
+          <div style="padding:6px 12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#dc2626;font-weight:500;">1. Clustering</div>
+            <div style="font-size:.58rem;color:var(--text3);">Auto-grouping</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#2563eb;font-weight:500;">2. Column profiles</div>
+            <div style="font-size:.58rem;color:var(--text3);">Correlation analysis</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#7c3aed;font-weight:500;">3. Pick representative</div>
+            <div style="font-size:.58rem;color:var(--text3);">Inspect Medoid</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#166534;font-weight:500;">4. Save preset</div>
+            <div style="font-size:.58rem;color:var(--text3);">Reusable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>Generation model and external LLM</strong> — Text mode first applies a rule-based pre-pass that turns simple phrases directly into waveforms; other requests go to a local model or an external LLM (Anthropic Claude or OpenAI-compatible). If the user explicitly picks an external LLM, the rule pre-pass is skipped. Administrators connect external LLMs under Data Management → Model Connection; the API key is stored only in a server file and shown as its last four characters. Each connection can be enabled per task (text→series, series→text, AI metadata inference); token usage is logged with a monthly warning at $10 and a limit at $100 (configurable).
+    </div>
+  </section>
+  </div><!-- /sub-search-modes -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: Similarity
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-compare">
+  <section class="about-section">
+    <p class="sec-desc">Search modes and distance functions for comparing the query with candidates.</p>
+
+    <!-- Pipeline overview -->
+    <div class="pipeline">
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">1</div>
+        <div class="pipe-title">Search Mode</div>
+        <div class="pipe-desc">Sliding window<br>Segment comparison<br>Split comparison</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">2</div>
+        <div class="pipe-title">Normalization</div>
+        <div class="pipe-desc">Shape only<br>via Z-score</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">3</div>
+        <div class="pipe-title">Distance</div>
+        <div class="pipe-desc">Euclidean / DTW<br>/ Cosine / Shape</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">4</div>
+        <div class="pipe-title">Result Filtering</div>
+        <div class="pipe-desc">Top-K or<br>similarity threshold</div>
+      </div>
+    </div>
+
+    <!-- Search modes (3) -->
+    <h3 style="margin-top:24px;">Search Modes</h3>
+    <div class="method-cards">
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-blue">1</div>
+        <h3>Continuous Sliding Window</h3>
+        <p>A fixed-length window slides one step at a time over a long series, comparing each position with the query.</p>
+        <div class="mc-when">To find <strong>every position</strong> where a pattern repeats in a continuous series</div>
+      </div>
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-green">2</div>
+        <h3>Segment-to-Segment Comparison</h3>
+        <p>Pre-divided segments (Collection) are compared directly with the query.</p>
+        <div class="mc-when">To rank <strong>similarity</strong> between daily or run-level profiles</div>
+      </div>
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-amber">3</div>
+        <h3>Continuous → Split Comparison</h3>
+        <p>A continuous series is split into fixed-length chunks (daily, weekly, etc.) and each chunk is compared with the query.</p>
+        <div class="mc-when">To <strong>classify</strong> quickly by calendar unit</div>
+      </div>
+    </div>
+
+    <!-- Distance function comparison -->
+    <h3 style="margin-top:24px;">Distance Functions</h3>
+    <div class="method-compare-table">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="mct-badge mct-green">Euclidean</span></th>
+            <th><span class="mct-badge mct-blue">DTW</span></th>
+            <th><span class="mct-badge mct-purple">Cosine</span></th>
+            <th><span class="mct-badge" style="background:#D97706;">Shape</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mct-label">Comparison method</td>
+            <td>1:1 point matching</td>
+            <td>Optimal alignment matching</td>
+            <td>Vector direction comparison</td>
+            <td>Shape features (slope, peaks, symmetry)</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Different lengths</td>
+            <td class="mct-no">X (same length only)</td>
+            <td class="mct-yes">O (auto-alignment)</td>
+            <td class="mct-no">X (same length only)</td>
+            <td class="mct-yes">O (length-independent)</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Time shift tolerance</td>
+            <td class="mct-no">X</td>
+            <td class="mct-yes">O</td>
+            <td class="mct-no">X</td>
+            <td class="mct-yes">O</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Speed</td>
+            <td>Fastest</td>
+            <td>2-5x slower</td>
+            <td>Fast</td>
+            <td>Fast</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Recommended use</td>
+            <td>Most cases</td>
+            <td>When length/timing differs</td>
+            <td>Shape only, regardless of magnitude</td>
+            <td>Macro shape: number and position of peaks/dips</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Method selection flowchart -->
+    <div class="method-guide">
+      <h3 class="about-h3">Choosing a Distance Function</h3>
+      <div class="fc">
+        <div class="fc-row">
+          <div class="fc-node fc-question">Segment lengths differ</div>
+        </div>
+        <div class="fc-row fc-connector-row"><div class="fc-branch-line"></div></div>
+        <div class="fc-row fc-split">
+          <div class="fc-col">
+            <div class="fc-label fc-label-yes">Yes</div>
+            <div class="fc-arrow">↓</div>
+            <div class="fc-node fc-result fc-result-blue">
+              <div class="fc-result-icon">DTW</div>
+              <div class="fc-result-text">Auto-aligned comparison<br>even with different lengths</div>
+            </div>
+          </div>
+          <div class="fc-col">
+            <div class="fc-label fc-label-no">No</div>
+            <div class="fc-arrow">↓</div>
+            <div class="fc-node fc-question fc-question-sub">Allow timing<br>differences</div>
+            <div class="fc-row fc-connector-row" style="margin-top:8px;"><div class="fc-branch-line"></div></div>
+            <div class="fc-row fc-split fc-split-sub">
+              <div class="fc-col">
+                <div class="fc-label fc-label-yes">Yes</div>
+                <div class="fc-arrow">↓</div>
+                <div class="fc-node fc-result fc-result-blue">
+                  <div class="fc-result-icon">DTW</div>
+                  <div class="fc-result-text">Allows time shift</div>
+                </div>
+              </div>
+              <div class="fc-col">
+                <div class="fc-label fc-label-no">No</div>
+                <div class="fc-arrow">↓</div>
+                <div class="fc-node fc-question fc-question-sub">Compare absolute<br>magnitude</div>
+                <div class="fc-row fc-connector-row" style="margin-top:8px;"><div class="fc-branch-line"></div></div>
+                <div class="fc-row fc-split fc-split-sub">
+                  <div class="fc-col">
+                    <div class="fc-label fc-label-yes">Yes</div>
+                    <div class="fc-arrow">↓</div>
+                    <div class="fc-node fc-result fc-result-green">
+                      <div class="fc-result-icon">ED</div>
+                      <div class="fc-result-text">Euclidean<span class="fc-default">(default)</span></div>
+                    </div>
+                  </div>
+                  <div class="fc-col">
+                    <div class="fc-label fc-label-no">Shape only</div>
+                    <div class="fc-arrow">↓</div>
+                    <div class="fc-node fc-result fc-result-purple">
+                      <div class="fc-result-icon">COS</div>
+                      <div class="fc-result-text">Cosine<span class="fc-default">direction only</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-search-compare -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: Search Options
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-options">
+  <section class="about-section">
+    <p class="sec-desc">Options that control the quality of comparison results.</p>
+    <div class="feat-list">
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Z-score Normalization</h3></div>
+        <p>Transforms each segment with <code>(value - mean) / std_dev</code>. Removes absolute magnitude and <strong>compares curve shape only</strong>.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Z-score OFF:</strong> a winter 50 kW bell and a summer 100 kW bell are classified as "different patterns"</div>
+            <div><strong>Z-score ON:</strong> both are the same bell curve → matched as <strong>the same pattern</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Multi-Column Simultaneous Search</h3></div>
+        <p>When several columns are selected, the per-column distances are <strong>equally averaged</strong> into an overall similarity.</p>
+        <div class="about-info-box">
+          <div class="about-info-box-title">Multi-column search — distances averaged equally over all selected columns</div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div style="flex:0 0 160px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#059669;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">Power</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#2563EB;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">Irradiance</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#D97706;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">Temperature</span>
+              </div>
+            </div>
+            <div style="font-size:1.2rem;color:var(--text3);">&rarr;</div>
+            <div style="flex:1;min-width:180px;height:60px;background:var(--surface2);border-radius:8px;position:relative;overflow:hidden;border:1px solid var(--surface3);">
+              <svg viewBox="0 0 200 50" style="width:100%;height:100%;">
+                <polyline points="10,40 40,30 70,12 100,8 130,14 160,28 190,38" fill="none" stroke="#059669" stroke-width="2" stroke-opacity="1" stroke-linecap="round"/>
+                <polyline points="10,35 40,25 70,10 100,6 130,12 160,24 190,34" fill="none" stroke="#2563EB" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+                <polyline points="10,25 40,24 70,22 100,21 130,23 160,25 190,26" fill="none" stroke="#D97706" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute;bottom:2px;right:6px;font-size:.56rem;color:var(--text3);">equal weight per column</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Result Filtering</h3></div>
+        <p>Two filter modes narrow down results when there are too many.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Top-K:</strong> show only the N most similar results (5-500, default 20)</div>
+            <div><strong>Similarity threshold:</strong> show only results above a threshold such as 70% — filtering by quality, not quantity</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Calendar Alignment</h3></div>
+        <p>In split comparison mode, segments are aligned automatically to <strong>calendar boundaries (midnight, month start, Monday)</strong>.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>6 hours:</strong> 00:00, 06:00, 12:00, 18:00 boundaries — distinguish AM/PM patterns</div>
+            <div><strong>Daily:</strong> starts at 00:00 each day — daily profile comparison</div>
+            <div><strong>Weekly:</strong> starts every Monday — weekly trend comparison</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>NaN Handling (During Comparison)</h3></div>
+        <p>Select how missing values encountered during comparison are handled.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Interpolation (default):</strong> fill NaN with the selected method (linear, cubic, MOMENT FM, etc.) and compare</div>
+            <div><strong>Skip:</strong> if even one NaN is present, the segment is excluded from comparison</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Export Results</h3></div>
+        <p>Search results can be <strong>downloaded as CSV</strong> for further analysis.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Output format:</strong> <code>rank, start_idx, end_idx, length, similarity, distance</code></div>
+            <div>→ Ready for spreadsheets, Python, R, etc.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  </div><!-- /sub-search-options -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 4: Reverse TS→Text (the bidirectional differentiator)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-reverse">
+  <section class="about-section">
+    <p class="sec-desc"><strong>Bidirectional conversion</strong> — not only Text→TS (search) but also TS→Text (interpretation).</p>
+
+    <!-- Key message banner -->
+    <div style="background:var(--surface2);border:1px solid var(--border);padding:16px 20px;border-radius:10px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:.95rem;font-weight:600;color:var(--text1);margin-bottom:4px;">Bidirectional Text ↔ TS Conversion</div>
+          <div style="font-size:.78rem;color:var(--text3);">Search (Text→TS) and interpretation (TS→Text) in one interface</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);padding:6px 12px;border-radius:6px;text-align:center;">
+            <div style="font-size:.6rem;color:#7c3aed;">Forward</div>
+            <div style="font-size:.75rem;font-weight:600;color:#5b21b6;">Text → TS</div>
+          </div>
+          <div style="font-size:1rem;display:flex;align-items:center;color:var(--text3);">⇄</div>
+          <div style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);padding:6px 12px;border-radius:6px;text-align:center;">
+            <div style="font-size:.6rem;color:#0891b2;">Reverse</div>
+            <div style="font-size:.75rem;font-weight:600;color:#0e7490;">TS → Text</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>Description model</strong> — The default series-to-text model is ChatTS-14B (bytedance-research, Apache-2.0). It runs in 8-bit on a separate GPU-shared server, loads on demand and unloads after 5 idle minutes; a cold request takes about 2 minutes and a warm one about 20 seconds. The model writes the narrative, while trend, volatility and feature numbers come from app-side computation to prevent hallucinated numbers. An external LLM can also be selected as the description model.
+    </div>
+
+    <!-- Bidirectional flow visualization -->
+    <div style="margin:20px 0;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+      <svg viewBox="0 0 580 180" fill="none" style="width:100%;height:auto;">
+        <!-- Forward: Text → TS (top) -->
+        <text x="290" y="16" text-anchor="middle" font-size="9" fill="#6b7280" font-weight="600">Forward: Text → TS (search)</text>
+
+        <!-- Natural language input -->
+        <rect x="15" y="28" width="115" height="48" rx="6" fill="var(--surface1)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="72" y="44" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">Natural language input</text>
+        <rect x="22" y="50" width="100" height="18" rx="3" fill="rgba(139,92,246,.06)"/>
+        <text x="72" y="62" text-anchor="middle" font-size="6" fill="#6b7280">"Sharp rise, then gradual fall"</text>
+
+        <!-- Arrow 1 -->
+        <path d="M138,52 L162,52" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr-p2)"/>
+        <rect x="143" y="42" width="24" height="11" rx="2" fill="#a78bfa"/>
+        <text x="155" y="50" text-anchor="middle" font-size="5" fill="white" font-weight="500">Model</text>
+
+        <!-- Synthetic shape -->
+        <rect x="170" y="28" width="90" height="48" rx="6" fill="var(--surface1)" stroke="#86efac" stroke-width="1"/>
+        <text x="215" y="42" text-anchor="middle" font-size="7" fill="#166534" font-weight="500">Synthetic shape</text>
+        <polyline points="180,62 195,50 210,48 225,52 240,58 250,60" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Arrow 2 -->
+        <path d="M268,52 L292,52" stroke="#86efac" stroke-width="1.2" marker-end="url(#arr-g2)"/>
+        <rect x="272" y="42" width="24" height="11" rx="2" fill="#86efac"/>
+        <text x="284" y="50" text-anchor="middle" font-size="5" fill="#166534" font-weight="500">Search</text>
+
+        <!-- Search results -->
+        <rect x="300" y="24" width="265" height="56" rx="6" fill="var(--surface1)" stroke="#93c5fd" stroke-width="1"/>
+        <text x="432" y="38" text-anchor="middle" font-size="7" fill="#1e40af" font-weight="500">Search results (Top-K matches)</text>
+        <g transform="translate(308,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(34,197,94,.06)" stroke="#86efac" stroke-width=".8"/>
+          <polyline points="8,22 18,10 30,8 42,12 54,16 66,20" stroke="#22c55e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#166534">91%</text>
+        </g>
+        <g transform="translate(388,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(34,197,94,.04)" stroke="#bbf7d0" stroke-width=".8"/>
+          <polyline points="8,20 18,10 30,7 42,11 54,15 66,18" stroke="#4ade80" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#166534">87%</text>
+        </g>
+        <g transform="translate(468,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(245,158,11,.04)" stroke="#fde68a" stroke-width=".8"/>
+          <polyline points="8,18 18,10 30,8 42,12 54,16 66,18" stroke="#fbbf24" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#92400e">72%</text>
+        </g>
+
+        <!-- Divider -->
+        <line x1="25" y1="92" x2="555" y2="92" stroke="var(--border)" stroke-width=".8" stroke-dasharray="3,2"/>
+        <rect x="265" y="85" width="50" height="14" rx="7" fill="var(--surface1)" stroke="var(--border)" stroke-width=".8"/>
+        <text x="290" y="94" text-anchor="middle" font-size="6" fill="#9ca3af" font-weight="500">⇅ Bidirectional</text>
+
+        <!-- Reverse: TS → Text (bottom) -->
+        <text x="290" y="115" text-anchor="middle" font-size="9" fill="#6b7280" font-weight="600">Reverse: TS → Text (interpretation)</text>
+
+        <!-- Selected region -->
+        <rect x="15" y="124" width="115" height="48" rx="6" fill="var(--surface1)" stroke="#67e8f9" stroke-width="1"/>
+        <text x="72" y="138" text-anchor="middle" font-size="7" fill="#0891b2" font-weight="500">Selected region</text>
+        <rect x="35" y="144" width="50" height="22" rx="2" fill="rgba(6,182,212,.08)" stroke="#67e8f9" stroke-width=".8" stroke-dasharray="2,1"/>
+        <polyline points="22,162 35,158 50,148 65,145 80,150 95,155 108,158" stroke="#22d3ee" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+        <!-- Arrow -->
+        <path d="M138,148 L162,148" stroke="#67e8f9" stroke-width="1.2" marker-end="url(#arr-c2)"/>
+        <rect x="143" y="138" width="24" height="11" rx="2" fill="#67e8f9"/>
+        <text x="155" y="146" text-anchor="middle" font-size="5" fill="#0e7490" font-weight="500">ChatTS</text>
+
+        <!-- Natural language interpretation -->
+        <rect x="170" y="124" width="395" height="48" rx="6" fill="var(--surface1)" stroke="#67e8f9" stroke-width="1"/>
+        <text x="367" y="138" text-anchor="middle" font-size="7" fill="#0891b2" font-weight="500">ChatTS natural language interpretation</text>
+        <rect x="180" y="144" width="375" height="22" rx="4" fill="rgba(6,182,212,.04)"/>
+        <text x="367" y="155" text-anchor="middle" font-size="7" fill="#374151">"A sharp rise followed by stabilization."</text>
+        <text x="367" y="163" text-anchor="middle" font-size="5.5" fill="#9ca3af">Linear change +23.4%/range · std/range 31% · no periodicity</text>
+
+        <defs>
+          <marker id="arr-p2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#a78bfa"/></marker>
+          <marker id="arr-g2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#86efac"/></marker>
+          <marker id="arr-c2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#67e8f9"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- TS→Text output examples -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">Description Output Examples</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;">
+
+        <!-- Example 1: single column -->
+        <div style="background:var(--surface1);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="background:rgba(6,182,212,.08);border-bottom:1px solid rgba(6,182,212,.15);padding:8px 12px;font-size:.72rem;font-weight:600;color:#0891b2;">
+            Single-column analysis
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;gap:10px;margin-bottom:10px;">
+              <svg viewBox="0 0 70 35" style="width:70px;height:35px;flex-shrink:0;background:rgba(6,182,212,.04);border-radius:4px;">
+                <polyline points="5,28 18,22 32,10 46,8 58,14 65,18" stroke="#22d3ee" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div style="font-size:.65rem;color:var(--text3);">power_kw (power generation)</div>
+                <div style="font-size:.68rem;color:#0891b2;font-weight:500;">2024-03-15 09:00 ~ 15:00</div>
+              </div>
+            </div>
+            <div style="background:var(--surface2);padding:10px;border-radius:6px;font-size:.72rem;line-height:1.5;color:var(--text2);">
+              <strong style="color:#0891b2;">Shape:</strong> sharp rise, then stabilization<br>
+              <strong style="color:#0891b2;">Stats:</strong> linear change +23.4%/range, std/range 31%<br>
+              <strong style="color:#0891b2;">Notes:</strong> normal operating pattern
+            </div>
+          </div>
+        </div>
+
+        <!-- Example 2: multi-column -->
+        <div style="background:var(--surface1);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="background:rgba(139,92,246,.06);border-bottom:1px solid rgba(139,92,246,.12);padding:8px 12px;font-size:.72rem;font-weight:600;color:#7c3aed;">
+            Multi-column analysis (3 sensors)
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <svg viewBox="0 0 70 35" style="width:70px;height:35px;flex-shrink:0;background:rgba(139,92,246,.04);border-radius:4px;">
+                <polyline points="5,26 18,20 32,10 46,8 58,12 65,15" stroke="#4ade80" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <polyline points="5,28 18,22 32,12 46,10 58,14 65,17" stroke="#60a5fa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <polyline points="5,18 18,16 32,14 46,13 58,15 65,16" stroke="#fbbf24" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(34,197,94,.08);color:#166534;border-radius:3px;">Power</span>
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(59,130,246,.08);color:#1e40af;border-radius:3px;">Irradiance</span>
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(245,158,11,.08);color:#92400e;border-radius:3px;">Module temp</span>
+              </div>
+            </div>
+            <div style="background:var(--surface2);padding:10px;border-radius:6px;font-size:.72rem;line-height:1.5;color:var(--text2);">
+              <strong style="color:#7c3aed;">Summary:</strong> normal generation driven by rising irradiance<br>
+              <strong style="color:#22c55e;">Power:</strong> bell-shaped rise (+45%)<br>
+              <strong style="color:#3b82f6;">Irradiance:</strong> synchronized rise
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to use -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">How to Use</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <polyline points="5,24 12,20 22,10 32,8 40,14" stroke="#d1d5db" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="14" y="6" width="16" height="20" rx="2" fill="rgba(34,197,94,.15)" stroke="#4ade80" stroke-width="1" stroke-dasharray="2,1"/>
+          </svg>
+          <div style="background:#4ade80;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">1</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">Drag to select a region</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">Define the area to analyze</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);font-size:1rem;">→</div>
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <rect x="10" y="6" width="25" height="18" rx="3" fill="rgba(59,130,246,.12)" stroke="#60a5fa" stroke-width="1"/>
+            <text x="22" y="18" text-anchor="middle" font-size="7" fill="#3b82f6" font-weight="500">Describe</text>
+          </svg>
+          <div style="background:#60a5fa;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">2</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">Click "Describe"</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">Request to the description model</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);font-size:1rem;">→</div>
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <rect x="5" y="4" width="35" height="22" rx="3" fill="rgba(139,92,246,.08)" stroke="#a78bfa" stroke-width=".8"/>
+            <line x1="9" y1="10" x2="36" y2="10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+            <line x1="9" y1="15" x2="30" y2="15" stroke="#c4b5fd" stroke-width=".8" stroke-linecap="round"/>
+            <line x1="9" y1="20" x2="25" y2="20" stroke="#ddd6fe" stroke-width=".8" stroke-linecap="round"/>
+          </svg>
+          <div style="background:#a78bfa;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">3</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">Read the interpretation</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">Shape, statistics, anomalies</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description items -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">What the Description Covers (numbers are app-computed)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;">
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(6,182,212,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><polyline points="2,12 6,6 10,9 14,3" stroke="#22d3ee" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Shape recognition</div>
+            <div style="font-size:.62rem;color:var(--text3);">Rise / fall / peak</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(34,197,94,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><text x="8" y="12" text-anchor="middle" font-size="9" fill="#4ade80" font-weight="600">%</text></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Rate of change</div>
+            <div style="font-size:.62rem;color:var(--text3);">Rise / fall rate</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(245,158,11,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M3,8 Q5.5,4 8,8 Q10.5,12 13,8" stroke="#fbbf24" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Volatility</div>
+            <div style="font-size:.62rem;color:var(--text3);">Std / range</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(239,68,68,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><circle cx="8" cy="8" r="5" fill="none" stroke="#f87171" stroke-width="1.5"/><line x1="8" y1="5" x2="8" y2="8" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11" r=".8" fill="#f87171"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Outliers</div>
+            <div style="font-size:.62rem;color:var(--text3);">Anomaly detection</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(139,92,246,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M2,9 Q4.5,6 7,9 Q9.5,12 12,9 Q14,7 14,9" stroke="#a78bfa" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Periodicity</div>
+            <div style="font-size:.62rem;color:var(--text3);">Repeating pattern</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(59,130,246,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><rect x="3" y="5" width="10" height="6" rx="1" fill="none" stroke="#60a5fa" stroke-width="1.2"/><text x="8" y="10" text-anchor="middle" font-size="4" fill="#60a5fa" font-weight="500">kW</text></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">Domain</div>
+            <div style="font-size:.62rem;color:var(--text3);">Units and meaning</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why bidirectional (comparison) -->
+    <div style="margin-top:20px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <h3 style="font-size:.85rem;font-weight:600;margin:0 0 12px;color:var(--text1);">Why Bidirectional Matters</h3>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-bottom:12px;">
+        <div style="padding:10px;background:var(--surface1);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:.62rem;color:var(--text3);margin-bottom:2px;">Existing system A</div>
+          <div style="font-size:.78rem;font-weight:500;color:var(--text2);">Text → TS only</div>
+          <div style="font-size:.6rem;color:var(--text3);margin-top:2px;">Search only, no interpretation</div>
+        </div>
+        <div style="padding:10px;background:var(--surface1);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:.62rem;color:var(--text3);margin-bottom:2px;">Existing system B</div>
+          <div style="font-size:.78rem;font-weight:500;color:var(--text2);">TS → Text only</div>
+          <div style="font-size:.6rem;color:var(--text3);margin-top:2px;">Interpretation only, no search</div>
+        </div>
+        <div style="padding:10px;background:rgba(139,92,246,.06);border-radius:6px;border:1px solid rgba(139,92,246,.15);">
+          <div style="font-size:.62rem;color:#7c3aed;margin-bottom:2px;">TS-Lens</div>
+          <div style="font-size:.78rem;font-weight:600;color:#5b21b6;">Text ↔ TS</div>
+          <div style="font-size:.6rem;color:#7c3aed;margin-top:2px;">Search ↔ understand cycle</div>
+        </div>
+      </div>
+      <p style="margin:0;font-size:.72rem;line-height:1.5;color:var(--text3);">
+        Search a pattern → understand its meaning → search for similar patterns again: an <strong style="color:var(--text2);">iterative cycle</strong>.
+      </p>
+    </div>
+
+  </section>
+  </div><!-- /sub-search-reverse -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 5: Scenarios (8)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-scenarios">
+  <section class="about-section">
+    <p class="sec-desc">Eight representative pattern search scenarios.</p>
+
+    <!-- Scenario 1: NL search -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">Natural Language Pattern Search <span style="font-weight:400;color:#7c3aed;font-size:.75em;">(Text → TS)</span></span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-engineer">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/><rect x="11" y="9" width="18" height="4" rx="2" fill="#d97706"/><rect x="13" y="7" width="14" height="3" rx="1.5" fill="#f59e0b"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Solar O&amp;M Engineer</div>
+          <div class="scenario-speech">"Yesterday afternoon the power generation graph suddenly dropped. I want to check whether a similar pattern occurred on any other day this year."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#8b5cf6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Text mode</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Switch to Segment view, select Text mode and type "gradually rises then suddenly drops after noon". The rule pre-pass or the model produces a synthetic shape and compares it against all segments.
+        </p>
+        <div class="scenario-method-note">Both views · Zero-shot · Rule pre-pass + local/external LLM · Column metadata improves accuracy</div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Sketch search -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">Sketch Shape Search</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Researcher</div>
+          <div class="scenario-speech">"I want to draw the double-peak pattern I have in mind and find similar ones."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ec4899;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sketch mode</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Draw the shape freely on the canvas → normalize → find similar patterns by sliding window or segment comparison
+        </p>
+        <div class="scenario-method-note">Zero-shot · Intuitive · Both views</div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: Preset search -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">Preset Shape Search</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-quality">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#3b82f6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#3b82f6" opacity=".55"/><rect x="24" y="22" width="10" height="13" rx="1.5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.2"/><path d="M27,27 L31,27 M27,30 L31,30 M27,33 L29,33" stroke="#3b82f6" stroke-width=".8"/><path d="M26.5,25 L28,26.5 L31,23" stroke="#22c55e" stroke-width="1.2" fill="none"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Process Quality Manager</div>
+          <div class="scenario-speech">"I want to know when bell-shaped normal patterns and sharp spike patterns each appear in our sensor data."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset mode</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          In Segment view, pick one of the 7 built-in shapes (rise, fall, flat, bell, v_shape, spike, dip) or a custom preset saved from a cluster centroid. The <strong>"Classify All"</strong> button categorizes all segments by all presets at once.
+        </p>
+        <div class="scenario-method-note">7 built-in + custom presets · Automatic full classification · Multi-column support</div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: QBE search -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">Search by Actual Segment (QBE)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/><circle cx="28" cy="26" r="5" fill="none" stroke="#7c3aed" stroke-width="1.5"/><line x1="32" y1="30" x2="36" y2="34" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Equipment Diagnostics Researcher</div>
+          <div class="scenario-speech">"I want to check whether other segments look like this specific waveform from March 15th."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#22c55e;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Select</span>
+          <span style="color:var(--text3);font-size:.72rem;">or</span>
+          <span style="background:#f59e0b;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sample</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          <strong>Select (Continuous):</strong> drag on the chart → sliding window finds all similar occurrences<br>
+          <strong>Sample (Segment):</strong> click a segment card → 1:1 segment comparison
+        </p>
+        <div class="scenario-method-note">Actual data waveform as query · Most accurate · Euclidean/DTW/Cosine/Shape distance</div>
+      </div>
+    </div>
+
+    <!-- Scenario 5: Multi-column search -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">5</span><span class="scenario-title-text">Multi-Column Search</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-multi">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#ec4899" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#ec4899" opacity=".55"/><path d="M25,24 L29,24 L29,33 M31,26 L31,33 M33,28 L33,33" stroke="#db2777" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Process Engineer</div>
+          <div class="scenario-speech">"I want to search across several sensors at once — temperature rising while power drops."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset mode · Multi-column</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Search several columns (sensors) simultaneously. Distances are averaged equally across the selected columns, and in Preset mode <strong>each column can take a different preset</strong> (e.g. power=fall, temperature=rise).
+        </p>
+        <div class="scenario-method-note">Independent preset per column · Equal-weight averaging · Combined similarity · Compound pattern search</div>
+      </div>
+    </div>
+
+    <!-- Scenario 6: Unsupervised clustering -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">6</span><span class="scenario-title-text">Automatic Pattern Discovery (Clustering)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Data Analyst</div>
+          <div class="scenario-speech">"I don't know what patterns exist yet. I want to discover the natural groups in the data automatically."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster mode</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Choose <strong>Fast (K-Means)</strong>, <strong>Shape (k-Shape)</strong> or <strong>Semantic AI (MOMENT)</strong> → segments are z-normalized and grouped automatically → per-column profiling → each cluster's <strong>centroid shape</strong> can be saved as a <strong>custom preset</strong> for reuse across datasets
+        </p>
+        <div class="scenario-method-note">Fast · Shape · Semantic AI · Auto-K · Save centroid as preset</div>
+      </div>
+    </div>
+
+    <!-- Scenario 7: Cross-column correlation -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">7</span><span class="scenario-title-text">Cross-Column Pattern Correlation</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-facility">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#10b981" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#10b981" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Domain Expert</div>
+          <div class="scenario-speech">"When power output shows a bell curve, what do temperature or humidity typically look like? Are these correlations consistent?"</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster mode → Correlation map</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          After clustering, <strong>every column</strong> within each cluster is profiled automatically: the average shape and a <strong>consistency score</strong> (how uniformly members share the pattern). The Column Pattern Correlation map shows mini sparklines for all columns &times; all clusters, with consistency badges <span style="color:#065f46;font-weight:600;">Strong</span>, <span style="color:#5b21b6;font-weight:600;">Moderate</span>, <span style="color:#92400e;font-weight:600;">Weak</span> or <span style="color:#6b7280;font-weight:600;">Noisy</span>.
+        </p>
+        <div class="scenario-method-note">All columns profiled · Cosine consistency metric · Primary/overlay tags · Sparkline visualization</div>
+      </div>
+    </div>
+
+    <!-- Scenario 8: Segment description (reverse) -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">8</span><span class="scenario-title-text">Segment Interpretation <span style="font-weight:400;color:#0891b2;font-size:.75em;">(TS → Text)</span></span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-operator">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#06b6d4" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#06b6d4" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#06b6d4" opacity=".55"/><rect x="24" y="24" width="12" height="9" rx="1.5" fill="#ecfdf5" stroke="#0891b2" stroke-width="1"/><polyline points="26,30 29,27 32,29 34,26" stroke="#06b6d4" stroke-width=".8" fill="none"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Operations Manager</div>
+          <div class="scenario-speech">"I want to know quickly whether this segment is normal or abnormal, and what each sensor's behavior looks like."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#06b6d4;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Describe</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          In Select mode, drag a region and click "Describe". ChatTS-14B (default) writes the shape narrative, while trend, volatility and feature numbers are filled from app-side computation. For multi-column data it gives per-column analysis plus an overall summary.
+        </p>
+        <div class="scenario-method-note">Single/multi-column · Shape, trend and volatility analysis · ChatTS-14B default (external LLM selectable) · Domain metadata aware</div>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /sub-search-scenarios -->
+
+  </div><!-- /tab-search -->

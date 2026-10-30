@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">TS-Lens — 시계열에서 패턴을 찾고, 검토하고, 기록합니다</title>
+<desc id="desc">CSV 등록, 다섯 가지 질의, 수치 기반 유사 검색, Label Basket 검토의 네 단계. 기본 분석은 CPU에서 동작하며 AI 기능은 모델별 GPU 또는 CPU 실행 환경과 가중치가 필요합니다. 실제 화면이 아닌 기능 흐름도입니다.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L7 4L0 8" fill="none" stroke="#91a3b5" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:"Noto Sans CJK KR","Noto Sans KR",sans-serif;fill:#172c40}.muted{fill:#526a7d}.teal{fill:#087e80}.small{font-size:17px}.body{font-size:19px}.label{font-size:15px;letter-spacing:1.4px;font-weight:700}.heading{font-size:27px;font-weight:700}.line{fill:none;stroke-linecap:round;stroke-linejoin:round}</style>
+<rect width="1600" height="1000" fill="#f3f6f9"/>
+<rect x="0" y="0" width="1600" height="8" fill="#087e80"/>
+<circle cx="87" cy="63" r="18" fill="none" stroke="#087e80" stroke-width="3"/>
+<path d="M100 77l12 12M73 64l7-6 7 12 10-14" class="line" stroke="#087e80" stroke-width="3"/>
+<text x="130" y="76" font-size="32" font-weight="700">TS-Lens</text>
+<text x="1536" y="71" text-anchor="end" class="label muted">TIME-SERIES PATTERN FINDER</text>
+<text x="64" y="151" font-size="43" font-weight="700">시계열에서 패턴을 찾고, 검토하고, 기록합니다.</text>
+<text x="64" y="194" font-size="22" class="muted">CSV 데이터부터 검색·군집화·라벨링까지 이어지는 내부 분석 도구</text>
+
+<rect x="64" y="247" width="344" height="370" rx="18" fill="#fff" stroke="#d9e3ea"/>
+<text x="88" y="282" class="label teal" >01</text>
+<text x="88" y="322" class="heading" >데이터 등록</text>
+<text x="88" y="354" class="small muted" >CSV를 읽고 품질을 확인합니다</text>
+<path d="M412 437h23" stroke="#91a3b5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="440" y="247" width="344" height="370" rx="18" fill="#fff" stroke="#d9e3ea"/>
+<text x="464" y="282" class="label teal" >02</text>
+<text x="464" y="322" class="heading" >패턴 질의</text>
+<text x="464" y="354" class="small muted" >찾고 싶은 모양을 지정합니다</text>
+<path d="M788 437h23" stroke="#91a3b5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="816" y="247" width="344" height="370" rx="18" fill="#fff" stroke="#d9e3ea"/>
+<text x="840" y="282" class="label teal" >03</text>
+<text x="840" y="322" class="heading" >유사 구간 검색</text>
+<text x="840" y="354" class="small muted" >수치 거리로 패턴을 비교합니다</text>
+<path d="M1164 437h23" stroke="#91a3b5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1192" y="247" width="344" height="370" rx="18" fill="#fff" stroke="#d9e3ea"/>
+<text x="1216" y="282" class="label teal" >04</text>
+<text x="1216" y="322" class="heading" >검토와 기록</text>
+<text x="1216" y="354" class="small muted" >사람이 확인하고 라벨을 남깁니다</text>
+<rect x="88" y="380" width="296" height="137" rx="10" fill="#f4f8fb" stroke="none"/>
+<path d="M104 410H368" class="line" stroke="#dbe5eb" stroke-width="1"/>
+<path d="M104 445H368" class="line" stroke="#dbe5eb" stroke-width="1"/>
+<path d="M104 480H368" class="line" stroke="#dbe5eb" stroke-width="1"/>
+<path d="M104.0,484.0 L107.3,480.7 L110.6,477.4 L113.9,474.4 L117.2,471.7 L120.5,469.4 L123.8,467.6 L127.1,466.2 L130.4,465.4 L133.7,465.0 L137.0,465.0 L140.3,465.3 L143.6,465.9 L146.9,466.6 L150.2,467.3 L153.5,467.8 L156.8,467.9 L160.1,467.5 L163.4,466.5 L166.7,464.7 L170.0,462.1 L173.3,458.6 L176.6,454.2 L179.9,449.0 L183.2,443.0 L186.5,436.5 L189.8,429.7 L193.1,422.9 L196.4,416.3 L199.7,410.2 L203.0,405.0 L206.3,400.9 L209.6,398.1 L212.9,396.9 L216.2,397.4 L219.5,399.5 L222.8,403.2 L226.1,408.4 L229.4,414.9 L232.7,422.5 L236.0,430.8 L239.3,439.6 L242.6,448.6 L245.9,457.4 L249.2,465.7 L252.5,473.4 L255.8,480.3 L259.1,486.2 L262.4,491.1 L265.7,494.9 L269.0,497.6 L272.3,499.3 L275.6,500.0 L278.9,499.9 L282.2,499.2 L285.5,497.9 L288.8,496.2 L292.1,494.2 L295.4,492.2 L298.7,490.1 L302.0,488.3 L305.3,486.6 L308.6,485.3 L311.9,484.4 L315.2,483.8 L318.5,483.6 L321.8,483.7 L325.1,484.2 L328.4,484.9 L331.7,485.7 L335.0,486.6 L338.3,487.5 L341.6,488.2 L344.9,488.7 L348.2,488.9 L351.5,488.8 L354.8,488.2 L358.1,487.2 L361.4,485.8 L364.7,484.0 L368.0,481.8" class="line" stroke="#087e80" stroke-width="3"/>
+<text x="88" y="555" class="small" >시각 열 · 값 열 · 결측 확인</text>
+<text x="88" y="585" class="small muted" >원본 파일 보관 / 전처리 결과 분리</text>
+<rect x="464" y="381" width="86" height="35" rx="7" fill="#eaf5f4" stroke="none"/>
+<text x="507.0" y="405" class="small teal" text-anchor="middle">선택</text>
+<rect x="559" y="381" width="96" height="35" rx="7" fill="#eaf5f4" stroke="none"/>
+<text x="607.0" y="405" class="small teal" text-anchor="middle">스케치</text>
+<rect x="664" y="381" width="96" height="35" rx="7" fill="#eaf5f4" stroke="none"/>
+<text x="712.0" y="405" class="small teal" text-anchor="middle">텍스트</text>
+<rect x="464" y="425" width="142" height="35" rx="7" fill="#eaf5f4" stroke="none"/>
+<text x="535.0" y="449" class="small teal" text-anchor="middle">샘플</text>
+<rect x="616" y="425" width="144" height="35" rx="7" fill="#eaf5f4" stroke="none"/>
+<text x="688.0" y="449" class="small teal" text-anchor="middle">프리셋</text>
+<path d="M481 514L516 514L548 490L577 478L605 490L640 514L742 514" class="line" stroke="#087e80" stroke-width="3"/>
+<text x="464" y="555" class="small" >예시 구간 · 직접 그린 파형 · 문장</text>
+<text x="464" y="585" class="small muted" >생성된 파형을 확인한 뒤 검색</text>
+<rect x="840" y="383" width="296" height="36" rx="6" fill="#eff5fa" stroke="none"/>
+<text x="855" y="408" class="small muted" >01</text>
+<path d="M904.0,412.0 L906.6,411.1 L909.2,410.3 L911.8,409.5 L914.4,408.7 L916.9,408.1 L919.5,407.6 L922.1,407.3 L924.7,407.0 L927.3,406.9 L929.9,406.9 L932.5,407.0 L935.0,407.2 L937.6,407.4 L940.2,407.6 L942.8,407.7 L945.4,407.7 L948.0,407.6 L950.6,407.3 L953.2,406.9 L955.8,406.2 L958.3,405.2 L960.9,404.1 L963.5,402.7 L966.1,401.1 L968.7,399.4 L971.3,397.6 L973.9,395.7 L976.5,394.0 L979.0,392.4 L981.6,391.0 L984.2,389.9 L986.8,389.2 L989.4,388.8 L992.0,389.0 L994.6,389.5 L997.1,390.5 L999.7,391.9 L1002.3,393.6 L1004.9,395.6 L1007.5,397.9 L1010.1,400.2 L1012.7,402.6 L1015.3,404.9 L1017.9,407.1 L1020.4,409.2 L1023.0,411.0 L1025.6,412.6 L1028.2,413.9 L1030.8,414.9 L1033.4,415.6 L1036.0,416.1 L1038.5,416.3 L1041.1,416.2 L1043.7,416.0 L1046.3,415.7 L1048.9,415.2 L1051.5,414.7 L1054.1,414.2 L1056.7,413.6 L1059.2,413.1 L1061.8,412.7 L1064.4,412.3 L1067.0,412.1 L1069.6,411.9 L1072.2,411.9 L1074.8,411.9 L1077.4,412.0 L1080.0,412.2 L1082.5,412.5 L1085.1,412.7 L1087.7,412.9 L1090.3,413.1 L1092.9,413.3 L1095.5,413.3 L1098.1,413.3 L1100.7,413.1 L1103.2,412.9 L1105.8,412.5 L1108.4,412.0 L1111.0,411.4" class="line" stroke="#087e80" stroke-width="3"/>
+<rect x="840" y="426" width="296" height="36" rx="6" fill="#eff5fa" stroke="none"/>
+<text x="855" y="451" class="small muted" >02</text>
+<path d="M904.0,451.8 L906.6,451.1 L909.2,450.4 L911.8,449.9 L914.4,449.4 L916.9,449.0 L919.5,448.8 L922.1,448.7 L924.7,448.7 L927.3,448.9 L929.9,449.2 L932.5,449.6 L935.0,450.1 L937.6,450.6 L940.2,451.1 L942.8,451.5 L945.4,451.9 L948.0,452.1 L950.6,452.1 L953.2,451.9 L955.8,451.4 L958.3,450.7 L960.9,449.8 L963.5,448.6 L966.1,447.2 L968.7,445.6 L971.3,443.9 L973.9,442.2 L976.5,440.5 L979.0,439.0 L981.6,437.6 L984.2,436.5 L986.8,435.7 L989.4,435.3 L992.0,435.4 L994.6,435.8 L997.1,436.6 L999.7,437.9 L1002.3,439.4 L1004.9,441.2 L1007.5,443.2 L1010.1,445.3 L1012.7,447.4 L1015.3,449.5 L1017.9,451.4 L1020.4,453.2 L1023.0,454.7 L1025.6,456.0 L1028.2,456.9 L1030.8,457.6 L1033.4,458.0 L1036.0,458.2 L1038.5,458.1 L1041.1,457.8 L1043.7,457.3 L1046.3,456.7 L1048.9,456.0 L1051.5,455.2 L1054.1,454.4 L1056.7,453.7 L1059.2,453.0 L1061.8,452.5 L1064.4,452.0 L1067.0,451.6 L1069.6,451.4 L1072.2,451.3 L1074.8,451.3 L1077.4,451.5 L1080.0,451.7 L1082.5,452.0 L1085.1,452.3 L1087.7,452.7 L1090.3,453.0 L1092.9,453.3 L1095.5,453.5 L1098.1,453.7 L1100.7,453.8 L1103.2,453.8 L1105.8,453.7 L1108.4,453.5 L1111.0,453.2" class="line" stroke="#377aa6" stroke-width="3"/>
+<rect x="840" y="469" width="296" height="36" rx="6" fill="#eff5fa" stroke="none"/>
+<text x="855" y="494" class="small muted" >03</text>
+<path d="M904.0,494.6 L906.6,494.2 L909.2,493.8 L911.8,493.5 L914.4,493.4 L916.9,493.3 L919.5,493.3 L922.1,493.5 L924.7,493.9 L927.3,494.3 L929.9,494.8 L932.5,495.4 L935.0,496.1 L937.6,496.8 L940.2,497.4 L942.8,497.9 L945.4,498.4 L948.0,498.6 L950.6,498.7 L953.2,498.5 L955.8,498.0 L958.3,497.3 L960.9,496.2 L963.5,494.9 L966.1,493.4 L968.7,491.7 L971.3,489.8 L973.9,487.9 L976.5,486.0 L979.0,484.2 L981.6,482.6 L984.2,481.2 L986.8,480.2 L989.4,479.5 L992.0,479.2 L994.6,479.3 L997.1,479.9 L999.7,480.8 L1002.3,482.0 L1004.9,483.5 L1007.5,485.2 L1010.1,487.0 L1012.7,488.8 L1015.3,490.6 L1017.9,492.3 L1020.4,493.8 L1023.0,495.1 L1025.6,496.1 L1028.2,496.9 L1030.8,497.5 L1033.4,497.7 L1036.0,497.8 L1038.5,497.6 L1041.1,497.2 L1043.7,496.7 L1046.3,496.1 L1048.9,495.4 L1051.5,494.7 L1054.1,494.0 L1056.7,493.4 L1059.2,492.8 L1061.8,492.4 L1064.4,492.1 L1067.0,491.9 L1069.6,491.9 L1072.2,492.1 L1074.8,492.4 L1077.4,492.8 L1080.0,493.3 L1082.5,493.9 L1085.1,494.5 L1087.7,495.1 L1090.3,495.8 L1092.9,496.4 L1095.5,497.0 L1098.1,497.5 L1100.7,497.8 L1103.2,498.1 L1105.8,498.3 L1108.4,498.4 L1111.0,498.3" class="line" stroke="#377aa6" stroke-width="3"/>
+<text x="840" y="555" class="small" >Euclidean · DTW · Cosine · Shape</text>
+<text x="840" y="585" class="small muted" >Discovery에서 군집별 패턴도 탐색</text>
+<rect x="1216" y="383" width="296" height="135" rx="10" fill="#f4f8fb" stroke="none"/>
+<text x="1234" y="414" class="body" font-weight="700">Label Basket</text>
+<rect x="1234" y="433" width="95" height="32" rx="6" fill="#e7edf3" stroke="none"/>
+<text x="1281" y="456" class="small muted" text-anchor="middle">Draft</text>
+<path d="M1340 449h24" stroke="#91a3b5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1380" y="433" width="115" height="32" rx="6" fill="#dff2e9" stroke="none"/>
+<text x="1437" y="456" class="small teal" text-anchor="middle">Confirmed</text>
+<text x="1234" y="495" class="small muted" >출처 · 구간 · 라벨 · 메모</text>
+<text x="1216" y="555" class="small" >검색 결과와 대표 패턴 검토</text>
+<text x="1216" y="585" class="small muted" >라벨 저장 / CSV 내보내기</text>
+<rect x="64" y="651" width="1472" height="253" rx="18" fill="#172c40" stroke="none"/>
+<text x="90" y="695" class="heading" style="fill:#ffffff">실행 환경에 맞춰 사용하는 분석과 AI</text>
+<path d="M549 728V876" class="line" stroke="#405366" stroke-width="1"/>
+<path d="M1040 728V876" class="line" stroke="#405366" stroke-width="1"/>
+<text x="90" y="751" class="small" style="fill:#78d8ce">기본 분석</text>
+<text x="90" y="790" class="heading" style="fill:#ffffff">CPU만으로 시작</text>
+<text x="90" y="831" class="small" style="fill:#d7e2ea">CSV · 검색 · 군집화 · 라벨링</text>
+<text x="90" y="861" class="small" style="fill:#d7e2ea">모델이 없으면 규칙 파형·통계 설명</text>
+<text x="576" y="751" class="small" style="fill:#78d8ce">선택 AI 기능</text>
+<text x="576" y="790" class="heading" style="fill:#ffffff">텍스트 ↔ 시계열</text>
+<text x="576" y="831" class="small" style="fill:#d7e2ea">VerbalTS: 영어 파형 생성 / GPU·CPU</text>
+<text x="576" y="861" class="small" style="fill:#d7e2ea">EXAONE vLLM: GPU / 로컬 LLM: CPU</text>
+<text x="1067" y="751" class="small" style="fill:#78d8ce">자동 실행</text>
+<text x="1067" y="790" class="heading" style="fill:#ffffff">준비된 모델을 확인</text>
+<text x="1067" y="831" class="small" style="fill:#d7e2ea">GPU · 패키지 · 가중치 확인 후 서빙</text>
+<text x="1067" y="861" class="small" style="fill:#d7e2ea">가용 AI가 없는 작업은 기본 분석 사용</text>
+<text x="64" y="949" class="small muted" >기능 흐름도 · 예시 파형이며 실제 화면이나 측정 결과가 아닙니다.</text>
+<text x="1536" y="949" class="small muted" text-anchor="end">AI 모델 가중치와 실행 환경은 별도 준비</text>
+</svg>

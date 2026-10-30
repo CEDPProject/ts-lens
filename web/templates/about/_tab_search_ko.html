@@ -1,0 +1,1299 @@
+  <div class="about-tab-content" id="tab-search">
+
+  <!-- 통합 검색 패널 개요 -->
+  <section class="about-section">
+    <div class="feat-item" style="border-left:3px solid var(--green);padding-left:16px;">
+      <h3 style="margin-top:0;">통합 패턴 검색 패널</h3>
+      <p>6가지 쿼리 모드와 양방향 Text↔TS 변환을 지원합니다. 데이터 뷰에 따라 사용 가능한 모드가 자동 전환됩니다. <strong>Continuous 뷰</strong>에서는 <strong>Select·Sketch·Text</strong>(전체 구간 슬라이딩 윈도우), <strong>Segment 뷰</strong>에서는 <strong>Sample·Sketch·Preset·Cluster·Text</strong>(세그먼트 단위 비교)를 씁니다. 비교 방법·결과 필터·결측 처리 같은 공통 설정은 "고급 설정" 한 곳에서 지정합니다.</p>
+
+      <!-- 패널 목업 + 6가지 모드 플로우 -->
+      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;">
+        <div class="about-sidebar-mock">
+          <div class="about-sidebar-title">패턴 검색</div>
+          <div class="about-sidebar-pills">
+            <span class="about-sidebar-pill active">Select</span>
+            <span class="about-sidebar-pill">Sketch</span>
+            <span class="about-sidebar-pill">Sample</span>
+            <span class="about-sidebar-pill">Preset</span>
+            <span class="about-sidebar-pill">Cluster</span>
+            <span class="about-sidebar-pill">Text</span>
+          </div>
+          <div class="about-sidebar-body">
+            <div style="font-size:.6rem;color:var(--text3);margin-bottom:4px;">&#9656; 모드별 설정</div>
+            <div style="height:32px;background:var(--surface3);border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text3);">고정 길이 / 프리셋 격자 / 문장 입력</div>
+            <div style="font-size:.6rem;color:var(--text3);margin-bottom:4px;">&#9656; 고급 설정 (공통)</div>
+            <div style="display:flex;gap:3px;">
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">비교</span>
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">필터</span>
+              <span style="font-size:.54rem;padding:2px 5px;background:var(--surface3);border-radius:3px;color:var(--text3);">NaN</span>
+            </div>
+          </div>
+          <div class="about-sidebar-footer">
+            <div class="about-sidebar-btn">검색</div>
+          </div>
+        </div>
+
+        <!-- 6가지 모드 플로우 (Both → Full → Segment 순) -->
+        <div style="flex:1;min-width:min(100%,280px);display:flex;flex-direction:column;gap:8px;">
+          <!-- Both: Sketch -->
+          <div class="about-flow-row" data-color="cyan">
+            <div class="about-flow-label">Sketch</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">프리핸드 스케치</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">정규화</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">유사 구간 검색</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">결과</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:4px;">Segment</span>
+          </div>
+          <!-- Both: Text -->
+          <div class="about-flow-row" data-color="purple">
+            <div class="about-flow-label">Text</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">자연어 입력</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">규칙 선처리 · 모델 생성</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">유사 구간 검색</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">결과</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:4px;">Segment</span>
+          </div>
+          <!-- Full only: Select -->
+          <div class="about-flow-row" data-color="green">
+            <div class="about-flow-label">Select</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">차트 드래그</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">실제 파형 쿼리</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">슬라이딩 윈도우</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">결과</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(34,197,94,.1);color:#166534;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Full</span>
+          </div>
+          <!-- Segment only: Sample -->
+          <div class="about-flow-row" data-color="amber">
+            <div class="about-flow-label">Sample</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">세그먼트 카드 클릭</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">실제 세그먼트를 쿼리로</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">1:1 비교</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">결과</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+          <!-- Segment only: Preset -->
+          <div class="about-flow-row" data-color="blue">
+            <div class="about-flow-label">Preset</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">형태 선택</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">합성 형태 (7종+커스텀)</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">세그먼트 비교</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">결과</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+          <!-- Segment only: Cluster -->
+          <div class="about-flow-row" data-color="red">
+            <div class="about-flow-label">Cluster</div>
+            <div class="about-flow-steps">
+              <span class="about-flow-chip about-flow-chip-hl">Fast / Shape / Semantic AI</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">자동 그룹화</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip">컬럼 프로파일</span>
+              <span class="about-flow-arrow">&rarr;</span>
+              <span class="about-flow-chip about-flow-chip-hl">상관관계 맵</span>
+            </div>
+            <span class="about-flow-tag" style="background:rgba(245,158,11,.1);color:#92400e;font-size:.6rem;padding:2px 6px;border-radius:4px;margin-left:8px;">Segment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 모드 가능 여부 표 -->
+      <table class="about-table" style="margin:12px 0;font-size:.75rem;border-collapse:collapse;width:100%;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border);">
+            <th style="text-align:left;padding:6px 12px;">모드</th>
+            <th style="padding:6px 12px;">Continuous</th>
+            <th style="padding:6px 12px;">Segment</th>
+            <th style="text-align:left;padding:6px 12px;">설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:4px 12px;font-weight:600;">Select</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="padding:4px 12px;">차트 드래그로 쿼리 파형 선택</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Sketch</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">프리핸드 드로잉으로 쿼리 형태 생성</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Text</td><td style="text-align:center;">&#10004;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">자연어 &rarr; 규칙 선처리 / 모델 형태 생성 &rarr; 검색</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Sample</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">세그먼트 카드 클릭을 쿼리로 (QBE)</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Preset</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">내장 7종 + 저장한 커스텀 프리셋</td></tr>
+          <tr><td style="padding:4px 12px;font-weight:600;">Cluster</td><td style="text-align:center;color:var(--text3);">&mdash;</td><td style="text-align:center;">&#10004;</td><td style="padding:4px 12px;">비지도 그룹화 (Fast/Shape/Semantic AI), 중심 저장</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 서브 탭 네비게이션 (5개) -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="searchSubTabs">
+      <button class="sub-tab active" data-subtab="sub-search-modes">모드</button>
+      <button class="sub-tab" data-subtab="sub-search-compare">유사도</button>
+      <button class="sub-tab" data-subtab="sub-search-options">검색 옵션</button>
+      <button class="sub-tab" data-subtab="sub-search-reverse">역방향 TS→Text</button>
+      <button class="sub-tab" data-subtab="sub-search-scenarios">시나리오</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: 모드
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-search-modes">
+  <section class="about-section">
+    <p class="sec-desc">6가지 쿼리 생성 모드입니다. 데이터 특성과 목적에 맞는 모드를 선택합니다.</p>
+
+    <!-- 모드 비교 카드 (3x2 그리드) with SVG illustrations -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px;margin:16px 0;">
+
+      <!-- Sketch -->
+      <div style="padding:16px;background:rgba(236,72,153,.04);border:1px solid rgba(236,72,153,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="2" y="2" width="46" height="36" rx="4" fill="#fff" stroke="#ec4899" stroke-width="1.5"/>
+            <path d="M8,30 Q15,28 22,18 Q30,8 38,12 Q44,16 44,20" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="0"/>
+            <circle cx="44" cy="20" r="2.5" fill="#ec4899"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#ec4899;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sketch</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">프리핸드 드로잉으로 <strong>머릿속 패턴</strong>을 직접 그립니다</p>
+            <div style="font-size:.68rem;color:var(--text3);">Zero-shot · 직관적인 형태 표현</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text -->
+      <div style="padding:16px;background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="2" y="2" width="22" height="36" rx="3" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="1"/>
+            <text x="13" y="22" text-anchor="middle" font-size="6" fill="#7c3aed" font-weight="600">NL</text>
+            <path d="M28,20 L34,20" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-t)"/>
+            <rect x="38" y="10" width="10" height="20" rx="2" fill="rgba(34,197,94,.15)" stroke="#22c55e" stroke-width="1"/>
+            <polyline points="40,22 43,16 46,20" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <defs><marker id="arr-t" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M1,1 L5,3 L1,5" fill="#8b5cf6"/></marker></defs>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#8b5cf6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Text</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">자연어 설명 → <strong>규칙 선처리 후 로컬 모델 또는 외부 LLM이 형태 생성</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">Zero-shot · 비대칭·복합 패턴 표현 가능</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Select -->
+      <div style="padding:16px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <polyline points="4,30 12,25 20,28 28,15 36,18 44,10" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="18" y="12" width="16" height="20" rx="2" fill="rgba(34,197,94,.25)" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="2,1"/>
+            <polyline points="20,28 28,15 34,18" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#22c55e;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Select</span>
+              <span style="font-size:.65rem;color:#166534;background:rgba(34,197,94,.1);padding:2px 6px;border-radius:4px;">Full</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">차트에서 관심 영역을 드래그해 <strong>실제 파형</strong>을 쿼리로 사용합니다</p>
+            <div style="font-size:.68rem;color:var(--text3);">슬라이딩 윈도우 · 가장 정확한 검색</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample -->
+      <div style="padding:16px;background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="4" y="6" width="18" height="28" rx="3" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+            <polyline points="7,24 11,18 15,22 19,14" stroke="#9ca3af" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="28" y="6" width="18" height="28" rx="3" fill="rgba(245,158,11,.2)" stroke="#f59e0b" stroke-width="1.5"/>
+            <polyline points="31,24 35,18 39,22 43,14" stroke="#f59e0b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="37" cy="20" r="6" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,1"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#f59e0b;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sample</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">세그먼트 카드 클릭 → <strong>원클릭 QBE</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">실제 데이터 기반 · 1:1 세그먼트 비교</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preset -->
+      <div style="padding:16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <rect x="4" y="4" width="14" height="14" rx="2" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>
+            <polyline points="6,14 11,8 16,14" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="22" y="4" width="14" height="14" rx="2" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>
+            <path d="M24,14 Q29,6 34,14" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="4" y="22" width="14" height="14" rx="2" fill="rgba(59,130,246,.25)" stroke="#3b82f6" stroke-width="1.5"/>
+            <polyline points="6,26 18,34" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="22" y="22" width="14" height="14" rx="2" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="2,1"/>
+            <text x="29" y="31" text-anchor="middle" font-size="7" fill="#8b5cf6">+</text>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">7종 내장 형태 + <strong>커스텀 프리셋</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">LLM 불필요 · "전체 분류" 자동화 가능</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cluster -->
+      <div style="padding:16px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <svg viewBox="0 0 50 40" style="width:50px;height:40px;flex-shrink:0;">
+            <circle cx="12" cy="12" r="6" fill="rgba(239,68,68,.2)" stroke="#ef4444" stroke-width="1"/>
+            <circle cx="10" cy="10" r="1.5" fill="#ef4444"/><circle cx="14" cy="11" r="1.5" fill="#ef4444"/><circle cx="11" cy="14" r="1.5" fill="#ef4444"/>
+            <circle cx="36" cy="14" r="7" fill="rgba(59,130,246,.2)" stroke="#3b82f6" stroke-width="1"/>
+            <circle cx="33" cy="12" r="1.5" fill="#3b82f6"/><circle cx="38" cy="11" r="1.5" fill="#3b82f6"/><circle cx="35" cy="16" r="1.5" fill="#3b82f6"/><circle cx="39" cy="15" r="1.5" fill="#3b82f6"/>
+            <circle cx="20" cy="30" r="6" fill="rgba(34,197,94,.2)" stroke="#22c55e" stroke-width="1"/>
+            <circle cx="18" cy="28" r="1.5" fill="#22c55e"/><circle cx="22" cy="29" r="1.5" fill="#22c55e"/><circle cx="20" cy="32" r="1.5" fill="#22c55e"/>
+          </svg>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster</span>
+              <span style="font-size:.65rem;color:#92400e;background:rgba(245,158,11,.1);padding:2px 6px;border-radius:4px;">Segment</span>
+            </div>
+            <p style="margin:0 0 6px;font-size:.78rem;color:var(--text2);">비지도 그룹화 — <strong>3가지 알고리즘</strong></p>
+            <div style="font-size:.68rem;color:var(--text3);">Fast · Shape · Semantic AI (MOMENT)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 모드 비교 표 -->
+    <div class="method-compare-table">
+      <table>
+        <thead><tr><th>모드</th><th>쿼리 생성 방법</th><th>장점</th><th>제약 · 참고</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mct-label">Select</td>
+            <td>차트에서 드래그로 관심 영역을 직접 선택 (Continuous 뷰)</td>
+            <td>실제 파형이 쿼리이므로 가장 정확. 슬라이딩 윈도우가 전체 구간을 훑음</td>
+            <td>Continuous 뷰 전용. 관심 영역이 데이터에 이미 있어야 함. 짧은 선택은 잡음에 민감</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Sketch</td>
+            <td>프리핸드 드로잉으로 원하는 형태를 생성</td>
+            <td>데이터 없이도 형태를 직관적으로 표현. 양쪽 뷰 지원</td>
+            <td>정확한 파형 재현은 어려움. 세밀한 형태는 Text 모드 권장</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Sample</td>
+            <td>세그먼트 카드를 클릭해 실제 파형을 쿼리로 사용</td>
+            <td>원클릭 QBE. 실제 데이터 기반이라 가장 정확</td>
+            <td>Segment 뷰 전용. 관심 세그먼트가 데이터에 이미 있어야 함</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Preset</td>
+            <td>내장 7종 + 저장한 클러스터 중심 커스텀 프리셋 중 클릭 선택</td>
+            <td>빠르고 일관됨. LLM 불필요(오프라인). "전체 분류"로 자동 분류 가능</td>
+            <td>Segment 뷰 전용. 프리셋에 없는 복잡한 형태는 표현 불가</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Cluster</td>
+            <td>3가지 알고리즘: Fast (K-Means), Shape (k-Shape), Semantic AI (MOMENT)</td>
+            <td>사전 라벨 불필요. Auto-K 선택. MOMENT는 다변량 Joint 클러스터링에 강함</td>
+            <td>Segment 뷰 전용. 의미 있는 군집에는 충분한 세그먼트 수가 필요</td>
+          </tr>
+          <tr>
+            <td class="mct-label">Text</td>
+            <td>자연어 &rarr; 규칙 기반 선처리, 그 다음 로컬 모델 또는 외부 LLM이 형태 생성</td>
+            <td>데이터·프리셋 없이 시작 가능(zero-shot). 비대칭·복합 패턴 서술 가능</td>
+            <td>양쪽 뷰 지원. 단순 표현은 규칙이, 나머지는 로컬 모델 또는 외부 LLM이 처리. 결과가 조금씩 달라질 수 있음</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 프리셋 형태 목록 (SVG 시각화) -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>내장 프리셋 형태 (7종)</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:16px;">
+        <!-- 상승 rise -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,25 55,5" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>상승</strong> <span style="color:var(--text3);">rise</span></div>
+        </div>
+        <!-- 하강 fall -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 55,25" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>하강</strong> <span style="color:var(--text3);">fall</span></div>
+        </div>
+        <!-- 평탄 flat -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,15 55,15" stroke="#6b7280" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>평탄</strong> <span style="color:var(--text3);">flat</span></div>
+        </div>
+        <!-- 종형 bell -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <path d="M5,25 Q15,25 20,18 Q30,2 40,18 Q45,25 55,25" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>종형</strong> <span style="color:var(--text3);">bell</span></div>
+        </div>
+        <!-- V자형 v_shape -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 30,25 55,5" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>V자형</strong> <span style="color:var(--text3);">v_shape</span></div>
+        </div>
+        <!-- 스파이크 spike -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,25 25,25 30,3 35,25 55,25" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>스파이크</strong> <span style="color:var(--text3);">spike</span></div>
+        </div>
+        <!-- 딥 dip -->
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 60 30" style="width:100%;height:30px;margin-bottom:6px;">
+            <polyline points="5,5 25,5 30,27 35,5 55,5" stroke="#06b6d4" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:.75rem;"><strong>딥</strong> <span style="color:var(--text3);">dip</span></div>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:.75rem;color:var(--text3);">선택한 형태는 세그먼트 길이에 맞춰 자동 리샘플링됩니다. 클러스터 중심(Medoid)을 저장하면 <span style="color:#8b5cf6;font-weight:600;">커스텀 프리셋</span>으로 재사용할 수 있습니다.</p>
+    </div>
+
+    <!-- 문장 → 형태 변환 (NL-to-Shape) 데모 -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>문장 → 형태 변환 (NL-to-Shape)</h3></div>
+      <p>패턴을 자연어로 서술합니다. 단순한 표현은 규칙 기반 선처리가 바로 파형으로 만들고, 나머지는 로컬 모델 또는 선택한 외부 LLM이 합성 시계열을 생성합니다.</p>
+      <div class="nl-to-shape-demo">
+        <div class="nts-input">
+          <div class="nts-label">자연어 입력</div>
+          <div class="nts-text">"서서히 올라가다 중간에서 갑자기 떨어짐"</div>
+          <div class="nts-meta">컬럼: <strong>power_kw</strong> (발전량, kW)</div>
+        </div>
+        <div class="nts-arrow">→</div>
+        <div class="nts-output">
+          <div class="nts-label">생성된 형태</div>
+          <canvas class="nts-canvas" id="ntsShapeDemo" height="70"></canvas>
+          <div class="nts-desc">상승 구간 유지 → 중간 지점에서 하락, 회복 없음</div>
+        </div>
+        <div class="nts-arrow">→</div>
+        <div class="nts-result">
+          <div class="nts-label">검색 결과</div>
+          <div class="nts-result-text">
+            <strong>23</strong>건 일치<br>
+            <span class="nts-result-sub">유사도 72-91%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 클러스터링 알고리즘 비교 -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>클러스터링 알고리즘 비교</h3></div>
+      <div class="method-compare-table" style="margin-top:12px;">
+        <table>
+          <thead><tr><th>알고리즘</th><th>방법</th><th>적합한 상황</th></tr></thead>
+          <tbody>
+            <tr><td class="mct-label">Fast (K-Means)</td><td>유클리드 거리 기반</td><td>범용, 대용량, 빠른 결과</td></tr>
+            <tr><td class="mct-label">Shape (k-Shape)</td><td>SBD, 스케일/시프트 불변</td><td>진폭·위상 변동이 있는 시계열</td></tr>
+            <tr><td class="mct-label">Semantic AI</td><td>MOMENT 임베딩 + K-Means</td><td>다변량 Joint 클러스터링</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 클러스터 활용 기능 -->
+    <div class="feat-item" style="margin-top:24px;">
+      <div class="feat-head"><h3>클러스터 활용 기능</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;margin-top:14px;">
+
+        <!-- 센트로이드 → 커스텀 프리셋 -->
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:32px;height:32px;background:rgba(139,92,246,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 20 20" style="width:18px;height:18px;">
+                <circle cx="10" cy="10" r="6" fill="none" stroke="#a78bfa" stroke-width="1.2"/>
+                <circle cx="10" cy="10" r="2" fill="#8b5cf6"/>
+                <path d="M10,4 L10,2" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M10,18 L10,16" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M4,10 L2,10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                <path d="M18,10 L16,10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:.82rem;color:var(--text1);">센트로이드 → 커스텀 프리셋</div>
+              <div style="font-size:.68rem;color:var(--text3);">발견한 패턴의 재사용</div>
+            </div>
+          </div>
+          <ul style="margin:0;padding-left:16px;font-size:.72rem;line-height:1.6;color:var(--text2);">
+            <li>클러스터 대표 형태(Medoid)를 선택</li>
+            <li><strong>커스텀 프리셋으로 저장</strong> → Preset 모드에서 보라색으로 표시, 재사용</li>
+            <li>"전체 분류" 기능으로 자동 라벨링 가능</li>
+          </ul>
+        </div>
+
+        <!-- 컬럼별 패턴 상관관계 분석 -->
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:32px;height:32px;background:rgba(59,130,246,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 20 20" style="width:18px;height:18px;">
+                <rect x="2" y="2" width="6" height="6" rx="1.5" fill="rgba(34,197,94,.3)" stroke="#22c55e" stroke-width=".8"/>
+                <rect x="12" y="2" width="6" height="6" rx="1.5" fill="rgba(59,130,246,.3)" stroke="#3b82f6" stroke-width=".8"/>
+                <rect x="2" y="12" width="6" height="6" rx="1.5" fill="rgba(245,158,11,.3)" stroke="#f59e0b" stroke-width=".8"/>
+                <rect x="12" y="12" width="6" height="6" rx="1.5" fill="rgba(239,68,68,.3)" stroke="#ef4444" stroke-width=".8"/>
+                <line x1="8" y1="5" x2="12" y2="5" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+                <line x1="5" y1="8" x2="5" y2="12" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+                <line x1="15" y1="8" x2="15" y2="12" stroke="#9ca3af" stroke-width=".8" stroke-dasharray="1.5,1"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:.82rem;color:var(--text1);">컬럼별 패턴 상관관계</div>
+              <div style="font-size:.68rem;color:var(--text3);">다변량 데이터 인사이트</div>
+            </div>
+          </div>
+          <ul style="margin:0;padding-left:16px;font-size:.72rem;line-height:1.6;color:var(--text2);">
+            <li>각 클러스터별 컬럼 프로파일링</li>
+            <li><strong>상관관계 맵</strong>으로 컬럼 간 패턴 연관성 시각화</li>
+            <li>"일사량↑ → 발전량↑" 같은 관계 발견</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 클러스터 활용 플로우 -->
+      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;">
+          <div style="padding:6px 12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#dc2626;font-weight:500;">1. 클러스터링</div>
+            <div style="font-size:.58rem;color:var(--text3);">자동 그룹화</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#2563eb;font-weight:500;">2. 컬럼 프로파일</div>
+            <div style="font-size:.58rem;color:var(--text3);">상관관계 분석</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#7c3aed;font-weight:500;">3. 대표 형태 선택</div>
+            <div style="font-size:.58rem;color:var(--text3);">Medoid 확인</div>
+          </div>
+          <span style="color:var(--text3);font-size:.8rem;">→</span>
+          <div style="padding:6px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15);border-radius:6px;text-align:center;">
+            <div style="font-size:.65rem;color:#166534;font-weight:500;">4. 프리셋 저장</div>
+            <div style="font-size:.58rem;color:var(--text3);">재사용 가능</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>생성 모델과 외부 LLM</strong> — Text 모드는 먼저 규칙 기반 선처리로 단순한 표현을 바로 파형으로 만들고, 나머지는 로컬 모델이나 외부 LLM(Anthropic Claude, OpenAI 호환)이 처리합니다. 사용자가 외부 LLM을 직접 고르면 규칙 선처리를 건너뜁니다. 외부 LLM은 관리자가 데이터 관리 → 모델 연결 탭에서 연결하며, API 키는 서버 파일에만 저장되고 화면에는 끝 4자리만 보입니다. 문장→파형·시계열→문장·AI 메타 추정 가운데 어디에 쓸지 고를 수 있고, 사용 토큰을 기록해 월 $10에서 경고하고 $100에서 막습니다(설정 가능).
+    </div>
+  </section>
+  </div><!-- /sub-search-modes -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: 유사도
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-compare">
+  <section class="about-section">
+    <p class="sec-desc">쿼리와 후보를 비교하는 검색 모드와 거리 함수입니다.</p>
+
+    <!-- 전체 흐름 -->
+    <div class="pipeline">
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">1</div>
+        <div class="pipe-title">검색 모드</div>
+        <div class="pipe-desc">슬라이딩 윈도우<br>세그먼트 비교<br>분할 비교</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">2</div>
+        <div class="pipe-title">정규화</div>
+        <div class="pipe-desc">Z-score로<br>형태만 비교</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">3</div>
+        <div class="pipe-title">거리 계산</div>
+        <div class="pipe-desc">Euclidean / DTW<br>/ Cosine / Shape</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step pipe-step-done">
+        <div class="pipe-num">4</div>
+        <div class="pipe-title">결과 필터링</div>
+        <div class="pipe-desc">Top-K 또는<br>유사도 임계값</div>
+      </div>
+    </div>
+
+    <!-- 검색 모드 3종 -->
+    <h3 style="margin-top:24px;">검색 모드</h3>
+    <div class="method-cards">
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-blue">1</div>
+        <h3>연속 슬라이딩 윈도우</h3>
+        <p>고정 길이 윈도우가 긴 시계열 위를 한 칸씩 이동하며 각 위치를 쿼리와 비교합니다.</p>
+        <div class="mc-when">연속 시계열에서 패턴이 반복되는 <strong>모든 위치</strong>를 찾을 때</div>
+      </div>
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-green">2</div>
+        <h3>세그먼트 간 비교</h3>
+        <p>미리 나눠 둔 세그먼트(Collection)를 쿼리와 직접 비교합니다.</p>
+        <div class="mc-when">일별·런별 프로파일 사이의 <strong>유사도 순위</strong>를 볼 때</div>
+      </div>
+      <div class="mc">
+        <div class="mc-icon-box mc-icon-amber">3</div>
+        <h3>연속 → 분할 비교</h3>
+        <p>연속 시계열을 고정 길이 조각(일·주 등)으로 나누고 각 조각을 쿼리와 비교합니다.</p>
+        <div class="mc-when">달력 단위로 빠르게 <strong>분류</strong>할 때</div>
+      </div>
+    </div>
+
+    <!-- 거리 함수 비교 -->
+    <h3 style="margin-top:24px;">거리 함수</h3>
+    <div class="method-compare-table">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="mct-badge mct-green">Euclidean</span></th>
+            <th><span class="mct-badge mct-blue">DTW</span></th>
+            <th><span class="mct-badge mct-purple">Cosine</span></th>
+            <th><span class="mct-badge" style="background:#D97706;">Shape</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mct-label">비교 방식</td>
+            <td>1:1 포인트 매칭</td>
+            <td>최적 정렬 매칭</td>
+            <td>벡터 방향 비교</td>
+            <td>형태 특징(기울기·봉우리·대칭) 비교</td>
+          </tr>
+          <tr>
+            <td class="mct-label">길이가 다를 때</td>
+            <td class="mct-no">X (동일 길이만)</td>
+            <td class="mct-yes">O (자동 정렬)</td>
+            <td class="mct-no">X (동일 길이만)</td>
+            <td class="mct-yes">O (길이 무관)</td>
+          </tr>
+          <tr>
+            <td class="mct-label">시간 이동 허용</td>
+            <td class="mct-no">X</td>
+            <td class="mct-yes">O</td>
+            <td class="mct-no">X</td>
+            <td class="mct-yes">O</td>
+          </tr>
+          <tr>
+            <td class="mct-label">속도</td>
+            <td>가장 빠름</td>
+            <td>2-5배 느림</td>
+            <td>빠름</td>
+            <td>빠름</td>
+          </tr>
+          <tr>
+            <td class="mct-label">권장 용도</td>
+            <td>대부분의 경우</td>
+            <td>길이/타이밍이 다를 때</td>
+            <td>크기 무관, 형태만 비교</td>
+            <td>봉우리·골 개수와 위치 같은 거시 형태</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 방법 선택 플로우차트 -->
+    <div class="method-guide">
+      <h3 class="about-h3">거리 함수 선택 기준</h3>
+      <div class="fc">
+        <div class="fc-row">
+          <div class="fc-node fc-question">세그먼트 길이가 서로 다른 경우</div>
+        </div>
+        <div class="fc-row fc-connector-row"><div class="fc-branch-line"></div></div>
+        <div class="fc-row fc-split">
+          <div class="fc-col">
+            <div class="fc-label fc-label-yes">예</div>
+            <div class="fc-arrow">↓</div>
+            <div class="fc-node fc-result fc-result-blue">
+              <div class="fc-result-icon">DTW</div>
+              <div class="fc-result-text">길이가 달라도<br>자동 정렬 비교</div>
+            </div>
+          </div>
+          <div class="fc-col">
+            <div class="fc-label fc-label-no">아니오</div>
+            <div class="fc-arrow">↓</div>
+            <div class="fc-node fc-question fc-question-sub">시간 차이<br>허용 여부</div>
+            <div class="fc-row fc-connector-row" style="margin-top:8px;"><div class="fc-branch-line"></div></div>
+            <div class="fc-row fc-split fc-split-sub">
+              <div class="fc-col">
+                <div class="fc-label fc-label-yes">예</div>
+                <div class="fc-arrow">↓</div>
+                <div class="fc-node fc-result fc-result-blue">
+                  <div class="fc-result-icon">DTW</div>
+                  <div class="fc-result-text">시간 이동 허용</div>
+                </div>
+              </div>
+              <div class="fc-col">
+                <div class="fc-label fc-label-no">아니오</div>
+                <div class="fc-arrow">↓</div>
+                <div class="fc-node fc-question fc-question-sub">절대 크기<br>비교 여부</div>
+                <div class="fc-row fc-connector-row" style="margin-top:8px;"><div class="fc-branch-line"></div></div>
+                <div class="fc-row fc-split fc-split-sub">
+                  <div class="fc-col">
+                    <div class="fc-label fc-label-yes">예</div>
+                    <div class="fc-arrow">↓</div>
+                    <div class="fc-node fc-result fc-result-green">
+                      <div class="fc-result-icon">ED</div>
+                      <div class="fc-result-text">유클리드<span class="fc-default">(기본값)</span></div>
+                    </div>
+                  </div>
+                  <div class="fc-col">
+                    <div class="fc-label fc-label-no">형태만</div>
+                    <div class="fc-arrow">↓</div>
+                    <div class="fc-node fc-result fc-result-purple">
+                      <div class="fc-result-icon">COS</div>
+                      <div class="fc-result-text">코사인<span class="fc-default">방향만 비교</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-search-compare -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: 검색 옵션
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-options">
+  <section class="about-section">
+    <p class="sec-desc">비교 결과의 품질을 조절하는 옵션입니다.</p>
+    <div class="feat-list">
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>Z-score 정규화</h3></div>
+        <p>각 세그먼트를 <code>(값 - 평균) / 표준편차</code>로 변환합니다. 절대 크기를 제거하고 <strong>곡선 형태만으로 비교</strong>합니다.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Z-score OFF:</strong> 겨울 50 kW 종형과 여름 100 kW 종형이 "다른 패턴"으로 분류됨</div>
+            <div><strong>Z-score ON:</strong> 둘 다 같은 종형 곡선 → <strong>같은 패턴</strong>으로 매칭됨</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>다중 컬럼 동시 검색</h3></div>
+        <p>여러 컬럼을 동시에 선택하면 컬럼별 거리를 <strong>균등 평균</strong>해 종합 유사도를 냅니다.</p>
+        <div class="about-info-box">
+          <div class="about-info-box-title">다중 컬럼 검색 — 선택한 모든 컬럼의 거리를 균등 평균</div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div style="flex:0 0 160px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#059669;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">발전량</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#2563EB;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">일사량</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#D97706;"></div>
+                <span style="font-size:.66rem;color:var(--text2);">온도</span>
+              </div>
+            </div>
+            <div style="font-size:1.2rem;color:var(--text3);">&rarr;</div>
+            <div style="flex:1;min-width:180px;height:60px;background:var(--surface2);border-radius:8px;position:relative;overflow:hidden;border:1px solid var(--surface3);">
+              <svg viewBox="0 0 200 50" style="width:100%;height:100%;">
+                <polyline points="10,40 40,30 70,12 100,8 130,14 160,28 190,38" fill="none" stroke="#059669" stroke-width="2" stroke-opacity="1" stroke-linecap="round"/>
+                <polyline points="10,35 40,25 70,10 100,6 130,12 160,24 190,34" fill="none" stroke="#2563EB" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+                <polyline points="10,25 40,24 70,22 100,21 130,23 160,25 190,26" fill="none" stroke="#D97706" stroke-width="2" stroke-opacity=".7" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute;bottom:2px;right:6px;font-size:.56rem;color:var(--text3);">컬럼별 동일 가중치</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>결과 필터링</h3></div>
+        <p>결과가 너무 많을 때 두 가지 필터 모드로 좁힙니다.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>Top-K:</strong> 가장 유사한 상위 N개만 표시 (5-500, 기본 20)</div>
+            <div><strong>유사도 임계값:</strong> 예를 들어 70% 이상만 표시 — 수량이 아닌 품질 기준 필터</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>캘린더 정렬</h3></div>
+        <p>분할 비교 모드에서 세그먼트를 <strong>달력 경계(자정, 월초, 월요일)</strong>에 자동으로 맞춥니다.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>6시간:</strong> 00:00, 06:00, 12:00, 18:00 경계 — 오전/오후 패턴 구분</div>
+            <div><strong>일 단위:</strong> 매일 00:00 시작 — 일별 프로파일 비교</div>
+            <div><strong>주 단위:</strong> 매주 월요일 시작 — 주간 추세 비교</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>NaN 처리 (비교 시)</h3></div>
+        <p>비교 중 만나는 결측값의 처리 방식을 선택합니다.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>보간 (기본값):</strong> 선택한 방법(선형, 3차, MOMENT FM 등)으로 NaN을 채운 뒤 비교</div>
+            <div><strong>건너뛰기:</strong> NaN이 하나라도 있으면 해당 세그먼트를 비교에서 제외</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-head"><h3>결과 내보내기</h3></div>
+        <p>검색 결과를 <strong>CSV 파일로 내려받아</strong> 후속 분석에 씁니다.</p>
+        <div class="feat-example">
+          <div class="feat-compare">
+            <div><strong>출력 형식:</strong> <code>rank, start_idx, end_idx, length, similarity, distance</code></div>
+            <div>→ 스프레드시트, Python, R 등에서 바로 사용 가능</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  </div><!-- /sub-search-options -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 4: 역방향 TS→Text (양방향의 핵심 차별점)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-reverse">
+  <section class="about-section">
+    <p class="sec-desc"><strong>양방향 변환</strong> — Text→TS(검색)뿐 아니라 TS→Text(해석)도 지원합니다.</p>
+
+    <!-- 핵심 메시지 배너 -->
+    <div style="background:var(--surface2);border:1px solid var(--border);padding:16px 20px;border-radius:10px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:.95rem;font-weight:600;color:var(--text1);margin-bottom:4px;">양방향 Text ↔ TS 변환</div>
+          <div style="font-size:.78rem;color:var(--text3);">검색(Text→TS)과 해석(TS→Text)을 하나의 인터페이스에서</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);padding:6px 12px;border-radius:6px;text-align:center;">
+            <div style="font-size:.6rem;color:#7c3aed;">정방향</div>
+            <div style="font-size:.75rem;font-weight:600;color:#5b21b6;">Text → TS</div>
+          </div>
+          <div style="font-size:1rem;display:flex;align-items:center;color:var(--text3);">⇄</div>
+          <div style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);padding:6px 12px;border-radius:6px;text-align:center;">
+            <div style="font-size:.6rem;color:#0891b2;">역방향</div>
+            <div style="font-size:.75rem;font-weight:600;color:#0e7490;">TS → Text</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>설명 모델</strong> — 시계열→문장 기본 모델은 ChatTS-14B(bytedance-research, Apache-2.0)입니다. 별도 서버에서 GPU를 공유하며 8bit로 돌고, 요청이 올 때만 올렸다가 5분간 쓰지 않으면 내립니다. 처음 요청은 약 2분, 이어지는 요청은 약 20초가 걸립니다. 문장은 모델이 쓰고 추세·변동성·특징 숫자는 앱이 계산한 값으로 채워 숫자 환각을 막습니다. 외부 LLM도 설명 모델로 고를 수 있습니다.
+    </div>
+
+    <!-- 양방향 플로우 시각화 -->
+    <div style="margin:20px 0;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+      <svg viewBox="0 0 580 180" fill="none" style="width:100%;height:auto;">
+        <!-- 정방향: Text → TS (상단) -->
+        <text x="290" y="16" text-anchor="middle" font-size="9" fill="#6b7280" font-weight="600">정방향: Text → TS (검색)</text>
+
+        <!-- 자연어 입력 -->
+        <rect x="15" y="28" width="115" height="48" rx="6" fill="var(--surface1)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="72" y="44" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">자연어 입력</text>
+        <rect x="22" y="50" width="100" height="18" rx="3" fill="rgba(139,92,246,.06)"/>
+        <text x="72" y="62" text-anchor="middle" font-size="6" fill="#6b7280">"급상승 후 점진적 하락"</text>
+
+        <!-- 화살표 1 -->
+        <path d="M138,52 L162,52" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr-p2)"/>
+        <rect x="143" y="42" width="24" height="11" rx="2" fill="#a78bfa"/>
+        <text x="155" y="50" text-anchor="middle" font-size="5" fill="white" font-weight="500">모델</text>
+
+        <!-- 합성 형태 -->
+        <rect x="170" y="28" width="90" height="48" rx="6" fill="var(--surface1)" stroke="#86efac" stroke-width="1"/>
+        <text x="215" y="42" text-anchor="middle" font-size="7" fill="#166534" font-weight="500">합성 형태</text>
+        <polyline points="180,62 195,50 210,48 225,52 240,58 250,60" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+        <!-- 화살표 2 -->
+        <path d="M268,52 L292,52" stroke="#86efac" stroke-width="1.2" marker-end="url(#arr-g2)"/>
+        <rect x="272" y="42" width="24" height="11" rx="2" fill="#86efac"/>
+        <text x="284" y="50" text-anchor="middle" font-size="5" fill="#166534" font-weight="500">검색</text>
+
+        <!-- 검색 결과 -->
+        <rect x="300" y="24" width="265" height="56" rx="6" fill="var(--surface1)" stroke="#93c5fd" stroke-width="1"/>
+        <text x="432" y="38" text-anchor="middle" font-size="7" fill="#1e40af" font-weight="500">검색 결과 (Top-K 매칭)</text>
+        <g transform="translate(308,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(34,197,94,.06)" stroke="#86efac" stroke-width=".8"/>
+          <polyline points="8,22 18,10 30,8 42,12 54,16 66,20" stroke="#22c55e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#166534">91%</text>
+        </g>
+        <g transform="translate(388,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(34,197,94,.04)" stroke="#bbf7d0" stroke-width=".8"/>
+          <polyline points="8,20 18,10 30,7 42,11 54,15 66,18" stroke="#4ade80" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#166534">87%</text>
+        </g>
+        <g transform="translate(468,44)">
+          <rect width="75" height="30" rx="4" fill="rgba(245,158,11,.04)" stroke="#fde68a" stroke-width=".8"/>
+          <polyline points="8,18 18,10 30,8 42,12 54,16 66,18" stroke="#fbbf24" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <text x="37" y="28" text-anchor="middle" font-size="5" fill="#92400e">72%</text>
+        </g>
+
+        <!-- 구분선 -->
+        <line x1="25" y1="92" x2="555" y2="92" stroke="var(--border)" stroke-width=".8" stroke-dasharray="3,2"/>
+        <rect x="265" y="85" width="50" height="14" rx="7" fill="var(--surface1)" stroke="var(--border)" stroke-width=".8"/>
+        <text x="290" y="94" text-anchor="middle" font-size="6" fill="#9ca3af" font-weight="500">⇅ 양방향</text>
+
+        <!-- 역방향: TS → Text (하단) -->
+        <text x="290" y="115" text-anchor="middle" font-size="9" fill="#6b7280" font-weight="600">역방향: TS → Text (해석)</text>
+
+        <!-- 선택한 구간 -->
+        <rect x="15" y="124" width="115" height="48" rx="6" fill="var(--surface1)" stroke="#67e8f9" stroke-width="1"/>
+        <text x="72" y="138" text-anchor="middle" font-size="7" fill="#0891b2" font-weight="500">선택한 구간</text>
+        <rect x="35" y="144" width="50" height="22" rx="2" fill="rgba(6,182,212,.08)" stroke="#67e8f9" stroke-width=".8" stroke-dasharray="2,1"/>
+        <polyline points="22,162 35,158 50,148 65,145 80,150 95,155 108,158" stroke="#22d3ee" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+        <!-- 화살표 -->
+        <path d="M138,148 L162,148" stroke="#67e8f9" stroke-width="1.2" marker-end="url(#arr-c2)"/>
+        <rect x="143" y="138" width="24" height="11" rx="2" fill="#67e8f9"/>
+        <text x="155" y="146" text-anchor="middle" font-size="5" fill="#0e7490" font-weight="500">ChatTS</text>
+
+        <!-- 자연어 해석 결과 -->
+        <rect x="170" y="124" width="395" height="48" rx="6" fill="var(--surface1)" stroke="#67e8f9" stroke-width="1"/>
+        <text x="367" y="138" text-anchor="middle" font-size="7" fill="#0891b2" font-weight="500">ChatTS 자연어 해석</text>
+        <rect x="180" y="144" width="375" height="22" rx="4" fill="rgba(6,182,212,.04)"/>
+        <text x="367" y="155" text-anchor="middle" font-size="7" fill="#374151">"급격한 상승 후 안정화되는 패턴입니다."</text>
+        <text x="367" y="163" text-anchor="middle" font-size="5.5" fill="#9ca3af">선형 변화 +23.4%/범위 · 표준편차/범위 31% · 주기성 없음</text>
+
+        <defs>
+          <marker id="arr-p2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#a78bfa"/></marker>
+          <marker id="arr-g2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#86efac"/></marker>
+          <marker id="arr-c2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#67e8f9"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- TS→Text 출력 예시 -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">설명 출력 예시</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;">
+
+        <!-- 예시 1: 단일 컬럼 -->
+        <div style="background:var(--surface1);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="background:rgba(6,182,212,.08);border-bottom:1px solid rgba(6,182,212,.15);padding:8px 12px;font-size:.72rem;font-weight:600;color:#0891b2;">
+            단일 컬럼 분석
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;gap:10px;margin-bottom:10px;">
+              <svg viewBox="0 0 70 35" style="width:70px;height:35px;flex-shrink:0;background:rgba(6,182,212,.04);border-radius:4px;">
+                <polyline points="5,28 18,22 32,10 46,8 58,14 65,18" stroke="#22d3ee" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div style="font-size:.65rem;color:var(--text3);">power_kw (발전량)</div>
+                <div style="font-size:.68rem;color:#0891b2;font-weight:500;">2024-03-15 09:00 ~ 15:00</div>
+              </div>
+            </div>
+            <div style="background:var(--surface2);padding:10px;border-radius:6px;font-size:.72rem;line-height:1.5;color:var(--text2);">
+              <strong style="color:#0891b2;">형태:</strong> 급격한 상승 후 안정화<br>
+              <strong style="color:#0891b2;">통계:</strong> 선형 변화 +23.4%/범위, 표준편차/범위 31%<br>
+              <strong style="color:#0891b2;">특이사항:</strong> 정상 운전 패턴
+            </div>
+          </div>
+        </div>
+
+        <!-- 예시 2: 다중 컬럼 -->
+        <div style="background:var(--surface1);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="background:rgba(139,92,246,.06);border-bottom:1px solid rgba(139,92,246,.12);padding:8px 12px;font-size:.72rem;font-weight:600;color:#7c3aed;">
+            다중 컬럼 분석 (3개 센서)
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <svg viewBox="0 0 70 35" style="width:70px;height:35px;flex-shrink:0;background:rgba(139,92,246,.04);border-radius:4px;">
+                <polyline points="5,26 18,20 32,10 46,8 58,12 65,15" stroke="#4ade80" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <polyline points="5,28 18,22 32,12 46,10 58,14 65,17" stroke="#60a5fa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <polyline points="5,18 18,16 32,14 46,13 58,15 65,16" stroke="#fbbf24" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(34,197,94,.08);color:#166534;border-radius:3px;">발전량</span>
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(59,130,246,.08);color:#1e40af;border-radius:3px;">일사량</span>
+                <span style="font-size:.55rem;padding:2px 5px;background:rgba(245,158,11,.08);color:#92400e;border-radius:3px;">모듈온도</span>
+              </div>
+            </div>
+            <div style="background:var(--surface2);padding:10px;border-radius:6px;font-size:.72rem;line-height:1.5;color:var(--text2);">
+              <strong style="color:#7c3aed;">종합:</strong> 일사량 증가에 따른 정상 발전<br>
+              <strong style="color:#22c55e;">발전량:</strong> 종형 상승 (+45%)<br>
+              <strong style="color:#3b82f6;">일사량:</strong> 동기화된 상승
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 사용 방법 -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">사용 방법</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <polyline points="5,24 12,20 22,10 32,8 40,14" stroke="#d1d5db" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="14" y="6" width="16" height="20" rx="2" fill="rgba(34,197,94,.15)" stroke="#4ade80" stroke-width="1" stroke-dasharray="2,1"/>
+          </svg>
+          <div style="background:#4ade80;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">1</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">구간 드래그 선택</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">분석할 영역 지정</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);font-size:1rem;">→</div>
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <rect x="10" y="6" width="25" height="18" rx="3" fill="rgba(59,130,246,.12)" stroke="#60a5fa" stroke-width="1"/>
+            <text x="22" y="18" text-anchor="middle" font-size="7" fill="#3b82f6" font-weight="500">설명</text>
+          </svg>
+          <div style="background:#60a5fa;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">2</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">"설명" 버튼 클릭</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">설명 모델에 요청</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);font-size:1rem;">→</div>
+        <div style="flex:1;min-width:130px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <svg viewBox="0 0 45 30" style="width:45px;height:30px;margin-bottom:6px;">
+            <rect x="5" y="4" width="35" height="22" rx="3" fill="rgba(139,92,246,.08)" stroke="#a78bfa" stroke-width=".8"/>
+            <line x1="9" y1="10" x2="36" y2="10" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+            <line x1="9" y1="15" x2="30" y2="15" stroke="#c4b5fd" stroke-width=".8" stroke-linecap="round"/>
+            <line x1="9" y1="20" x2="25" y2="20" stroke="#ddd6fe" stroke-width=".8" stroke-linecap="round"/>
+          </svg>
+          <div style="background:#a78bfa;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 4px;">3</div>
+          <div style="font-size:.72rem;font-weight:600;color:var(--text1);">자연어 해석 확인</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px;">형태, 통계, 이상 여부</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 설명 항목 -->
+    <div style="margin:20px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:12px;color:var(--text1);">설명에 담기는 항목 (숫자는 앱 계산값)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;">
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(6,182,212,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><polyline points="2,12 6,6 10,9 14,3" stroke="#22d3ee" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">형태 인식</div>
+            <div style="font-size:.62rem;color:var(--text3);">상승/하강/피크</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(34,197,94,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><text x="8" y="12" text-anchor="middle" font-size="9" fill="#4ade80" font-weight="600">%</text></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">변화율</div>
+            <div style="font-size:.62rem;color:var(--text3);">상승/하락률</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(245,158,11,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M3,8 Q5.5,4 8,8 Q10.5,12 13,8" stroke="#fbbf24" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">변동성</div>
+            <div style="font-size:.62rem;color:var(--text3);">표준편차/범위</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(239,68,68,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><circle cx="8" cy="8" r="5" fill="none" stroke="#f87171" stroke-width="1.5"/><line x1="8" y1="5" x2="8" y2="8" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11" r=".8" fill="#f87171"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">이상치</div>
+            <div style="font-size:.62rem;color:var(--text3);">비정상 탐지</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(139,92,246,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M2,9 Q4.5,6 7,9 Q9.5,12 12,9 Q14,7 14,9" stroke="#a78bfa" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">주기성</div>
+            <div style="font-size:.62rem;color:var(--text3);">반복 패턴</div>
+          </div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:rgba(59,130,246,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><rect x="3" y="5" width="10" height="6" rx="1" fill="none" stroke="#60a5fa" stroke-width="1.2"/><text x="8" y="10" text-anchor="middle" font-size="4" fill="#60a5fa" font-weight="500">kW</text></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:.72rem;color:var(--text1);">도메인</div>
+            <div style="font-size:.62rem;color:var(--text3);">단위·의미</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 양방향의 의의 (비교) -->
+    <div style="margin-top:20px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <h3 style="font-size:.85rem;font-weight:600;margin:0 0 12px;color:var(--text1);">양방향 변환의 의의</h3>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-bottom:12px;">
+        <div style="padding:10px;background:var(--surface1);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:.62rem;color:var(--text3);margin-bottom:2px;">기존 시스템 A</div>
+          <div style="font-size:.78rem;font-weight:500;color:var(--text2);">Text → TS만</div>
+          <div style="font-size:.6rem;color:var(--text3);margin-top:2px;">검색만, 해석 불가</div>
+        </div>
+        <div style="padding:10px;background:var(--surface1);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:.62rem;color:var(--text3);margin-bottom:2px;">기존 시스템 B</div>
+          <div style="font-size:.78rem;font-weight:500;color:var(--text2);">TS → Text만</div>
+          <div style="font-size:.6rem;color:var(--text3);margin-top:2px;">해석만, 검색 불가</div>
+        </div>
+        <div style="padding:10px;background:rgba(139,92,246,.06);border-radius:6px;border:1px solid rgba(139,92,246,.15);">
+          <div style="font-size:.62rem;color:#7c3aed;margin-bottom:2px;">TS-Lens</div>
+          <div style="font-size:.78rem;font-weight:600;color:#5b21b6;">Text ↔ TS</div>
+          <div style="font-size:.6rem;color:#7c3aed;margin-top:2px;">검색 ↔ 이해 사이클</div>
+        </div>
+      </div>
+      <p style="margin:0;font-size:.72rem;line-height:1.5;color:var(--text3);">
+        패턴을 검색하고 → 그 의미를 이해하고 → 다시 유사 패턴을 찾는 <strong style="color:var(--text2);">반복 사이클</strong>이 가능합니다.
+      </p>
+    </div>
+
+  </section>
+  </div><!-- /sub-search-reverse -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 5: 시나리오 (8개)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-search-scenarios">
+  <section class="about-section">
+    <p class="sec-desc">대표적인 패턴 검색 시나리오 8가지입니다.</p>
+
+    <!-- Scenario 1: 자연어 검색 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">자연어로 패턴 검색 <span style="font-weight:400;color:#7c3aed;font-size:.75em;">(Text → TS)</span></span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-engineer">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/><rect x="11" y="9" width="18" height="4" rx="2" fill="#d97706"/><rect x="13" y="7" width="14" height="3" rx="1.5" fill="#f59e0b"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">태양광 O&amp;M 엔지니어</div>
+          <div class="scenario-speech">"어제 오후 발전량 그래프가 갑자기 떨어졌습니다. 올해 다른 날에도 비슷한 패턴이 있었는지 확인하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#8b5cf6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Text 모드</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Segment 뷰에서 Text 모드를 고르고 "정오 이후 점진적으로 상승하다가 갑자기 하락"을 입력합니다. 규칙 선처리 또는 모델이 합성 형태를 만들고 모든 세그먼트와 비교합니다.
+        </p>
+        <div class="scenario-method-note">양쪽 뷰 · Zero-shot · 규칙 선처리 + 로컬/외부 LLM · 컬럼 메타데이터로 정확도 향상</div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: 스케치 검색 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">스케치로 형태 검색</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">연구원</div>
+          <div class="scenario-speech">"머릿속에 있는 이중 피크 패턴을 직접 그려서 비슷한 것을 찾고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ec4899;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sketch 모드</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          캔버스에 원하는 형태를 자유롭게 그림 → 정규화 → 슬라이딩 윈도우 또는 세그먼트 비교로 유사 패턴 검색
+        </p>
+        <div class="scenario-method-note">Zero-shot · 직관적 · 양쪽 뷰 지원</div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: 프리셋 검색 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">프리셋 형태 검색</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-quality">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#3b82f6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#3b82f6" opacity=".55"/><rect x="24" y="22" width="10" height="13" rx="1.5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.2"/><path d="M27,27 L31,27 M27,30 L31,30 M27,33 L29,33" stroke="#3b82f6" stroke-width=".8"/><path d="M26.5,25 L28,26.5 L31,23" stroke="#22c55e" stroke-width="1.2" fill="none"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">공정 품질 관리자</div>
+          <div class="scenario-speech">"센서 데이터에서 종형 정상 패턴과 날카로운 스파이크 패턴이 각각 언제 나타나는지 알고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset 모드</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Segment 뷰에서 내장 7종(rise, fall, flat, bell, v_shape, spike, dip)이나 클러스터 중심으로 저장한 커스텀 프리셋을 선택합니다. <strong>"전체 분류"</strong> 버튼은 모든 세그먼트를 모든 프리셋으로 한 번에 분류합니다.
+        </p>
+        <div class="scenario-method-note">내장 7종 + 커스텀 프리셋 · 전체 자동 분류 · 다중 컬럼 지원</div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: QBE 검색 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">실제 구간으로 검색 (QBE)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/><circle cx="28" cy="26" r="5" fill="none" stroke="#7c3aed" stroke-width="1.5"/><line x1="32" y1="30" x2="36" y2="34" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">설비 진단 연구원</div>
+          <div class="scenario-speech">"3월 15일의 이 파형과 유사한 다른 세그먼트가 있는지 확인하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#22c55e;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Select</span>
+          <span style="color:var(--text3);font-size:.72rem;">또는</span>
+          <span style="background:#f59e0b;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Sample</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          <strong>Select (Continuous):</strong> 차트 드래그 → 슬라이딩 윈도우로 유사 구간 전부 검색<br>
+          <strong>Sample (Segment):</strong> 세그먼트 카드 클릭 → 1:1 세그먼트 비교
+        </p>
+        <div class="scenario-method-note">실제 데이터 파형이 쿼리 · 가장 정확 · Euclidean/DTW/Cosine/Shape 거리</div>
+      </div>
+    </div>
+
+    <!-- Scenario 5: 다중 컬럼 검색 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">5</span><span class="scenario-title-text">다중 컬럼 검색</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-multi">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#fdf2f8" stroke="#ec4899" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#ec4899" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#ec4899" opacity=".55"/><path d="M25,24 L29,24 L29,33 M31,26 L31,33 M33,28 L33,33" stroke="#db2777" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">공정 엔지니어</div>
+          <div class="scenario-speech">"온도는 오르면서 출력은 떨어지는 구간처럼, 여러 센서를 동시에 고려해 검색하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset 모드 · 다중 컬럼</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          여러 컬럼(센서)을 동시에 검색합니다. 선택한 컬럼의 거리를 균등 평균하며, Preset 모드에서는 <strong>컬럼마다 다른 프리셋</strong>을 지정할 수 있습니다(예: 출력=fall, 온도=rise).
+        </p>
+        <div class="scenario-method-note">컬럼별 독립 프리셋 · 균등 가중 평균 · 종합 유사도 · 복합 패턴 검색</div>
+      </div>
+    </div>
+
+    <!-- Scenario 6: 비지도 군집화 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">6</span><span class="scenario-title-text">자동 패턴 발견 (클러스터링)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">데이터 분석가</div>
+          <div class="scenario-speech">"어떤 패턴이 있는지 모릅니다. 데이터에서 자연스러운 그룹을 발견하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster 모드</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          <strong>Fast (K-Means)</strong>, <strong>Shape (k-Shape)</strong>, <strong>Semantic AI (MOMENT)</strong> 중 선택 → 세그먼트를 z-정규화해 자동 군집화 → 컬럼별 프로파일링 → 각 클러스터의 <strong>중심 형태</strong>를 <strong>커스텀 프리셋</strong>으로 저장해 다른 데이터셋에서 재사용
+        </p>
+        <div class="scenario-method-note">Fast · Shape · Semantic AI · Auto-K · 중심을 프리셋으로 저장</div>
+      </div>
+    </div>
+
+    <!-- Scenario 7: 컬럼 간 패턴 상관관계 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">7</span><span class="scenario-title-text">컬럼 간 패턴 상관관계</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-facility">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#10b981" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#10b981" opacity=".55"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">도메인 전문가</div>
+          <div class="scenario-speech">"출력이 종형일 때 온도나 습도는 보통 어떤 모양입니까? 그 관계가 일관된지도 알고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Cluster 모드 → 상관관계 맵</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          클러스터링 뒤 각 클러스터 안의 <strong>모든 컬럼</strong>을 자동 프로파일링해 평균 형태와 <strong>일관성 점수</strong>(구성원이 패턴을 얼마나 고르게 공유하는지)를 계산합니다. 컬럼 패턴 상관관계 맵은 모든 컬럼 &times; 모든 클러스터의 미니 스파크라인을 보여 주고, 일관성을 <span style="color:#065f46;font-weight:600;">강함</span>·<span style="color:#5b21b6;font-weight:600;">보통</span>·<span style="color:#92400e;font-weight:600;">약함</span>·<span style="color:#6b7280;font-weight:600;">잡음</span> 배지로 표시합니다.
+        </p>
+        <div class="scenario-method-note">전 컬럼 프로파일링 · 코사인 일관성 지표 · 주/보조 태그 · 스파크라인 시각화</div>
+      </div>
+    </div>
+
+    <!-- Scenario 8: 구간 해석 (역방향) -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">8</span><span class="scenario-title-text">구간 해석 <span style="font-weight:400;color:#0891b2;font-size:.75em;">(TS → Text)</span></span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-operator">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#06b6d4" stroke-width="1.5"/><circle cx="20" cy="16" r="6" fill="#06b6d4" opacity=".85"/><path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#06b6d4" opacity=".55"/><rect x="24" y="24" width="12" height="9" rx="1.5" fill="#ecfdf5" stroke="#0891b2" stroke-width="1"/><polyline points="26,30 29,27 32,29 34,26" stroke="#06b6d4" stroke-width=".8" fill="none"/></svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">운영 관리자</div>
+          <div class="scenario-speech">"이 구간이 정상인지 비정상인지, 센서별로 어떤 특징이 있는지 빠르게 알고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#06b6d4;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">설명 기능</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          Select 모드에서 구간을 드래그하고 "설명"을 누르면 ChatTS-14B(기본)가 형태를 서술하고, 추세·변동성·특징 숫자는 앱 계산값으로 채웁니다. 다중 컬럼이면 컬럼별 분석과 종합 요약을 함께 냅니다.
+        </p>
+        <div class="scenario-method-note">단일/다중 컬럼 · 형태·추세·변동성 분석 · ChatTS-14B 기본(외부 LLM 선택 가능) · 도메인 메타데이터 반영</div>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /sub-search-scenarios -->
+
+  </div><!-- /tab-search -->

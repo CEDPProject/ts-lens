@@ -1,0 +1,405 @@
+  <div class="about-tab-content" id="tab-labeling">
+
+  <!-- 개요 -->
+  <section class="about-section">
+    <div class="feat-item" style="border-left:3px solid var(--purple);padding-left:16px;">
+      <h3 style="margin-top:0;">라벨링 & 패턴 라이브러리</h3>
+      <p><span class="agent-badge ab-labeler">Labeler</span> 검색 결과를 검토하고 수락/거절로 패턴 라이브러리를 점진적으로 쌓습니다. 확정된 패턴은 쿼리 정제에 쓰여 검색 품질이 올라갑니다.</p>
+
+      <!-- 라벨링 루프 시각화 -->
+      <div style="margin:16px 0;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <svg viewBox="0 0 500 80" fill="none" style="width:100%;height:auto;">
+          <!-- 검색 -->
+          <rect x="20" y="20" width="80" height="40" rx="6" fill="rgba(139,92,246,.1)" stroke="#a78bfa" stroke-width="1"/>
+          <text x="60" y="44" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="500">검색</text>
+
+          <path d="M108,40 L138,40" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr-lab1)"/>
+
+          <!-- 수락/거절 -->
+          <rect x="145" y="20" width="90" height="40" rx="6" fill="rgba(34,197,94,.1)" stroke="#86efac" stroke-width="1"/>
+          <text x="190" y="44" text-anchor="middle" font-size="9" fill="#166534" font-weight="500">수락 / 거절</text>
+
+          <path d="M243,40 L273,40" stroke="#86efac" stroke-width="1.2" marker-end="url(#arr-lab2)"/>
+
+          <!-- Draft → Confirmed -->
+          <rect x="280" y="20" width="100" height="40" rx="6" fill="rgba(59,130,246,.1)" stroke="#93c5fd" stroke-width="1"/>
+          <text x="330" y="38" text-anchor="middle" font-size="8" fill="#1e40af" font-weight="500">Draft → Confirmed</text>
+          <text x="330" y="50" text-anchor="middle" font-size="7" fill="#6b7280">(검토 후 확정)</text>
+
+          <path d="M388,40 L418,40" stroke="#93c5fd" stroke-width="1.2" marker-end="url(#arr-lab3)"/>
+
+          <!-- 정제 -->
+          <rect x="425" y="20" width="60" height="40" rx="6" fill="rgba(245,158,11,.1)" stroke="#fde68a" stroke-width="1"/>
+          <text x="455" y="44" text-anchor="middle" font-size="9" fill="#92400e" font-weight="500">정제</text>
+
+          <!-- 되돌아가는 화살표 -->
+          <path d="M455,65 Q455,75 300,75 Q60,75 60,65" stroke="#d1d5db" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+          <path d="M60,65 L60,62" stroke="#d1d5db" stroke-width="1.2" marker-end="url(#arr-lab4)"/>
+          <text x="260" y="73" text-anchor="middle" font-size="6" fill="#9ca3af">반복</text>
+
+          <defs>
+            <marker id="arr-lab1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#a78bfa"/></marker>
+            <marker id="arr-lab2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#86efac"/></marker>
+            <marker id="arr-lab3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#93c5fd"/></marker>
+            <marker id="arr-lab4" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L5,8 L8,2" fill="#d1d5db"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 서브 탭 네비게이션 -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="labelingSubTabs">
+      <button class="sub-tab active" data-subtab="sub-label-basket">라벨 바스켓</button>
+      <button class="sub-tab" data-subtab="sub-label-library">패턴 라이브러리</button>
+      <button class="sub-tab" data-subtab="sub-label-scenarios">사용 시나리오</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: 라벨 바스켓
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-label-basket">
+  <section class="about-section">
+    <p class="sec-desc">검색 결과에서 수락한 세그먼트를 모아 관리합니다. 담을 당시의 싱글·멀티 컬럼 파형과 종합 유사도, 거리 방법, 정규화 설정을 함께 보존하며, 컬럼 선택기에서 원본의 다른 컬럼도 검토할 수 있습니다. 카드 미리보기는 화면에 가까워질 때 극값을 보존한 축약 데이터로 불러오고, CSV 내보내기는 정확한 전체 행을 유지합니다.</p>
+
+    <!-- Draft / Confirmed 구조 -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:16px 0;">
+      <!-- Draft -->
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;background:rgba(245,158,11,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><rect x="3" y="3" width="10" height="10" rx="2" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,1"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;color:var(--text1);">Draft (임시)</div>
+            <div style="font-size:.68rem;color:var(--text3);">검토 대기 항목</div>
+          </div>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:.75rem;line-height:1.6;color:var(--text2);">
+          <li>검색 결과에서 <strong>Accept</strong>(수락)를 누르면 추가</li>
+          <li>개별 삭제 또는 일괄 삭제 가능</li>
+          <li>검토 후 <strong>Confirm All</strong>(모두 확정)로 확정</li>
+        </ul>
+      </div>
+
+      <!-- Confirmed -->
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;background:rgba(34,197,94,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M4,8 L7,11 L12,5" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;color:var(--text1);">Confirmed (확정)</div>
+            <div style="font-size:.68rem;color:var(--text3);">최종 확정된 패턴</div>
+          </div>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:.75rem;line-height:1.6;color:var(--text2);">
+          <li>Draft에서 확정된 항목이 이동</li>
+          <li>잘못 확정한 항목은 삭제 가능</li>
+          <li>평균 형태로 쿼리 <strong>자동 정제</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 일괄 작업 버튼 -->
+    <div style="margin:16px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:10px;color:var(--text1);">일괄 작업</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.72rem;">
+          <strong>Select All</strong>(모두 선택) — Draft 또는 Confirmed 구역의 모든 항목 선택
+        </div>
+        <div style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.72rem;">
+          <strong>Delete Selected</strong>(선택 삭제) — 선택한 항목을 한 번에 삭제
+        </div>
+        <div style="padding:8px 14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:.72rem;color:#166534;">
+          <strong>Confirm All</strong> — Draft 전체를 Confirmed로 이동
+        </div>
+      </div>
+    </div>
+
+    <!-- 워크플로우 -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>워크플로우</h3></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#8b5cf6;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">1</div>
+          <div style="font-size:.72rem;font-weight:500;">검색 결과에서</div>
+          <div style="font-size:.65rem;color:var(--text3);">Accept 클릭</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#f59e0b;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">2</div>
+          <div style="font-size:.72rem;font-weight:500;">Draft에서</div>
+          <div style="font-size:.65rem;color:var(--text3);">검토 & 정리</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#22c55e;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">3</div>
+          <div style="font-size:.72rem;font-weight:500;">Confirm All</div>
+          <div style="font-size:.65rem;color:var(--text3);">확정</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#3b82f6;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">4</div>
+          <div style="font-size:.72rem;font-weight:500;">쿼리 자동 정제</div>
+          <div style="font-size:.65rem;color:var(--text3);">평균 형태 기반</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-label-basket -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: 패턴 라이브러리
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-label-library">
+  <section class="about-section">
+    <p class="sec-desc">확정된 패턴이 쌓여 재사용 가능한 라이브러리가 됩니다.</p>
+
+    <!-- 라벨링 루프의 장점 -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0;">
+      <div style="padding:14px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#7c3aed;margin-bottom:6px;">예시 없이 시작</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">예시 세그먼트 없이 자연어 설명만으로 첫 검색 가능</div>
+      </div>
+      <div style="padding:14px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#166534;margin-bottom:6px;">점진적 정제</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">수락된 실제 데이터의 피드백으로 쿼리가 점점 정확해짐</div>
+      </div>
+      <div style="padding:14px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#1e40af;margin-bottom:6px;">지식 축적</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">확정된 패턴이 보존되어 팀원이 바뀌어도 재활용 가능</div>
+      </div>
+    </div>
+
+    <!-- 정제(Refine) 메커니즘 -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>정제(Refine) 메커니즘</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        확정된 세그먼트들의 <strong>실제 데이터를 평균</strong>하여 새 쿼리 형태를 만듭니다.
+        문장 기반 초기 형태는 근사치이지만, 수락된 실제 데이터의 피드백으로 점점 정확한 형태에 수렴합니다.
+      </p>
+      <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,25 15,15 25,10 35,18 45,22" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-dasharray="2,1"/>
+            </svg>
+            <div style="font-size:.6rem;color:var(--text3);">문장 기반 초기 형태</div>
+          </div>
+          <div style="color:var(--text3);">+</div>
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,22 15,12 25,8 35,15 45,20" stroke="#4ade80" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="5,24 15,14 25,10 35,17 45,21" stroke="#60a5fa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="5,23 15,13 25,9 35,16 45,20" stroke="#fbbf24" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:.6rem;color:var(--text3);">수락된 세그먼트들</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,23 15,13 25,9 35,16 45,20" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:.6rem;color:#166534;font-weight:500;">정제된 쿼리</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 클러스터 중심을 커스텀 프리셋으로 저장 -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>클러스터 중심을 커스텀 프리셋으로 저장</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        <strong>클러스터 분석</strong>(Fast/Shape/Semantic AI)을 돌린 뒤 각 클러스터의 <strong>중심(Medoid — 중심에 가장 가까운 실제 멤버)</strong>을
+        패턴 라이브러리에 커스텀 프리셋으로 저장할 수 있습니다.
+        저장한 형태는 Preset 모드에서 직접 추가한 기본 프리셋과 함께 표시되며, 맥락이 맞도록 <strong>데이터셋별</strong>로 보관됩니다.
+      </p>
+      <div class="feat-example">
+        <div class="feat-ex-title">워크플로우</div>
+        <ol>
+          <li>세그먼트 뷰로 전환 &rarr; Cluster 모드 실행(Fast/Shape/Semantic AI)</li>
+          <li>클러스터 결과 검토 &mdash; 그룹마다 Medoid 형태와 멤버 세그먼트 표시</li>
+          <li>클러스터 카드의 <span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></span> 버튼 클릭 &rarr; 패턴 이름 입력(예: "Morning Double Peak")</li>
+          <li>중심이 패턴 라이브러리에 저장 &rarr; Preset 모드에서 커스텀 프리셋으로 사용</li>
+          <li>커스텀 프리셋은 × 버튼으로 삭제(내장 프리셋은 삭제 불가)</li>
+        </ol>
+      </div>
+      <div class="feat-example">
+        <div class="feat-ex-title">장점</div>
+        <div class="feat-compare">
+          <div><strong>데이터셋별 보관</strong>: 프리셋은 데이터셋별로 저장 &mdash; 태양광 패턴은 태양광 데이터에서만 보입니다. 라이브러리는 서버에 있고 모든 계정이 공유합니다</div>
+          <div><strong>Medoid 기반</strong>: 평균이 아니라 중심에 가장 가까운 실제 멤버 세그먼트를 사용 &mdash; 이상치에 강합니다</div>
+          <div><strong>반복 탐색</strong>: 클러스터 &rarr; 저장 &rarr; 검색 &rarr; 정제 &rarr; 더 많은 맥락으로 다시 클러스터</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 컬럼 간 상관 인사이트 -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>컬럼 간 상관 인사이트</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        클러스터링 중에 생성되는 <strong>컬럼 패턴 상관 맵</strong>은 측정 변수들이 어떻게 함께 변하는지 보여 줍니다.
+        각 셀은 실제 평균 형태의 SVG 스파크라인과 통계적 신뢰도를 나타내는 <strong>일관성 배지</strong>를 담습니다.
+      </p>
+      <div class="feat-example">
+        <div class="feat-ex-title">일관성 등급</div>
+        <div class="feat-compare">
+          <div><strong>Strong (&gt;=85%)</strong>: 거의 모든 멤버가 같은 형태 &mdash; 신뢰할 수 있는 패턴</div>
+          <div><strong>Moderate (&gt;=70%)</strong>: 다수가 같은 형태 &mdash; 대체로 신뢰 가능</div>
+          <div><strong>Weak (&gt;=55%)</strong>: 편차 있음 &mdash; 주의해서 해석</div>
+          <div><strong>Noisy (&lt;55%)</strong>: 편차 큼 &mdash; 평균 형태가 대표성 없음</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 라이브러리 활용 -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>라이브러리 활용</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>새 데이터에 적용:</strong> 같은 데이터셋에 새 구간·새 기간이 들어오면 저장된 패턴으로 바로 검색
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>팀 공유:</strong> 패턴 정의가 라이브러리에 보존되어 협업 가능
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>CSV 내보내기:</strong> 라벨링 결과를 CSV로 내려받기
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-label-library -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: 사용 시나리오
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-label-scenarios">
+  <section class="about-section">
+    <p class="sec-desc">라벨링 기능을 활용한 실제 워크플로우 사례.</p>
+
+    <!-- Scenario 1: 패턴 라이브러리 구축 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">패턴 라이브러리 구축</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#6366f1" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#6366f1" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">데이터 분석가</div>
+          <div class="scenario-speech">"검색 결과에서 필요한 패턴만 골라 패턴 라이브러리에 저장하고, 나중에 다시 쓰고 싶다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#6366f1;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">라벨링 루프</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li><strong>검색:</strong> Text/Preset/Sample/Cluster 모드로 패턴 검색</li>
+          <li><strong>판정:</strong> 정확한 결과는 Accept, 틀린 결과는 <strong>Reject</strong>(거절)</li>
+          <li><strong>확인:</strong> Draft에서 검토 후 Confirm All로 확정</li>
+          <li><strong>정제:</strong> 확정된 세그먼트의 평균 형태로 쿼리 개선</li>
+          <li><strong>반복:</strong> 정제된 쿼리로 재검색 → 더 정확한 결과 → 라이브러리 누적</li>
+        </ol>
+        <div class="scenario-method-note">반복: 검색 → 선택 → 저장 · 패턴별 인스턴스 관리 · 라벨링 결과 CSV 내보내기</div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: 클러스터로 프리셋 만들기 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">클러스터로 프리셋 만들기</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">연구원</div>
+          <div class="scenario-speech">"클러스터링으로 발견한 패턴을 저장해 두고, 나중에 새 데이터에서 같은 패턴을 빨리 찾고 싶다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#7c3aed;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">커스텀 프리셋</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li>세그먼트 뷰 → Cluster 모드 실행(Fast/Shape/Semantic AI)</li>
+          <li>클러스터 결과 검토 — 그룹별 Medoid 형태와 멤버 세그먼트 확인</li>
+          <li>클러스터 카드의 <span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></span> 버튼 클릭 → 패턴 이름 입력(예: "Morning Double Peak")</li>
+          <li>Preset 모드에 보라색으로 표시되어 재사용</li>
+        </ol>
+        <div class="scenario-method-note">데이터셋별 저장 · Medoid 기반(이상치에 강함) · 클러스터 → 저장 → 검색 → 정제 반복</div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: 신규 데이터 분류 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">신규 데이터 분류</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-engineer">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">운영 엔지니어</div>
+          <div class="scenario-speech">"전에 만든 패턴 라이브러리로 같은 데이터셋에 들어온 새 데이터를 빨리 분류하고 싶다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset 모드</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li>같은 데이터셋의 새 구간 로드 → 세그먼트 뷰로 전환</li>
+          <li>Preset 모드에서 라이브러리에 저장된 패턴 선택</li>
+          <li><strong>"전체 분류"</strong> 버튼으로 모든 세그먼트 자동 분류</li>
+          <li>분류 결과 검토, 필요하면 추가 라벨링</li>
+        </ol>
+        <div class="scenario-method-note">저장된 패턴 재사용 · 전체 분류 자동화 · 결과 내보내기</div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: 팀 협업 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">팀 협업</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">연구팀 리더</div>
+          <div class="scenario-speech">"팀원들이 발견한 패턴을 공유하고, 새로 합류한 팀원도 기존 패턴 정의를 쓸 수 있으면 좋겠다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#7c3aed;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">패턴 라이브러리</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          패턴 라이브러리는 <strong>데이터셋별로 서버에 저장</strong>되어 모든 계정이 같이 봅니다. 팀원이 확정한 패턴은 라이브러리에 쌓이고,
+          새 팀원도 같은 데이터셋을 열면 기존 패턴 정의를 쓸 수 있습니다.
+        </p>
+        <div class="scenario-method-note">데이터셋별 저장 · 지식 축적 · 팀원이 바뀌어도 유지</div>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /sub-label-scenarios -->
+
+  </div><!-- /tab-labeling -->

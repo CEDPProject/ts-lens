@@ -1,0 +1,405 @@
+  <div class="about-tab-content" id="tab-labeling">
+
+  <!-- Overview -->
+  <section class="about-section">
+    <div class="feat-item" style="border-left:3px solid var(--purple);padding-left:16px;">
+      <h3 style="margin-top:0;">Labeling & Pattern Library</h3>
+      <p><span class="agent-badge ab-labeler">Labeler</span> Review search results and build a pattern library progressively through Accept/Reject. Confirmed patterns feed query refinement, so search quality improves.</p>
+
+      <!-- Labeling loop diagram -->
+      <div style="margin:16px 0;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <svg viewBox="0 0 500 80" fill="none" style="width:100%;height:auto;">
+          <!-- Search -->
+          <rect x="20" y="20" width="80" height="40" rx="6" fill="rgba(139,92,246,.1)" stroke="#a78bfa" stroke-width="1"/>
+          <text x="60" y="44" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="500">Search</text>
+
+          <path d="M108,40 L138,40" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr-lab1)"/>
+
+          <!-- Accept / Reject -->
+          <rect x="145" y="20" width="90" height="40" rx="6" fill="rgba(34,197,94,.1)" stroke="#86efac" stroke-width="1"/>
+          <text x="190" y="44" text-anchor="middle" font-size="9" fill="#166534" font-weight="500">Accept / Reject</text>
+
+          <path d="M243,40 L273,40" stroke="#86efac" stroke-width="1.2" marker-end="url(#arr-lab2)"/>
+
+          <!-- Draft → Confirmed -->
+          <rect x="280" y="20" width="100" height="40" rx="6" fill="rgba(59,130,246,.1)" stroke="#93c5fd" stroke-width="1"/>
+          <text x="330" y="38" text-anchor="middle" font-size="8" fill="#1e40af" font-weight="500">Draft → Confirmed</text>
+          <text x="330" y="50" text-anchor="middle" font-size="7" fill="#6b7280">(review, then confirm)</text>
+
+          <path d="M388,40 L418,40" stroke="#93c5fd" stroke-width="1.2" marker-end="url(#arr-lab3)"/>
+
+          <!-- Refine -->
+          <rect x="425" y="20" width="60" height="40" rx="6" fill="rgba(245,158,11,.1)" stroke="#fde68a" stroke-width="1"/>
+          <text x="455" y="44" text-anchor="middle" font-size="9" fill="#92400e" font-weight="500">Refine</text>
+
+          <!-- Return arrow -->
+          <path d="M455,65 Q455,75 300,75 Q60,75 60,65" stroke="#d1d5db" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+          <path d="M60,65 L60,62" stroke="#d1d5db" stroke-width="1.2" marker-end="url(#arr-lab4)"/>
+          <text x="260" y="73" text-anchor="middle" font-size="6" fill="#9ca3af">repeat</text>
+
+          <defs>
+            <marker id="arr-lab1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#a78bfa"/></marker>
+            <marker id="arr-lab2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#86efac"/></marker>
+            <marker id="arr-lab3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#93c5fd"/></marker>
+            <marker id="arr-lab4" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L5,8 L8,2" fill="#d1d5db"/></marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sub-tab navigation -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="labelingSubTabs">
+      <button class="sub-tab active" data-subtab="sub-label-basket">Label Basket</button>
+      <button class="sub-tab" data-subtab="sub-label-library">Pattern Library</button>
+      <button class="sub-tab" data-subtab="sub-label-scenarios">Usage Scenarios</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: Label Basket
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-label-basket">
+  <section class="about-section">
+    <p class="sec-desc">Collects and manages segments accepted from search results. Each item preserves the captured single- or multi-column waveforms together with its combined similarity, distance method and normalization setting; other source columns can be reviewed in the column picker. Card previews load extrema-preserving, reduced data only when they approach the viewport; CSV export keeps the exact full rows.</p>
+
+    <!-- Draft / Confirmed structure -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:16px 0;">
+      <!-- Draft -->
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;background:rgba(245,158,11,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><rect x="3" y="3" width="10" height="10" rx="2" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,1"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;color:var(--text1);">Draft (temporary)</div>
+            <div style="font-size:.68rem;color:var(--text3);">Items awaiting review</div>
+          </div>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:.75rem;line-height:1.6;color:var(--text2);">
+          <li>Added when you click <strong>Accept</strong> on a search result</li>
+          <li>Delete items individually or in bulk</li>
+          <li>Review, then finalize with <strong>Confirm All</strong></li>
+        </ul>
+      </div>
+
+      <!-- Confirmed -->
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;background:rgba(34,197,94,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 16 16" style="width:14px;height:14px;"><path d="M4,8 L7,11 L12,5" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.85rem;color:var(--text1);">Confirmed (finalized)</div>
+            <div style="font-size:.68rem;color:var(--text3);">Finalized patterns</div>
+          </div>
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:.75rem;line-height:1.6;color:var(--text2);">
+          <li>Items confirmed from Draft move here</li>
+          <li>Accidental confirmations can be deleted</li>
+          <li>Query is <strong>auto-refined</strong> from the average shape</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bulk operation buttons -->
+    <div style="margin:16px 0;">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:10px;color:var(--text1);">Bulk Operations</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.72rem;">
+          <strong>Select All</strong> — select every item in the Draft or Confirmed section
+        </div>
+        <div style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.72rem;">
+          <strong>Delete Selected</strong> — remove all selected items at once
+        </div>
+        <div style="padding:8px 14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:.72rem;color:#166534;">
+          <strong>Confirm All</strong> — move all Draft items to Confirmed
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflow -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>Workflow</h3></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#8b5cf6;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">1</div>
+          <div style="font-size:.72rem;font-weight:500;">In search results</div>
+          <div style="font-size:.65rem;color:var(--text3);">Click Accept</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#f59e0b;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">2</div>
+          <div style="font-size:.72rem;font-weight:500;">In Draft</div>
+          <div style="font-size:.65rem;color:var(--text3);">Review & clean up</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#22c55e;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">3</div>
+          <div style="font-size:.72rem;font-weight:500;">Confirm All</div>
+          <div style="font-size:.65rem;color:var(--text3);">Finalize</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--text3);">→</div>
+        <div style="flex:1;min-width:100px;padding:12px;background:var(--surface2);border-radius:6px;text-align:center;">
+          <div style="background:#3b82f6;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;margin:0 auto 6px;">4</div>
+          <div style="font-size:.72rem;font-weight:500;">Auto-refine query</div>
+          <div style="font-size:.65rem;color:var(--text3);">From the average shape</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-label-basket -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: Pattern Library
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-label-library">
+  <section class="about-section">
+    <p class="sec-desc">Confirmed patterns accumulate into a reusable library.</p>
+
+    <!-- Benefits of the labeling loop -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0;">
+      <div style="padding:14px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#7c3aed;margin-bottom:6px;">Start without examples</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">Begin the first search with only a natural-language description, no example segment</div>
+      </div>
+      <div style="padding:14px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#166534;margin-bottom:6px;">Progressive refinement</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">Feedback from accepted real data makes the query more accurate each round</div>
+      </div>
+      <div style="padding:14px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:8px;">
+        <div style="font-weight:600;font-size:.8rem;color:#1e40af;margin-bottom:6px;">Knowledge accumulation</div>
+        <div style="font-size:.72rem;color:var(--text2);line-height:1.5;">Confirmed patterns persist and stay reusable when team members change</div>
+      </div>
+    </div>
+
+    <!-- Refine mechanism -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>Refine Mechanism</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        The <strong>actual data of confirmed segments is averaged</strong> to produce a new query shape.
+        The text-based initial shape is an approximation; feedback from accepted real data converges it toward a more accurate shape.
+      </p>
+      <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,25 15,15 25,10 35,18 45,22" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-dasharray="2,1"/>
+            </svg>
+            <div style="font-size:.6rem;color:var(--text3);">Text-based initial shape</div>
+          </div>
+          <div style="color:var(--text3);">+</div>
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,22 15,12 25,8 35,15 45,20" stroke="#4ade80" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="5,24 15,14 25,10 35,17 45,21" stroke="#60a5fa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <polyline points="5,23 15,13 25,9 35,16 45,20" stroke="#fbbf24" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:.6rem;color:var(--text3);">Accepted segments</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="text-align:center;">
+            <svg viewBox="0 0 50 30" style="width:50px;height:30px;">
+              <polyline points="5,23 15,13 25,9 35,16 45,20" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:.6rem;color:#166534;font-weight:500;">Refined query</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save cluster centroids as custom presets -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>Save Cluster Centroids as Custom Presets</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        After running <strong>Cluster analysis</strong> (Fast/Shape/Semantic AI), each cluster's <strong>centroid (Medoid — the actual member closest to center)</strong>
+        can be saved to the Pattern Library as a custom preset.
+        Saved shapes appear in Preset mode next to any built-in presets you have added, and are stored <strong>per-dataset</strong> for context relevance.
+      </p>
+      <div class="feat-example">
+        <div class="feat-ex-title">Workflow</div>
+        <ol>
+          <li>Switch to Segment view &rarr; run Cluster mode (Fast/Shape/Semantic AI)</li>
+          <li>Review cluster results &mdash; each group shows its Medoid shape and member segments</li>
+          <li>Click the <span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></span> button on a cluster card &rarr; name the pattern (e.g., "Morning Double Peak")</li>
+          <li>The centroid is saved to the Pattern Library &rarr; available as a custom preset in Preset mode</li>
+          <li>Delete custom presets via the × button (built-in presets cannot be deleted)</li>
+        </ol>
+      </div>
+      <div class="feat-example">
+        <div class="feat-ex-title">Benefits</div>
+        <div class="feat-compare">
+          <div><strong>Per-dataset storage</strong>: Presets are stored per-dataset &mdash; solar patterns appear only with solar data. The library lives on the server and is shared by all accounts</div>
+          <div><strong>Medoid-based</strong>: Uses the actual member segment closest to center, not the mean &mdash; more robust to outliers</div>
+          <div><strong>Iterative discovery</strong>: Cluster &rarr; save &rarr; search &rarr; refine &rarr; cluster again with more context</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross-column correlation insights -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>Cross-Column Correlation Insights</h3></div>
+      <p style="font-size:.78rem;line-height:1.6;color:var(--text2);margin-top:8px;">
+        The <strong>Column Pattern Correlation Map</strong> generated during clustering shows how measured variables co-vary.
+        Each cell holds an SVG sparkline of the actual average shape and a <strong>consistency badge</strong> indicating statistical reliability.
+      </p>
+      <div class="feat-example">
+        <div class="feat-ex-title">Consistency Levels</div>
+        <div class="feat-compare">
+          <div><strong>Strong (&gt;=85%)</strong>: Nearly all members share this shape &mdash; reliable pattern</div>
+          <div><strong>Moderate (&gt;=70%)</strong>: Majority share the shape &mdash; generally reliable</div>
+          <div><strong>Weak (&gt;=55%)</strong>: Some variance &mdash; interpret with caution</div>
+          <div><strong>Noisy (&lt;55%)</strong>: High variance &mdash; the average shape is not representative</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Using the library -->
+    <div class="feat-item" style="margin-top:20px;">
+      <div class="feat-head"><h3>Using the Library</h3></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>Apply to new data:</strong> when the same dataset receives new ranges or periods, search them right away with saved patterns
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>Team sharing:</strong> pattern definitions persist in the library for collaboration
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-size:.72rem;">
+          <strong>CSV export:</strong> download labeling results as CSV
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-label-library -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: Usage Scenarios
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-label-scenarios">
+  <section class="about-section">
+    <p class="sec-desc">Real-world workflow examples using the labeling features.</p>
+
+    <!-- Scenario 1: Building a pattern library -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">Building a Pattern Library</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#6366f1" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#6366f1" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Data Analyst</div>
+          <div class="scenario-speech">"I want to select only the patterns I need from search results, save them to a pattern library, and reuse them later."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#6366f1;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Labeling loop</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li><strong>Search:</strong> Find patterns using Text/Preset/Sample/Cluster mode</li>
+          <li><strong>Evaluate:</strong> Accept accurate results, <strong>Reject</strong> incorrect ones</li>
+          <li><strong>Confirm:</strong> Review in Draft, then Confirm All to finalize</li>
+          <li><strong>Refine:</strong> Query improves from the average shape of confirmed segments</li>
+          <li><strong>Repeat:</strong> Re-search with the refined query → more accurate results → library grows</li>
+        </ol>
+        <div class="scenario-method-note">Iterate: search → select → save · Per-pattern instance management · Export labeling results (CSV)</div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Creating presets from clusters -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">Creating Presets from Clusters</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Researcher</div>
+          <div class="scenario-speech">"I want to save patterns discovered through clustering so I can quickly find the same patterns in new data later."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#7c3aed;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Custom presets</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li>Segment view → run Cluster mode (Fast/Shape/Semantic AI)</li>
+          <li>Review cluster results — check each group's Medoid shape and member segments</li>
+          <li>Click the <span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></span> button on a cluster card → name the pattern (e.g., "Morning Double Peak")</li>
+          <li>Shown in purple in Preset mode for reuse</li>
+        </ol>
+        <div class="scenario-method-note">Per-dataset storage · Medoid-based (robust to outliers) · Cluster → save → search → refine iteration</div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: Classifying new data -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">Classifying New Data</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-engineer">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Operations Engineer</div>
+          <div class="scenario-speech">"I want to quickly classify new data arriving in the same dataset using the pattern library I built earlier."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#3b82f6;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Preset mode</span>
+        </div>
+        <ol style="margin:0 0 0 20px;padding:0;font-size:.78rem;line-height:1.6;">
+          <li>Load the new range of the same dataset → switch to Segment view</li>
+          <li>In Preset mode, select a pattern saved in the library</li>
+          <li>Click <strong>"Classify All"</strong> to classify every segment automatically</li>
+          <li>Review the results and add labels where needed</li>
+        </ol>
+        <div class="scenario-method-note">Reuse saved patterns · Automated full classification · Export results</div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: Team collaboration -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">Team Collaboration</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#7c3aed" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#7c3aed" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Research Team Lead</div>
+          <div class="scenario-speech">"I want team members to share the patterns they find, and new members to use the existing pattern definitions."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="background:#7c3aed;color:white;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:600;">Pattern Library</span>
+        </div>
+        <p style="margin:0;font-size:.78rem;line-height:1.6;">
+          The pattern library is <strong>stored on the server per dataset</strong> and shared by all accounts. Patterns confirmed by team members accumulate in the library,
+          and a new member who opens the same dataset can use the existing pattern definitions.
+        </p>
+        <div class="scenario-method-note">Per-dataset storage · Knowledge accumulation · Survives team changes</div>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /sub-label-scenarios -->
+
+  </div><!-- /tab-labeling -->

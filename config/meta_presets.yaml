@@ -1,0 +1,83 @@
+# Dataset Metadata Presets
+# Quick input via scroll/select during upload
+
+locations:
+  - Haenam-gun Samsan-myeon, Jeonnam
+  - Sinan-gun Aphae-eup, Jeonnam
+  - Gunsan-si Okdo-myeon, Jeonbuk
+  - Suwon-si Yeongtong-gu, Gyeonggi
+  - Ansan-si Danwon-gu, Gyeonggi
+  - Seosan-si Daesan-eup, Chungnam
+  - Dangjin-si Seokmun-myeon, Chungnam
+  - Gyeongju-si Gampo-eup, Gyeongbuk
+  - Gimhae-si Jinyeong-eup, Gyeongnam
+  - Seogwipo-si Daejeong-eup, Jeju
+  - Gangnam-gu, Seoul
+  - Haeundae-gu, Busan
+  - Yuseong-gu, Daejeon
+  - Buk-gu, Gwangju
+
+facilities:
+  - Solar Power Plant
+  - Wind Power Plant
+  - ESS Storage Facility
+  - Weather Station (AWS)
+  - Substation
+  - Factory Power Metering
+  - Building Energy Management
+  - Agricultural Greenhouse
+  - Water Treatment Facility
+
+capacities:
+  - 3kW
+  - 10kW
+  - 50kW
+  - 100kW
+  - 500kW
+  - 1MW
+  - 3MW
+  - 10MW
+  - 50MW
+
+intervals:
+  - 1 min
+  - 5 min
+  - 10 min
+  - 15 min
+  - 30 min
+  - 1 hour
+  - 3 hours
+  - Daily
+  - Weekly
+  - Monthly
+
+characteristics:
+  - Includes seasonal variation
+  - Contains outliers/missing values
+  - Mostly normal patterns
+  - Strong periodicity
+  - Irregular patterns
+  - Real-time sensor data
+  - Simulation data
+  - Weather-linked data
+
+tags:
+  - Solar
+  - Wind
+  - ESS
+  - Weather
+  - Power
+  - Energy
+  - Temperature
+  - Humidity
+  - Irradiance
+  - Generation
+  - Sensor
+  - IoT
+  - Hourly
+  - Daily
+  - Segment
+  - Continuous
+  - Summer
+  - Winter
+  - Anomaly Detection

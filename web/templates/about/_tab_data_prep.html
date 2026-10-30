@@ -1,0 +1,681 @@
+  <div class="about-tab-content" id="tab-data-prep">
+
+  <!-- Sub-tab navigation -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="dataPrepSubTabs">
+      <button class="sub-tab active" data-subtab="sub-dp-format">Data Format</button>
+      <button class="sub-tab" data-subtab="sub-dp-preproc">Preprocessing</button>
+      <button class="sub-tab" data-subtab="sub-dp-analysis">Diagnosis & Split</button>
+      <button class="sub-tab" data-subtab="sub-dp-scenarios">Usage Scenarios</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: Data Format (from Input)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-dp-format">
+  <section class="about-section">
+    <p class="sec-desc">Upload a single CSV or a folder in Data Management → Upload. A folder can keep each file as its own source (individual) or merge all files into one series in time order (merge). Encoding and delimiter are detected automatically and can be overridden.</p>
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>Duplicate timestamps, AI metadata, deletion</strong> — When a timestamp appears more than once, choose: reject, keep first, keep last, average, or shift; if every timestamp appears exactly k times, the app reports that k regional files were likely merged. The switch at the top of the Upload tab lets a connected external LLM (Anthropic Claude or OpenAI-compatible, set up by an admin under Model Connection) fill dataset key, name, description, location, facility, capacity, interval, characteristics, tags and column metadata; it is off by default, remembers the last choice, and marks AI-filled fields with a red border for review. Deleting a dataset in the Datasets tab also removes its preprocessing results, labels, basket, presets, cache and files after a DB backup. Public examples in data/wind_energy/ include Elia (Belgium) wind generation and forecasts 2015–2026 as five regional hourly CSVs, Sangmyeong wind farm and the Haengwon met mast.
+    </div>
+
+
+    <div class="input-compare">
+      <div class="input-card input-a">
+        <div class="input-badge">Continuous Time Series (Single)</div>
+        <h3>One Long Time Series</h3>
+        <p>A single CSV containing a time axis column and value columns as a continuous time series.</p>
+        <div class="input-example">
+          <div class="code-mini">
+            <span class="cm-comment"># power_2024.csv (8,760 rows)</span><br>
+            datetime, power_kw, irradiance<br>
+            2024-01-01 00:00, 0.0, 0<br>
+            ...<br>
+            2024-12-31 23:00, 0.0, 0
+          </div>
+        </div>
+        <ul class="input-features">
+          <li>Select query range by dragging on the chart</li>
+          <li>Explore the entire series via sliding window</li>
+          <li>Automatic splitting by fixed length (daily, weekly, etc.)</li>
+        </ul>
+      </div>
+
+      <div class="input-vs">or</div>
+
+      <div class="input-card input-b">
+        <div class="input-badge input-badge-b">Segment Collection</div>
+        <h3>Multiple Short Segments</h3>
+        <p>Multiple CSVs with the same structure. In individual mode each file becomes its own source; in merge mode they are joined in time order.</p>
+        <div class="input-example">
+          <div class="code-mini">
+            <span class="cm-comment"># motor_runs/ (8 files)</span><br>
+            motor_run_01.csv <span class="cm-comment">(148 rows)</span><br>
+            motor_run_02.csv <span class="cm-comment">(95 rows)</span><br>
+            ...<br>
+            motor_run_08.csv <span class="cm-comment">(132 rows)</span>
+          </div>
+        </div>
+        <ul class="input-features">
+          <li>Compare segments directly</li>
+          <li>Concatenate all segments for continuous exploration</li>
+          <li>Manage as a Collection even with varying lengths</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Index Type -->
+    <h3 style="margin-top:28px;">Automatic Index Type Detection</h3>
+    <p style="margin-bottom:12px;">Automatically detects the type of the index column (x-axis).</p>
+    <div class="idx-cards">
+      <div class="idx-card">
+        <div class="idx-type">datetime</div>
+        <div class="idx-desc">Date/time based</div>
+        <div class="idx-example">
+          <code>2024-01-01 09:00</code><br>
+          Weather data, power generation, sensor logs
+        </div>
+      </div>
+      <div class="idx-card">
+        <div class="idx-type idx-type-num">numeric</div>
+        <div class="idx-desc">Sequence/number based</div>
+        <div class="idx-example">
+          <code>step: 1~148</code><br>
+          Batch processes, motor runs, cycle tests
+        </div>
+      </div>
+      <div class="idx-card">
+        <div class="idx-type idx-type-txt">text</div>
+        <div class="idx-desc">Other text</div>
+        <div class="idx-example">
+          Categories, code names, etc.
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-format -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: Preprocessing (from Process)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-preproc">
+  <section class="about-section">
+    <p class="sec-desc">Resolve quality issues in raw data and transform it into a form suitable for exploration. Original data is preserved, and you can compare before/after at any time. Preprocessing is done from the "Data Preprocessing" menu.</p>
+
+    <!-- Preprocessing pipeline flow -->
+    <div class="pp-flow">
+      <div class="pp-flow-node pp-flow-io">
+        <div class="pp-flow-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div>
+        <div class="pp-flow-title">Dataset</div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+
+      <div class="pp-flow-group">
+        <div class="pp-flow-group-label">Preprocessing Pipeline</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">1</div>
+          <div class="pp-flow-title">Extreme Values</div>
+        </div>
+        <div class="pp-flow-arrow-inner">→</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">2</div>
+          <div class="pp-flow-title">Time Gaps</div>
+        </div>
+        <div class="pp-flow-arrow-inner">→</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">3</div>
+          <div class="pp-flow-title">NaN Imputation</div>
+        </div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+
+      <div class="pp-flow-node pp-flow-io">
+        <div class="pp-flow-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></div>
+        <div class="pp-flow-title">Ready to Explore</div>
+      </div>
+    </div>
+
+    <div class="feat-list" style="margin-top:20px;">
+      <!-- Step 1 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">01</span><h3>Extreme Value Handling</h3></div>
+        <div class="input-compare">
+          <div class="input-card input-a">
+            <div class="input-badge">Value Range Limit</div>
+            <p>Values outside the column min/max (physical range) set in metadata are clamped or turned into NaN. Each column also carries a label, unit and description; the ⓘ next to each field explains it.</p>
+            <ul class="input-features">
+              <li>Clamp or NaN conversion mode</li>
+              <li>Independent settings per column</li>
+            </ul>
+          </div>
+          <div class="input-vs">or</div>
+          <div class="input-card input-b">
+            <div class="input-badge input-badge-b">Outlier Clamping</div>
+            <p>Automatically detect extreme values statistically (IQR, Percentile, Sigma).</p>
+            <ul class="input-features">
+              <li>Auto-detect when min/max unknown</li>
+              <li>Adjust sensitivity with k coefficient</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">02</span><h3>Time Gap Filling</h3></div>
+        <p>Detect <strong>time gaps</strong> caused by sensor downtime, communication loss, etc., and insert NaN at missing timestamps.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">03</span><h3>NaN Imputation/Restoration</h3></div>
+        <p>Choose from 8 imputation methods: Adaptive (recommended), Linear, Cubic spline, Smoothing spline, Nearest, Zero fill, Forward fill, <strong>MOMENT</strong> (foundation model context-based restoration).</p>
+        <div class="input-example" style="margin-top:10px;">
+          <div class="code-mini">
+            <span class="cm-comment"># Original: [10, NaN, NaN, 16]</span><br>
+            <span class="cm-comment"># linear:   [10, <strong>12</strong>, <strong>14</strong>, 16]</span><br>
+            <span class="cm-comment"># MOMENT:   [10, <strong>11.3</strong>, <strong>14.1</strong>, 16]  ← context-based</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-preproc -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: Diagnosis & Split (from Process)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-analysis">
+  <section class="about-section">
+    <p class="sec-desc">Automatically diagnose data quality, analyze periodicity, and split data into various units.</p>
+
+    <div class="feat-list">
+      <!-- Quality Diagnosis -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">01</span><h3>Data Quality Diagnosis</h3></div>
+        <p>Automatically analyze missing values, outliers, and gaps before preprocessing.</p>
+
+        <!-- Diagnosis report cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0;">
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(217,119,6,.06) 0%,rgba(217,119,6,.02) 100%);border:1px solid rgba(217,119,6,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><circle cx="10" cy="10" r="8" fill="rgba(217,119,6,.15)" stroke="#d97706" stroke-width="1.2"/><path d="M6,10 L14,10" stroke="#d97706" stroke-width="1.5"/><path d="M10,6 L10,14" stroke="#d97706" stroke-width="1.5"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#92400e;">Sampling Interval</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#d97706;">Auto-detected</div>
+            <div style="font-size:.65rem;color:#b45309;margin-top:2px;">1h, 15min, 1min, etc.</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(239,68,68,.06) 0%,rgba(239,68,68,.02) 100%);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><rect x="3" y="8" width="14" height="8" rx="2" fill="rgba(239,68,68,.15)" stroke="#ef4444" stroke-width="1"/><circle cx="10" cy="5" r="2" fill="#ef4444"/><path d="M8,12 L12,12" stroke="#ef4444" stroke-width="1.5"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#dc2626;">Time Gaps</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#ef4444;">3</div>
+            <div style="font-size:.65rem;color:#b91c1c;margin-top:2px;">Missing points: 142</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,rgba(245,158,11,.02) 100%);border:1px solid rgba(245,158,11,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><path d="M4,16 L8,10 L10,4 L12,14 L16,8" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="10" cy="4" r="2" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2 1"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#b45309;">Outliers (IQR)</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#f59e0b;">28</div>
+            <div style="font-size:.65rem;color:#92400e;margin-top:2px;">Ratio: 0.32%</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(100,116,139,.06) 0%,rgba(100,116,139,.02) 100%);border:1px solid rgba(100,116,139,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><rect x="4" y="4" width="12" height="12" rx="2" fill="rgba(100,116,139,.15)" stroke="#64748b" stroke-width="1"/><text x="10" y="13" text-anchor="middle" font-size="7" fill="#64748b" font-weight="600">?</text></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#475569;">NaN Values</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#64748b;">56</div>
+            <div style="font-size:.65rem;color:#64748b;margin-top:2px;">Ratio: 0.64%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FFT -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">02</span><h3>FFT Periodicity Analysis</h3></div>
+
+        <!-- FFT spectrum -->
+        <div style="margin:12px 0;padding:16px;background:rgba(37,99,235,.03);border:1px solid rgba(37,99,235,.15);border-radius:10px;">
+          <svg viewBox="0 0 400 100" fill="none" style="width:100%;height:auto;max-height:100px;">
+            <!-- axes -->
+            <line x1="40" y1="80" x2="390" y2="80" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="40" y1="10" x2="40" y2="80" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="215" y="96" text-anchor="middle" font-size="8" fill="#64748b">Frequency (cycles/day)</text>
+            <text x="12" y="45" text-anchor="middle" font-size="8" fill="#64748b" transform="rotate(-90,12,45)">Power</text>
+
+            <!-- spectrum bars -->
+            <rect x="60" y="20" width="12" height="60" rx="2" fill="#2563eb" opacity=".9"/>
+            <text x="66" y="90" text-anchor="middle" font-size="6" fill="#1e40af" font-weight="600">1/day</text>
+
+            <rect x="100" y="55" width="12" height="25" rx="2" fill="#3b82f6" opacity=".7"/>
+            <text x="106" y="90" text-anchor="middle" font-size="6" fill="#64748b">2/day</text>
+
+            <rect x="140" y="65" width="12" height="15" rx="2" fill="#60a5fa" opacity=".5"/>
+            <rect x="180" y="70" width="12" height="10" rx="2" fill="#93c5fd" opacity=".4"/>
+            <rect x="220" y="72" width="12" height="8" rx="2" fill="#bfdbfe" opacity=".3"/>
+            <rect x="260" y="74" width="12" height="6" rx="2" fill="#dbeafe" opacity=".3"/>
+            <rect x="300" y="75" width="12" height="5" rx="2" fill="#eff6ff" opacity=".3"/>
+            <rect x="340" y="76" width="12" height="4" rx="2" fill="#f8fafc" opacity=".2"/>
+
+            <!-- peak marker -->
+            <circle cx="66" cy="16" r="4" fill="#dc2626"/>
+            <text x="66" y="8" text-anchor="middle" font-size="6" fill="#dc2626" font-weight="700">Peak</text>
+
+            <!-- legend -->
+            <rect x="300" y="15" width="88" height="32" rx="4" fill="rgba(255,255,255,.9)" stroke="#e2e8f0" stroke-width=".5"/>
+            <circle cx="312" cy="26" r="4" fill="#dc2626"/>
+            <text x="320" y="29" font-size="7" fill="#374151">Main peak: <tspan font-weight="600">24h</tspan></text>
+            <text x="308" y="42" font-size="6" fill="#6b7280">→ daily split suggested</text>
+          </svg>
+        </div>
+
+        <p>Use FFT to analyze data periodicity. The main peak is identified to help determine the appropriate split unit.</p>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <div style="padding:6px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#166534;font-weight:600;">24h cycle</span>
+            <span style="color:#6b7280;margin-left:4px;">→ daily split</span>
+          </div>
+          <div style="padding:6px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#1e40af;font-weight:600;">168h cycle</span>
+            <span style="color:#6b7280;margin-left:4px;">→ weekly split</span>
+          </div>
+          <div style="padding:6px 12px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#5b21b6;font-weight:600;">8760h cycle</span>
+            <span style="color:#6b7280;margin-left:4px;">→ annual pattern</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segment Split -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">03</span><h3>Flexible Split & Concatenation</h3></div>
+        <p>The same data can be <strong>split, concatenated, and re-split</strong> into various units.</p>
+
+        <!-- Split/concat flow -->
+        <div style="margin:16px 0;padding:16px;background:rgba(5,150,105,.03);border:1px solid rgba(5,150,105,.15);border-radius:10px;">
+          <svg viewBox="0 0 440 120" fill="none" style="width:100%;height:auto;">
+            <!-- original continuous data -->
+            <text x="10" y="12" font-size="7" fill="#64748b" font-weight="600">Continuous data</text>
+            <rect x="10" y="18" width="120" height="24" rx="4" fill="rgba(217,119,6,.1)" stroke="#d97706" stroke-width="1.2"/>
+            <polyline points="16,36 26,30 36,32 46,26 56,28 66,22 76,30 86,26 96,32 106,28 116,34 124,30" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+            <!-- arrow: split -->
+            <path d="M135,30 L155,30" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+            <text x="145" y="22" text-anchor="middle" font-size="6" fill="#059669" font-weight="600">Split</text>
+
+            <!-- split segments -->
+            <text x="165" y="12" font-size="7" fill="#64748b" font-weight="600">Segments (daily)</text>
+            <rect x="165" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="170,32 176,26 182,30 188,24 192,28" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="201" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="206,30 212,24 218,28 224,22 228,26" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="237" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="242,28 248,22 254,26 260,20 264,24" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <text x="273" y="30" font-size="8" fill="#059669">...</text>
+
+            <!-- arrow: concat -->
+            <path d="M220,42 L220,55" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+            <text x="232" y="52" font-size="6" fill="#7c3aed" font-weight="600">Concat</text>
+
+            <!-- concatenated data -->
+            <text x="165" y="68" font-size="7" fill="#64748b" font-weight="600">Concatenated continuous data</text>
+            <rect x="165" y="74" width="130" height="24" rx="4" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="1.2"/>
+            <polyline points="171,92 181,86 191,88 201,82 211,84 221,78 231,86 241,82 251,88 261,84 271,90 281,86 289,90" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+            <!-- arrow: re-split -->
+            <path d="M300,86 L320,86" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+            <text x="310" y="78" text-anchor="middle" font-size="6" fill="#2563eb" font-weight="600">Re-split</text>
+
+            <!-- re-split segments (hourly) -->
+            <text x="330" y="68" font-size="7" fill="#64748b" font-weight="600">Segments (hourly)</text>
+            <rect x="330" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="352" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="374" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="396" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <text x="420" y="84" font-size="8" fill="#2563eb">...</text>
+
+            <!-- arrow markers -->
+            <defs>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#059669"/></marker>
+              <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L5,8 L8,2" fill="#7c3aed"/></marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#2563eb"/></marker>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Time unit cards -->
+        <div class="split-demo-grid">
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">6 hours</span></div>
+            <div class="split-demo-desc">AM/PM/evening/night separation</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">1 day</span></div>
+            <div class="split-demo-desc">Daily profile comparison</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">1 week</span></div>
+            <div class="split-demo-desc">Weekly trend analysis</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">Full</span></div>
+            <div class="split-demo-desc">Sliding window exploration</div>
+          </div>
+        </div>
+
+        <!-- Concat description -->
+        <div style="margin-top:12px;padding:12px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.15);border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none"><path d="M4,10 L8,10 M12,10 L16,10" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="none" stroke="#7c3aed" stroke-width="1.5"/></svg>
+            <span style="font-size:.75rem;font-weight:600;color:#5b21b6;">Segment Concatenation (Concat)</span>
+          </div>
+          <div style="font-size:.72rem;color:var(--text3);line-height:1.5;">
+            Select several segments and join them into one continuous series. The result can be re-split into another time unit or searched end to end with a sliding window.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-analysis -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 4: Usage Scenarios
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-scenarios">
+  <section class="about-section">
+    <h2 class="sec-title">Usage Scenarios</h2>
+    <p class="sec-desc">Common situations during data preparation and how to handle them.</p>
+
+    <!-- Scenario 1: Data format -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">Choosing a Data Format</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#3b82f6" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#3b82f6" opacity=".55"/>
+            <rect x="26" y="24" width="8" height="10" rx="1" fill="#fff" stroke="#3b82f6" stroke-width="1"/>
+            <path d="M28,27 L32,27 M28,29 L31,29 M28,31 L32,31" stroke="#3b82f6" stroke-width=".6"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Researcher</div>
+          <div class="scenario-speech">"I have one year of continuous data, but also data split into many short CSV files, like motor run logs. Can I analyze both?"</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- continuous series -->
+              <rect x="4" y="8" width="70" height="34" rx="4" fill="#fff7ed" stroke="#f59e0b" stroke-width="1"/>
+              <text x="39" y="18" text-anchor="middle" font-size="6" fill="#92400e" font-weight="600">Continuous series</text>
+              <polyline points="10,38 20,30 30,34 40,26 50,30 60,24 68,32" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <text x="39" y="46" text-anchor="middle" font-size="5" fill="#b45309">power_2024.csv</text>
+              <!-- or -->
+              <text x="90" y="28" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600">or</text>
+              <!-- segment collection -->
+              <rect x="106" y="8" width="70" height="34" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+              <text x="141" y="18" text-anchor="middle" font-size="6" fill="#065f46" font-weight="600">Segment collection</text>
+              <rect x="112" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <rect x="132" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <rect x="152" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <text x="141" y="46" text-anchor="middle" font-size="5" fill="#059669">motor_runs/ (8 files)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div>
+        <div>
+          Both data formats are supported:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>Continuous time series:</strong> one long CSV — sliding window search, split by time unit</li>
+            <li><strong>Segment collection:</strong> several CSVs in a folder — compared with DTW even at different lengths, concatenated for continuous exploration when needed</li>
+          </ul>
+          <div class="scenario-method-note">Auto-detect encoding, delimiter and index · Column metadata (unit, min, max) entered or AI-estimated · Sampling interval computed automatically</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Quality diagnosis -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">Quality Diagnosis</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/>
+            <circle cx="30" cy="26" r="6" fill="#fff" stroke="#f59e0b" stroke-width="1.2"/>
+            <path d="M30,23 L30,27 M30,29 L30,29.5" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Data Analyst</div>
+          <div class="scenario-speech">"This is a new dataset. Before anything else I want to know how many values are missing and how severe the outliers are."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-a" style="margin-bottom:6px;">Data Quality Diagnosis</div>
+          Data quality is diagnosed automatically before preprocessing:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>Sampling interval:</strong> auto-detected (1h, 15min, 1min, etc.)</li>
+            <li><strong>Time gaps:</strong> number of missing stretches from sensor downtime and the missing points</li>
+            <li><strong>Outliers (IQR):</strong> count and ratio of statistically extreme values</li>
+            <li><strong>NaN values:</strong> count of missing values and ratio to the total</li>
+          </ul>
+          <div class="scenario-method-note">Read-only diagnosis · Original data unchanged · Independent analysis per column</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: Preprocessing -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">Data Preprocessing</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-dataeng">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f97316" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f97316" opacity=".55"/>
+            <circle cx="30" cy="28" r="6" fill="none" stroke="#ea580c" stroke-width="1.4"/>
+            <circle cx="30" cy="28" r="2" fill="#ea580c"/>
+            <path d="M30,22 L30,24 M30,32 L30,34 M24,28 L26,28 M34,28 L36,28" stroke="#ea580c" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Data Engineer</div>
+          <div class="scenario-speech">"There are quite a few sensor gaps and outliers, so running it on the raw data would likely produce unreliable results."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- before -->
+              <rect x="4" y="4" width="70" height="36" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+              <text x="39" y="14" text-anchor="middle" font-size="5.5" fill="#991b1b" font-weight="600">Before</text>
+              <polyline points="10,32 16,28 22,30" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <circle cx="30" cy="18" r="2" fill="none" stroke="#ef4444" stroke-width=".8" stroke-dasharray="1.5 1"/>
+              <polyline points="38,26 44,22" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="2 2"/>
+              <polyline points="52,24 58,28 64,20 70,26" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- arrow -->
+              <path d="M78,22 L92,22" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+              <text x="85" y="18" text-anchor="middle" font-size="5" fill="#059669" font-weight="600">3 stages</text>
+              <!-- after -->
+              <rect x="96" y="4" width="70" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+              <text x="131" y="14" text-anchor="middle" font-size="5.5" fill="#166534" font-weight="600">After</text>
+              <polyline points="102,32 112,26 122,28 132,22 142,24 152,20 162,26" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs><marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#059669"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span></div>
+        <div>
+          The preprocessing pipeline runs in 3 stages:
+          <ol style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>Extreme value handling:</strong> Choose value range limiting (column min/max) or outlier clamping (IQR, Percentile, Sigma)</li>
+            <li><strong>Time gap filling:</strong> Insert NaN at timestamps missing due to sensor downtime</li>
+            <li><strong>NaN imputation:</strong> Choose from 8 methods — Linear, Cubic, Smoothing spline, Nearest, Zero fill, Forward fill, Adaptive, <strong>MOMENT</strong> (FM-based context restoration)</li>
+          </ol>
+          <div class="scenario-method-note">Original preserved · 3-stage pipeline · Before/after comparison charts · Revert anytime</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: FFT analysis -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">FFT Periodicity Analysis</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-energy">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#eab308" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#eab308" opacity=".55"/>
+            <circle cx="30" cy="26" r="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1"/>
+            <path d="M30,23 L30,26 L32,28" stroke="#ca8a04" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Energy Analyst</div>
+          <div class="scenario-speech">"This is solar generation data. I am not sure whether daily or weekly splitting is right, so I want to check the periodicity first."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-b" style="margin-bottom:6px;">FFT Periodicity Analysis</div>
+          FFT (fast Fourier transform) reveals hidden periodicity in the data:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>Main peak detection:</strong> the strongest periodic pattern is identified automatically</li>
+            <li><strong>Split unit suggestion:</strong> 24h peak → daily split, 168h peak → weekly split</li>
+            <li><strong>Multiple cycles:</strong> daily, weekly and annual patterns seen at once</li>
+          </ul>
+          <div class="scenario-method-note">Spectrum visualization · Automatic peak detection · Split unit suggestion</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 5: Time unit selection -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">5</span><span class="scenario-title-text">Time Unit Split</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-facility">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#10b981" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#10b981" opacity=".55"/>
+            <rect x="24" y="22" width="4" height="6" rx=".5" fill="#059669"/>
+            <rect x="29" y="25" width="4" height="3" rx=".5" fill="#34d399"/>
+            <rect x="24" y="29" width="9" height="5" rx=".5" fill="#047857" opacity=".7"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Facility Manager</div>
+          <div class="scenario-speech">"Sometimes I want to analyze by week, sometimes by hour — I need to split the data into different time units depending on the purpose."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- original -->
+              <rect x="4" y="8" width="50" height="28" rx="3" fill="rgba(217,119,6,.1)" stroke="#d97706" stroke-width="1"/>
+              <polyline points="10,28 18,22 26,26 34,18 42,24 48,20" stroke="#d97706" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- arrows -->
+              <path d="M58,22 L72,14" stroke="#059669" stroke-width="1"/>
+              <path d="M58,22 L72,22" stroke="#059669" stroke-width="1"/>
+              <path d="M58,22 L72,30" stroke="#059669" stroke-width="1"/>
+              <!-- 6 hours -->
+              <rect x="76" y="4" width="36" height="12" rx="2" fill="rgba(5,150,105,.1)" stroke="#059669" stroke-width=".8"/>
+              <text x="94" y="12" text-anchor="middle" font-size="5" fill="#059669" font-weight="600">6 hours</text>
+              <!-- 1 day -->
+              <rect x="76" y="18" width="36" height="12" rx="2" fill="rgba(37,99,235,.1)" stroke="#2563eb" stroke-width=".8"/>
+              <text x="94" y="26" text-anchor="middle" font-size="5" fill="#2563eb" font-weight="600">1 day</text>
+              <!-- 1 week -->
+              <rect x="76" y="32" width="36" height="12" rx="2" fill="rgba(124,58,237,.1)" stroke="#7c3aed" stroke-width=".8"/>
+              <text x="94" y="40" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="600">1 week</text>
+              <!-- resulting segments -->
+              <rect x="120" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="136" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="152" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="168" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <text x="186" y="26" font-size="6" fill="#2563eb">...</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-b" style="margin-bottom:6px;">Time Unit Selection (6 types)</div>
+          Select the desired unit from hour · 6hour · day · week · month · year,
+          and the segment length is automatically calculated based on the data's sampling interval.
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>6 hours:</strong> Separate AM/PM/evening/night patterns</li>
+            <li><strong>1 day:</strong> Daily profile comparison — ideal for solar generation patterns</li>
+            <li><strong>1 week:</strong> Weekly trend analysis — distinguish weekday/weekend patterns</li>
+          </ul>
+          <div class="scenario-method-note">6 time units · Auto-detect sampling interval · Different patterns per unit · Instant switching</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 6: Segment concatenation -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">6</span><span class="scenario-title-text">Segment Concatenation (Concat)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-process">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/>
+            <rect x="24" y="23" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="29" y="23" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="24" y="28" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="29" y="28" width="4" height="4" rx=".5" fill="#a78bfa"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">Process Engineer</div>
+          <div class="scenario-speech">"From the daily segments I want to pick three specific days, join them, and search for patterns across the whole result."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- selected segments -->
+              <rect x="4" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="8,24 12,18 16,22 20,16 24,20" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="32" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="36,22 40,16 44,20 48,14 52,18" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="60" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="64,20 68,14 72,18 76,12 80,16" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <!-- arrow -->
+              <path d="M90,20 L106,20" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+              <text x="98" y="14" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="600">Concat</text>
+              <!-- concatenated result -->
+              <rect x="112" y="6" width="84" height="28" rx="4" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="118,26 126,18 134,24 142,16 150,22 158,14 166,20 174,12 182,18 190,24" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="154" y="40" text-anchor="middle" font-size="5" fill="#5b21b6">Continuous exploration</text>
+              <defs><marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#7c3aed"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-c" style="margin-bottom:6px;">Segment Concatenation</div>
+          Select several segments and join them into one continuous series:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>Selective concat:</strong> join only the segments you choose</li>
+            <li><strong>Sliding window:</strong> search for patterns across the joined series</li>
+            <li><strong>Re-split:</strong> split the joined series again into another time unit</li>
+          </ul>
+          <div class="scenario-method-note">Multi-select · Order preserved · Re-split after concat · Full-range search</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-scenarios -->
+
+  </div><!-- /tab-data-prep -->

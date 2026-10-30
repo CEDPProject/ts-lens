@@ -1,0 +1,52 @@
+# ═══════════════════════════════════════════════════════════════
+# Search Settings — DGS Pipeline
+# ═══════════════════════════════════════════════════════════════
+
+# ── Distance Method ───────────────────────────────────────────
+# euclidean: Point-wise RMSE (default, fast)
+# cosine: Shape similarity, ignores magnitude
+# dtw: Dynamic Time Warping, handles time shifts
+# Applies to both the server-side fallback and the initial UI selection.
+default_method: euclidean
+
+# ── Result Limits ─────────────────────────────────────────────
+default_top_k: 10             # Continuous mode
+segment_top_k: 20             # Segment comparison mode
+
+# Top-K slider in the UI (rendered from here, not hardcoded in the template)
+top_k_slider:
+  min: 5
+  max: 500
+  step: 5
+  unlimited: 9999             # top_k sent when the UI asks for "all results"
+
+# ── DTW Settings ──────────────────────────────────────────────
+dtw:
+  band_ratio: 0.2             # Sakoe-Chiba band (% of sequence length)
+  min_band: 10                # Minimum band width for short sequences
+  max_compare_len: 150        # DTW-specific cap before banded comparison
+  prefilter_min_comparisons: 300
+  prefilter_multiplier: 3     # Euclidean shortlist relative to requested top-K
+  prefilter_max_diverse: 2000 # Bound DTW work for very large/"all" requests
+
+# ── Shape Distance ────────────────────────────────────────────
+shape:
+  # 특징 차이를 상대값으로 잴 때 분모의 바닥. 기울기처럼 0 에 가까운 특징이
+  # 1e-17 대 1e-4 같은 무의미한 차이로 최대값(1)을 찍어 거리를 지배하는 것을 막는다.
+  scale_floor: 0.2
+  # 방향이 바뀐 횟수를 셀 때, 진폭 대비 이 비율보다 작은 흔들림은 잡음으로 보고 세지 않는다.
+  peak_noise_ratio: 0.05
+
+# ── Comparison Settings ───────────────────────────────────────
+comparison:
+  max_compare_len: 500        # Auto-downsample if longer
+
+# ── NaN Handling ──────────────────────────────────────────────
+nan:
+  mode: interpolate           # interpolate | skip
+  max_ratio: 0.5              # Skip segments exceeding this NaN ratio
+
+# ── Z-score Normalization ─────────────────────────────────────
+normalize:
+  enabled: true
+  min_std: 1.0e-10            # Below this → treated as constant

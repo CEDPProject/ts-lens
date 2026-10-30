@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ t.auth.title }} — TS-Lens</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v={{ cache_bust }}">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css?v={{ cache_bust }}">
+<style>
+.login-page { min-height:100vh; display:grid; place-items:center; background:var(--bg); padding:24px; }
+.login-card {
+  width:min(380px, 100%); background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:28px 28px 24px;
+}
+.login-brand { display:flex; align-items:center; gap:9px; margin-bottom:22px; color:var(--text); }
+.login-brand svg { width:26px; height:26px; color:var(--accent); }
+.login-brand b { font-size:1.05rem; font-weight:650; letter-spacing:-.015em; }
+.login-card h1 { font-size:1.05rem; font-weight:650; margin:0 0 4px; }
+.login-card p.sub { margin:0 0 18px; font-size:.8rem; color:var(--text3); }
+.login-field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+.login-field label { font-size:.72rem; font-weight:600; color:var(--text3); letter-spacing:.02em; }
+.login-field input {
+  padding:9px 11px; border:1px solid var(--border2); border-radius:var(--r-sm); font-size:.9rem;
+  background:var(--surface); color:var(--text); outline:none;
+}
+.login-field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(15,118,110,.10); }
+.login-btn {
+  width:100%; margin-top:6px; padding:10px; border:0; border-radius:var(--r-sm);
+  background:var(--accent); color:#fff; font-size:.9rem; font-weight:600; cursor:pointer;
+}
+.login-btn:hover { background:var(--accent-dk); }
+.login-btn:disabled { opacity:.6; cursor:wait; }
+.login-error { min-height:1.2em; margin:10px 0 0; font-size:.78rem; color:var(--red); }
+.login-foot { margin-top:18px; display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted); }
+.login-foot a { color:var(--text3); text-decoration:none; }
+</style>
+</head>
+<body>
+<main class="login-page">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <div class="login-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="7"/><path d="M15.6 15.6 L20.5 20.5" stroke-width="2.2"/>
+        <polyline points="5.6,12 7.4,12 8.6,8.8 10.4,14 11.8,10.6 12.8,12 15.4,12" stroke-width="1.6"/>
+      </svg>
+      <b>TS<span style="opacity:.35">-</span>Lens</b>
+    </div>
+    <h1>{{ t.auth.title }}</h1>
+    <p class="sub">{{ t.auth.subtitle }}</p>
+    <div class="login-field">
+      <label for="username">{{ t.auth.username }}</label>
+      <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+    </div>
+    <div class="login-field">
+      <label for="password">{{ t.auth.password }}</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="login-btn" type="submit" id="loginBtn">{{ t.auth.login }}</button>
+    <p class="login-error" id="loginError" role="alert"></p>
+    <div class="login-foot">
+      <span>{{ t.auth.hint }}</span>
+      <a href="/set_lang/{{ 'en' if lang == 'ko' else 'ko' }}?next=/login">{{ 'EN' if lang == 'ko' else 'KO' }}</a>
+    </div>
+  </form>
+</main>
+<script>
+(function () {
+  var form = document.getElementById('loginForm');
+  var btn = document.getElementById('loginBtn');
+  var err = document.getElementById('loginError');
+  var params = new URLSearchParams(location.search);
+  var next = params.get('next') || '/';
+  if (!/^\/(?!\/)/.test(next)) next = '/';
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    err.textContent = '';
+    btn.disabled = true;
+    fetch('/api/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: form.username.value.trim(), password: form.password.value })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+      .then(function (res) {
+        if (!res.ok) { err.textContent = res.body.error || {{ t.auth.invalid | tojson }}; btn.disabled = false; form.password.value = ''; form.password.focus(); return; }
+        location.replace(next);
+      })
+      .catch(function () { err.textContent = {{ t.auth.network | tojson }}; btn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

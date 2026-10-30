@@ -1,0 +1,167 @@
+# ──────────────────────────────────────────────────────────────
+# LLM 프롬프트 설정
+# ──────────────────────────────────────────────────────────────
+#
+# llm_service.py에서 로드하여 사용합니다.
+# Python 코드를 수정하지 않고도 프롬프트를 조정할 수 있습니다.
+# ──────────────────────────────────────────────────────────────
+
+# Shape 생성 프롬프트 (NL-to-Shape)
+# 사용자의 자연어 설명을 z-score 정규화 배열로 변환할 때 사용
+shape_generation: |
+  You are a time-series shape generation expert.
+  Given a natural language pattern description, generate a z-score normalized array representing that pattern.
+
+  ## Step-by-step
+
+  1. Read the **target column** name, unit, and value range from the dataset info below
+  2. Interpret the user's description in the context of that column's physical meaning
+  3. Map the description to a concrete shape using the reference table below
+  4. Generate exactly the requested number of values
+
+  ## Domain Pattern Reference Table
+
+  | Description keywords | Shape | z-score pattern |
+  |---|---|---|
+  | steady, flat, constant, stable | flat line | all values near 0 |
+  | rising, increasing, ramp up | upward slope | -1.5 → +1.5 linear |
+  | falling, decreasing, decline | downward slope | +1.5 → -1.5 linear |
+  | spike, sudden peak, surge | sharp peak mid-segment | 0,0,...+2.5,...0,0 (peak at center) |
+  | dip, sudden drop, valley | sharp dip mid-segment | 0,0,...-2.5,...0,0 (dip at center) |
+  | bell, normal day, clear sky solar | symmetric bell curve | -1.5 → rise to +1.5 at center → fall to -1.5 |
+  | V-shape, drop and recover | V pattern | +1 → sharp drop to -2 → recover to +1 |
+  | step up, level shift up | step function | -1...-1 (first half), then +1...+1 (second half) |
+  | step down, level shift down | step function | +1...+1 (first half), then -1...-1 (second half) |
+  | sudden drop to zero, shutdown | high then crash | +1...+1 (80%), then sharp drop to -2...-2 (20%) |
+  | drop and recover, 급락후회복 | drop then gradual rise | +1 → sharp drop to -2 → gradual rise back to +1 |
+  | oscillation, fluctuation, noisy | zigzag pattern | alternating +1/-1 irregularly |
+  | low output, near zero, cutout | flat bottom | all values near -1.5 to -2 |
+  | cloud shadow, intermittent | irregular dips from high | +1 baseline with random dips to -1 |
+  | ramp up then plateau | rise then flat | -1.5 → rise to +1 → flat at +1 |
+
+  ## Output constraints
+
+  1. Array length must **exactly** match the requested length
+  2. Values must be in **-3 to +3** range (z-score normalized)
+     - 0 = average level, +2 = high, -2 = low, ±3 = extreme (rare)
+  3. Adjacent values should differ by **< 0.5** (smooth curve)
+     - Exception: "sudden", "sharp", "급" keywords allow jumps > 1.0
+  4. Output **ONLY** the JSON below. No other text.
+
+  ## Response format
+
+  ```json
+  {
+    "description": "one-sentence description of the generated pattern",
+    "values": [0.0, 0.3, 0.8, ...]
+  }
+  ```
+
+
+# TS-to-Text 프롬프트 (Shape-to-NL)
+# 시계열 세그먼트를 자연어로 해석할 때 사용
+ts_description: |
+  시계열 세그먼트의 사전 분석(Pre-computed Analysis) 결과가 제공됩니다.
+  이 수치 분석 결과를 자연어로 정리하세요. 직접 해석하지 말고, 제공된 분석을 번역하세요.
+  모든 텍스트 필드는 반드시 한글과 영어를 모두 제공하세요.
+
+  ## 규칙
+  - **사전 분석 기반**: Pre-computed Analysis에 있는 수치만 사용하세요. 직접 값을 분석하지 마세요.
+  - **추측 금지**: 원인, 이유, 도메인 해석을 추가하지 마세요. 수치 사실만 기술하세요.
+  - **컬럼명 제외**: summary에 컬럼명을 넣지 마세요.
+  - **구체적으로**: "변동성이 크다" 대신 "표준편차/범위 35%로 변동 폭이 크다"처럼 수치를 인용하세요. 평균이 0에 가까운 데이터에 CV를 사용하지 마세요.
+  - features는 사전 분석에서 눈에 띄는 항목만 태그로 만드세요.
+
+  ## 출력 형식 (반드시 JSON만 출력)
+
+  ```json
+  {
+    "shape": {"ko": "곡선/직선/종형/V자/계단 등 1~2단어", "en": "curve/linear/bell/V-shape/step etc"},
+    "trend": {"ko": "상승/하락/횡보 + 수치 근거", "en": "trend + evidence"},
+    "volatility": {"ko": "높음/보통/낮음 + 표준편차/범위", "en": "level + std/range"},
+    "features": [{"ko": "수치 기반 태그", "en": "numeric tag"}],
+    "summary": {"ko": "사전 분석의 핵심 포인트를 한 문장으로 (수치 포함)", "en": "one sentence with key numbers"}
+  }
+  ```
+
+
+# 멀티 컬럼 종합 해석 프롬프트
+ts_description_multi: |
+  다변량 시계열의 사전 분석(Pre-computed Analysis) 결과가 각 컬럼별로 제공됩니다.
+  이 수치 분석 결과를 자연어로 정리하세요. 직접 해석하지 말고, 제공된 분석을 번역하세요.
+  모든 텍스트 필드는 반드시 한글과 영어를 모두 제공하세요.
+
+  ## 규칙
+  - **사전 분석 기반**: Pre-computed Analysis에 있는 수치만 사용하세요.
+  - **추측 금지**: 원인, 이유, 도메인 해석을 추가하지 마세요. 수치 사실만 기술하세요.
+  - **컬럼명 제외**: 각 컬럼의 summary에 컬럼명을 넣지 마세요.
+  - **구체적으로**: 수치를 인용하여 명확하게 기술하세요.
+  - correlations: 컬럼 간 수치적 관계만 기술하세요 (예: "두 컬럼의 segment_means가 같은 방향으로 변화").
+
+  ## 출력 형식 (반드시 JSON만 출력)
+
+  ```json
+  {
+    "columns": [
+      {
+        "col_name": "컬럼명",
+        "shape": {"ko": "곡선/직선/종형/V자 등 1~2단어", "en": "curve/linear/bell/V-shape etc"},
+        "trend": {"ko": "상승/하락/횡보/순환 등 1~2단어", "en": "rising/falling/flat/cyclic etc"},
+        "volatility": {"ko": "높음/보통/낮음", "en": "high/medium/low"},
+        "features": [{"ko": "고유 특징 태그", "en": "feature tag"}],
+        "summary": {"ko": "패턴을 한 문장으로 설명 (컬럼명, 수치 제외)", "en": "one sentence (no column name, no stats)"}
+      }
+    ],
+    "correlations": [{"ko": "컬럼A↔B 관계", "en": "colA↔B relationship"}],
+    "situation": {"ko": "전체 상황 요약", "en": "overall situation"},
+    "tags": [{"ko": "태그1", "en": "tag1"}]
+  }
+  ```
+
+# 업로드 메타 추정 (관리자가 연결한 외부 LLM 이 쓴다 — backend/routes/external_llm_routes.py)
+# 표본 행·칸 통계·파일 이름만 보고 "이 데이터가 무엇인지" 를 제안한다. 제안은 폼에 미리 채워질 뿐,
+# 사용자가 고쳐서 저장한다. 모르면 비워 두게 하고 지어내지 않게 한다.
+dataset_meta_inference: |
+  You are helping register a time-series CSV in an analysis tool. From the file name, column
+  names, sample rows and per-column statistics, infer what this dataset most likely is.
+
+  Rules
+  - Be specific when the evidence supports it (e.g. "Belgian onshore wind generation and Elia
+    day-ahead forecasts, hourly"). Say less, not more, when it does not.
+  - Never invent units or physical ranges. Give a unit only when the column name, values or a
+    well-known public dataset make it clear; otherwise leave it empty.
+  - `val_min`/`val_max` are plausible PHYSICAL bounds (what a correct sensor could report), not
+    the sample min/max. Give a bound whenever one is defensible: non-negative quantities
+    (power, energy, irradiance, speed, counts) → 0; ratios → 0..1; percent/humidity → 0..100;
+    generation ≤ rated capacity (use the largest capacity seen, rounded up ~10%). Use null only
+    when no physical bound exists (temperature, price, net flow). They become out-of-range filters.
+  - When `file_count` > 1 the files form ONE dataset (a collection): name, key and description
+    must describe the whole set (what is common, and what differs between files — e.g. regions,
+    sites, years). Never name the set after a single file. `location`/`facility`/`capacity`
+    then describe the set as a whole ("5 Belgian wind regions", total capacity) or stay "".
+  - Fill every dataset field you can defend: `location` (site/region), `facility` (equipment
+    type), `capacity` (rated size with unit, from a capacity column or public knowledge),
+    `characteristics` (one sentence: seasonality, gaps, unit changes, meaning of negatives).
+    Leave "" only when there is no evidence. Choose `domain_tags` from `available_tags` when
+    given (exact spelling), 2-5 of them.
+  - Write all human-readable text in the language given by `lang` (ko = Korean, en = English).
+    Keep column `label` short (a display name). Column `description` is one sentence.
+  - Point out data caveats you can see: unit changes, negative values that need interpretation,
+    duplicated timestamps, large gaps, suspicious constants.
+  - Return ONLY a JSON object with exactly these keys:
+    {
+      "dataset_key": str,             # ascii snake_case identifier for this dataset, <= 40 chars (e.g. elia_offshore_wind_hourly)
+      "dataset_name": str,            # short, human-readable
+      "description": str,             # 1-2 sentences: what, where, resolution, period
+      "domain_tags": [str],           # 1-4 tags, e.g. ["energy","wind","forecast"]
+      "sampling": str,                # e.g. "1 hour" / "15 min" — "" if unknown
+      "location": str,                # measurement site/region, "" if unknown
+      "facility": str,                # equipment type (offshore wind farm, PV inverter, met mast...)
+      "capacity": str,                # rated capacity with unit, e.g. "2262 MW", "" if unknown
+      "characteristics": str,         # one sentence on data properties for analysts
+      "columns": [ {"name": str, "label": str, "unit": str, "description": str,
+                    "val_min": number|null, "val_max": number|null, "confidence": "high"|"medium"|"low"} ],
+      "caveats": [str],
+      "confidence": "high"|"medium"|"low",
+      "basis": str                    # one sentence: what the guess is based on
+    }

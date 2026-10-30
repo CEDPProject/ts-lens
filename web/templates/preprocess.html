@@ -1,0 +1,1483 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.preprocess.title }}{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block head_style %}
+<style>
+/* .pp-wrap width/padding handled globally in style.css (--content-w) */
+
+/* 데이터셋 선택 */
+.pp-select-bar {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:16px 20px; box-shadow:var(--sh-sm); margin-bottom:20px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.pp-select-label {
+  font-family:var(--mono); font-size:.7rem; font-weight:600;
+  color:var(--text3); text-transform:uppercase; letter-spacing:.6px;
+}
+.pp-ds-select {
+  padding:7px 14px; border-radius:var(--r-sm);
+  border:1.5px solid var(--border); background:var(--surface);
+  font-family:var(--sans); font-size:.84rem; font-weight:500;
+  color:var(--text); outline:none; cursor:pointer; min-width:240px;
+}
+.pp-ds-select:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(5,150,105,.08); }
+
+/* 상태 배지 */
+.pp-status-badge {
+  font-size:.72rem; font-weight:600; padding:4px 12px; border-radius:20px;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.pp-status-badge.has-pp { background:var(--green-lt); color:var(--green-dk); }
+.pp-status-badge.no-pp { background:var(--surface3); color:var(--text3); }
+.pp-status-dot {
+  width:6px; height:6px; border-radius:50%;
+}
+.pp-status-badge.has-pp .pp-status-dot { background:var(--green); }
+.pp-status-badge.no-pp .pp-status-dot { background:var(--muted); }
+
+/* 진단 패널 */
+.pp-diag-panel {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:0; box-shadow:var(--sh-md); margin-bottom:20px;
+  scroll-margin-top:16px; overflow:hidden;
+  animation:ppSlideUp .4s ease-out;
+}
+.pp-diag-panel.highlight-pulse {
+  animation: diagPulse .6s ease;
+}
+@keyframes diagPulse {
+  0% { box-shadow:var(--sh-md); }
+  50% { box-shadow:0 0 0 5px rgba(5,150,105,.15), 0 4px 20px rgba(5,150,105,.12); }
+  100% { box-shadow:var(--sh-md); }
+}
+/* 패널 상단 그라데이션 바 */
+.pp-diag-accent { display:none; }
+.pp-diag-inner { padding:20px; }
+.pp-panel-title {
+  font-size:.92rem; font-weight:650; letter-spacing:-.01em;
+  color:var(--text); margin-bottom:6px;
+  display:flex; align-items:center; gap:8px;
+}
+
+/* 전체 품질 요약 바 */
+.pp-quality-bar {
+  display:flex; align-items:center; gap:14px;
+  padding:12px 16px; margin-bottom:16px;
+  background:var(--surface2);
+  border:1px solid var(--border); border-radius:var(--r-sm);
+}
+.pp-quality-scores {
+  display:flex; gap:16px; align-items:baseline;
+}
+.pp-quality-item {
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.pp-quality-item-label {
+  font-size:.56rem; font-weight:600; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.4px;
+}
+.pp-quality-score {
+  font-family:var(--mono); font-size:1.2rem; font-weight:800;
+  line-height:1;
+}
+.pp-quality-arrow {
+  font-size:.72rem; color:var(--green); font-weight:700; margin-top:8px;
+}
+.pp-quality-meta {
+  font-size:.68rem; color:var(--text3); line-height:1.4; flex:1;
+}
+.pp-quality-info-btn {
+  width:20px; height:20px; border-radius:50%; border:1px solid var(--border);
+  background:var(--surface); color:var(--text3); font-size:.68rem; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .15s; flex-shrink:0;
+}
+.pp-quality-info-btn:hover { background:var(--surface2); color:var(--text); }
+.pp-quality-tooltip {
+  display:none; margin-top:10px; padding:10px 14px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm);
+  font-family:var(--mono); font-size:.64rem; line-height:1.8;
+  color:var(--text2); width:100%;
+}
+.pp-quality-tooltip.show { display:block; }
+.pp-quality-big-bar {
+  flex:1; height:6px; background:var(--surface3); border-radius:3px;
+  overflow:hidden; display:none;
+}
+
+/* 패널 & 카드 등장 애니메이션 */
+@keyframes ppSlideUp {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes ppBarGrow {
+  from { width:0 !important; }
+}
+
+/* 컬럼별 진단 테이블 */
+.pp-diag-table-wrap {
+  overflow-x:auto; margin:0 -4px; padding:0 4px;
+}
+.pp-diag-table {
+  width:100%; border-collapse:separate; border-spacing:0; font-size:.76rem;
+  min-width:800px;
+}
+.pp-diag-table th {
+  text-align:left; padding:9px 10px; font-weight:600; color:var(--text3);
+  border-bottom:2px solid var(--border); font-size:.64rem;
+  text-transform:uppercase; letter-spacing:.5px;
+  background:var(--surface2); position:sticky; top:0; z-index:1;
+  font-family:var(--sans); white-space:nowrap;
+}
+.pp-diag-table th:first-child { border-radius:8px 0 0 0; }
+.pp-diag-table th:last-child { border-radius:0 8px 0 0; }
+.pp-diag-table td {
+  padding:10px 10px; border-bottom:1px solid var(--surface3);
+  font-family:var(--mono); font-size:.74rem;
+}
+.pp-diag-table tbody tr { cursor:pointer; transition:background .12s; }
+.pp-diag-table tbody tr:hover td { background:rgba(5,150,105,.04); }
+.pp-diag-table tbody tr.active td { background:var(--green-lt); }
+.pp-col-name {
+  font-family:var(--sans); font-weight:700; color:var(--text);
+  font-size:.78rem;
+}
+.pp-col-unit { font-weight:400; color:var(--muted); font-size:.68rem; }
+.pp-warn { color:#B45309; font-weight:600; }
+.pp-good { color:var(--green-dk); font-weight:600; }
+.pp-neutral { color:var(--text2); }
+/* min/max 변경 표시 */
+.pp-val-changed {
+  display:inline-flex; align-items:center; gap:4px;
+}
+.pp-val-changed .pp-old-val {
+  font-size:.6rem; color:var(--muted); text-decoration:line-through;
+}
+.pp-val-changed .pp-arrow {
+  font-size:.56rem; color:var(--green); font-weight:700;
+}
+
+/* 원본/전처리 태그 */
+.pp-row-tag {
+  display:inline-block; font-size:.56rem; font-weight:700; padding:2px 8px;
+  border-radius:4px; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap;
+}
+.pp-row-tag.orig { background:var(--surface3); color:var(--muted); }
+.pp-row-tag.pp { background:var(--green-lt); color:var(--green-dk); }
+
+/* 행 스타일: orig/pp */
+.pp-diag-table .pp-row-orig td { border-bottom:none; }
+.pp-diag-table .pp-row-pp td {
+  border-bottom:2px solid var(--surface3);
+  background:rgba(5,150,105,.02);
+}
+.pp-diag-table .pp-row-pp > td:first-child {
+  box-shadow:inset 3px 0 0 var(--green);
+}
+
+/* 유효 데이터 프로그레스 바 */
+.pp-valid-cell { min-width:120px; }
+.pp-valid-bar {
+  width:100%; height:5px; background:var(--surface3);
+  border-radius:3px; margin-bottom:4px; overflow:hidden;
+}
+.pp-valid-fill {
+  height:100%; border-radius:3px;
+  animation:ppBarGrow .6s ease-out;
+}
+.pp-valid-pct {
+  font-family:var(--mono); font-size:.78rem; font-weight:700;
+}
+.pp-valid-detail {
+  font-family:var(--mono); font-size:.6rem; color:var(--muted);
+  display:block; margin-top:1px;
+}
+
+/* 델타 칩 */
+.pp-delta {
+  display:inline-block; font-size:.56rem; font-weight:700;
+  padding:1px 5px; border-radius:3px; margin-left:4px;
+  vertical-align:middle; letter-spacing:.2px;
+}
+.pp-delta.good { background:var(--green-lt); color:var(--green-dk); }
+.pp-delta.bad { background:#FEF3C7; color:#B45309; }
+.pp-delta.neutral { background:var(--surface3); color:var(--muted); }
+
+/* 파이프라인 패널 */
+.pp-pipeline {
+  margin-bottom:20px; animation:ppSlideUp .45s ease-out;
+}
+.pp-pipeline-title {
+  font-family:var(--sans); font-size:.92rem; font-weight:700;
+  color:var(--text); margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.pp-pipeline-title::before {
+  content:''; width:4px; height:16px; border-radius:2px; background:var(--green);
+}
+
+/* 파이프라인 카드 */
+.pp-step {
+  position:relative; background:var(--surface); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:0; margin-bottom:0;
+  box-shadow:var(--sh-sm); transition:border-color .2s, box-shadow .2s;
+}
+.pp-step.active {
+  border-color:var(--green); box-shadow:0 2px 12px rgba(5,150,105,.1);
+  border-left:3px solid var(--green); background:rgba(5,150,105,.015);
+}
+.pp-step + .pp-step { margin-top:0; }
+
+/* 카드 사이 연결선 */
+.pp-connector {
+  display:flex; justify-content:center; padding:2px 0;
+}
+.pp-connector-line {
+  width:2px; height:18px; background:var(--surface3); border-radius:1px;
+  transition:background .2s;
+}
+.pp-connector.active .pp-connector-line {
+  background:repeating-linear-gradient(to bottom, var(--green) 0, var(--green) 4px, transparent 4px, transparent 8px);
+  background-size:2px 8px;
+  animation:ppFlowDown .6s linear infinite;
+}
+@keyframes ppFlowDown {
+  from { background-position:0 0; }
+  to { background-position:0 8px; }
+}
+
+/* 카드 헤더 */
+.pp-step-header {
+  display:flex; align-items:center; gap:10px; padding:14px 18px;
+  cursor:pointer; user-select:none;
+}
+.pp-step-badge {
+  width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:.72rem; font-weight:700;
+  background:var(--surface3); color:var(--muted); transition:all .2s;
+  flex-shrink:0;
+}
+.pp-step.active .pp-step-badge {
+  background:var(--green); color:#fff;
+}
+.pp-step-info { flex:1; }
+.pp-step-name {
+  font-size:.84rem; font-weight:600; color:var(--text);
+}
+.pp-step-desc {
+  font-size:.7rem; color:var(--text3); margin-top:2px;
+}
+.pp-step-toggle {
+  width:36px; height:20px; border-radius:10px;
+  background:var(--surface3); border:none; cursor:pointer;
+  position:relative; transition:background .2s; flex-shrink:0;
+}
+.pp-step-toggle::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:16px; height:16px; border-radius:50%;
+  background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.15);
+  transition:transform .2s;
+}
+.pp-step-toggle.on { background:var(--green); }
+.pp-step-toggle.on::after { transform:translateX(16px); }
+
+/* 카드 설정 영역 */
+.pp-step-settings {
+  padding:0 18px 16px; display:none;
+  border-top:1px solid var(--surface3); margin-top:0;
+}
+.pp-step.active .pp-step-settings { display:block; padding-top:14px; }
+.pp-step-setting-row {
+  display:flex; align-items:center; gap:8px; padding:5px 0;
+  font-size:.78rem; color:var(--text2);
+}
+.pp-step-setting-row label { font-weight:500; min-width:60px; }
+.pp-step-setting-row select, .pp-step-setting-row input {
+  padding:5px 10px; border:1.5px solid var(--border); border-radius:6px;
+  font-size:.76rem; background:var(--surface); color:var(--text);
+  outline:none; transition:border-color .15s;
+}
+.pp-step-setting-row select:focus, .pp-step-setting-row input:focus {
+  border-color:var(--green);
+}
+.pp-step-category {
+  font-size:.58rem; font-weight:700; padding:2px 7px; border-radius:3px;
+  text-transform:uppercase; letter-spacing:.4px; margin-left:auto; flex-shrink:0;
+}
+.pp-step-category.cleaning { background:#DBEAFE; color:#2563EB; }
+.pp-step-category.transform { background:#D1FAE5; color:#059669; }
+.pp-step-category.fill { background:#FEF3C7; color:#D97706; }
+
+/* 컬럼 범위 테이블 */
+.pp-limits-table {
+  width:100%; border-collapse:collapse; font-size:.76rem; margin-top:8px;
+}
+.pp-limits-table th {
+  text-align:left; padding:6px 8px; font-weight:600; color:var(--muted);
+  border-bottom:1px solid var(--surface3); font-size:.68rem;
+}
+.pp-limits-table td { padding:5px 8px; border-bottom:1px solid var(--surface3); }
+.pp-limits-table input[type="number"] {
+  width:80px; padding:4px 6px; border:1px solid var(--border);
+  border-radius:6px; font-size:.74rem; font-family:var(--mono);
+}
+
+/* 실행 버튼 */
+.pp-action-bar {
+  display:flex; align-items:center; gap:12px; margin-bottom:20px;
+}
+.pp-btn-execute {
+  padding:11px 32px; border:none; border-radius:var(--r-sm);
+  font-size:.86rem; font-weight:700; cursor:pointer;
+  background:var(--accent); color:#fff; transition:background .15s;
+}
+.pp-btn-execute:not(:disabled):hover { background:var(--accent-dk); }
+@keyframes ppShimmer {
+  0% { left:-100%; }
+  50%,100% { left:120%; }
+}
+.pp-btn-execute:hover:not(:disabled) {
+  box-shadow:0 4px 20px rgba(5,150,105,.35); transform:translateY(-2px);
+}
+.pp-btn-execute:disabled {
+  background:var(--surface3); color:var(--muted); cursor:not-allowed;
+  box-shadow:none; transform:none;
+}
+.pp-btn-execute:disabled::after { display:none; }
+/* (pp-btn-delete removed -- replaced by pp-btn-delete-sm inline) */
+
+/* 결과 요약 */
+.pp-result-panel {
+  background:var(--surface);
+  border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 22px; margin-bottom:20px;
+}
+.pp-result-panel[hidden] { display:none; }
+.pp-result-title {
+  font-family:var(--sans); font-size:.88rem; font-weight:700;
+  color:var(--green-dk); margin-bottom:14px;
+  display:flex; align-items:center; gap:6px;
+}
+.pp-result-title::before {
+  content:''; width:8px; height:8px; border-radius:50%; background:var(--green);
+}
+.pp-result-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));
+  gap:10px;
+}
+.pp-result-stat {
+  text-align:center; padding:12px 8px; background:rgba(255,255,255,.7);
+  border-radius:var(--r-sm); border:1px solid rgba(5,150,105,.1);
+  backdrop-filter:blur(4px);
+}
+.pp-result-num {
+  font-family:var(--mono); font-size:1rem; font-weight:700;
+  color:var(--green-dk);
+}
+.pp-result-label {
+  font-size:.64rem; color:var(--text3); margin-top:3px; font-weight:500;
+}
+
+/* 기존 전처리 정보 (진단 패널 내부에 통합) */
+.pp-existing-inline {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:8px 12px; margin-bottom:14px;
+  background:var(--accent-lt);
+  border:1px solid rgba(5,150,105,.15); border-radius:var(--r-sm);
+}
+.pp-existing-inline .pp-config-tag {
+  display:inline-flex; padding:2px 8px; border-radius:4px;
+  background:rgba(255,255,255,.7); color:var(--green-dk);
+  font-size:.64rem; font-weight:600; border:1px solid rgba(5,150,105,.12);
+}
+.pp-existing-inline .pp-existing-date {
+  font-family:var(--mono); font-size:.62rem; color:var(--text3);
+  margin-left:auto;
+}
+.pp-btn-delete-sm {
+  padding:3px 10px; border:1px solid var(--border); border-radius:4px;
+  font-size:.62rem; font-weight:600; cursor:pointer;
+  background:var(--surface); color:var(--muted); transition:all .15s;
+  white-space:nowrap;
+}
+.pp-btn-delete-sm:hover { background:var(--red-lt); border-color:var(--red); color:var(--red); }
+
+/* 데이터셋 정보 패널 */
+.pp-ds-info {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px 20px; box-shadow:var(--sh-sm); margin-bottom:20px;
+  animation:ppSlideUp .3s ease-out;
+}
+.pp-ds-info[hidden] { display:none; }
+.pp-ds-info-header {
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.pp-ds-info-name {
+  font-family:var(--sans); font-size:.92rem; font-weight:700; color:var(--text);
+}
+.pp-ds-info-type {
+  font-size:.68rem; font-weight:600; padding:3px 10px; border-radius:12px;
+}
+.pp-ds-info-type.single { background:var(--blue-lt); color:var(--blue); }
+.pp-ds-info-type.collection { background:var(--purple-lt); color:var(--purple); }
+.pp-ds-info-desc {
+  font-size:.8rem; color:var(--text3); line-height:1.65; margin-bottom:10px;
+}
+.pp-ds-info-desc:empty { display:none; }
+.pp-ds-meta-grid {
+  display:flex; flex-wrap:wrap; gap:6px 16px;
+  font-size:.74rem; color:var(--text2);
+}
+.pp-ds-meta-item {
+  display:inline-flex; align-items:center; gap:4px;
+}
+.pp-ds-meta-item b { color:var(--text); font-weight:600; }
+.pp-ds-col-list {
+  overflow-x:auto; max-width:100%;
+  margin-top:12px; padding-top:10px; border-top:1px solid var(--surface3);
+}
+.pp-ds-col-list-title {
+  font-size:.68rem; font-weight:600; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px;
+}
+.pp-col-table {
+  width:100%; border-collapse:collapse; font-size:.76rem;
+}
+.pp-col-table thead th {
+  font-family:var(--mono); font-size:.64rem; font-weight:600;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.4px;
+  padding:6px 8px; text-align:left; border-bottom:2px solid var(--border);
+  white-space:nowrap;
+}
+.pp-col-table tbody td {
+  padding:7px 8px; border-bottom:1px solid var(--surface3);
+  vertical-align:middle;
+}
+.pp-col-table tbody tr:last-child td { border-bottom:none; }
+.pp-col-table tbody tr:hover { background:var(--surface2); }
+.pp-col-table .col-name {
+  font-family:var(--mono); font-weight:600; color:var(--text);
+  white-space:nowrap;
+}
+.pp-col-table .col-unit {
+  font-size:.68rem; color:var(--muted); white-space:nowrap;
+}
+.pp-col-table .col-desc {
+  color:var(--text3); max-width:240px;
+}
+.pp-col-table .col-range {
+  font-family:var(--mono); font-size:.68rem; color:var(--text3);
+  white-space:nowrap; text-align:right;
+}
+
+/* 진단 테이블 행 클릭 (already in main block, keep overrides) */
+
+/* 컬럼 프리뷰 차트 */
+.pp-chart-panel {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:16px 20px; box-shadow:var(--sh-md); margin-bottom:20px;
+  animation:ppSlideUp .35s ease-out;
+}
+.pp-chart-panel[hidden] { display:none; }
+.pp-chart-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+}
+.pp-chart-title {
+  font-family:var(--sans); font-size:.84rem; font-weight:700; color:var(--text);
+}
+.pp-chart-legend {
+  display:flex; gap:12px; font-size:.7rem; color:var(--text3);
+}
+.pp-chart-legend span { display:flex; align-items:center; gap:4px; }
+.pp-chart-legend .dot { width:8px; height:8px; border-radius:50%; }
+.pp-chart-close {
+  background:none; border:none; cursor:pointer; font-size:.9rem;
+  color:var(--text3); padding:2px 6px; border-radius:4px;
+}
+.pp-chart-close:hover { background:var(--surface3); color:var(--text); }
+
+/* 로딩 인디케이터 */
+.pp-loading {
+  display:flex; align-items:center; gap:10px;
+  padding:28px; justify-content:center;
+  color:var(--text3); font-size:.82rem;
+}
+.pp-loading[hidden] { display:none; }
+.pp-spinner {
+  width:18px; height:18px; border:2.5px solid var(--surface3);
+  border-top-color:var(--green); border-radius:50%;
+  animation:ppSpin .7s linear infinite;
+}
+@keyframes ppSpin { to { transform:rotate(360deg); } }
+
+/* 빈 상태 */
+.pp-empty {
+  text-align:center; padding:48px;
+  color:var(--muted); font-size:.86rem;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="pp-wrap">
+
+  <h1 class="page-title">{{ t.preprocess.hero_title }}</h1>
+
+  <!-- 데이터셋 선택 -->
+  <div class="pp-select-bar">
+    <span class="pp-select-label">{{ t.preprocess.dataset }}</span>
+    <select class="pp-ds-select" id="ppDatasetSelect">
+      <option value="">{{ t.preprocess.select_dataset }}</option>
+    </select>
+    <span class="pp-status-badge no-pp" id="ppStatusBadge" hidden>
+      <span class="pp-status-dot"></span>
+      <span id="ppStatusText">{{ t.preprocess.original }}</span>
+    </span>
+  </div>
+
+  <!-- 데이터셋 정보 -->
+  <div class="pp-ds-info" id="ppDsInfo" hidden>
+    <div class="pp-ds-info-header">
+      <span class="pp-ds-info-name" id="ppDsInfoName"></span>
+      <span class="pp-ds-info-type" id="ppDsInfoType"></span>
+    </div>
+    <div class="pp-ds-info-desc" id="ppDsInfoDesc"></div>
+    <div class="pp-ds-meta-grid" id="ppDsInfoMeta"></div>
+    <div class="pp-ds-col-list" id="ppDsInfoCols"></div>
+  </div>
+
+  <!-- 로딩 인디케이터 -->
+  <div class="pp-loading" id="ppLoading" hidden>
+    <span class="pp-spinner"></span>
+    <span id="ppLoadingText">{{ t.preprocess.diagnosing }}</span>
+  </div>
+
+  <!-- 진단 정보 -->
+  <div class="pp-diag-panel" id="ppDiagPanel" hidden>
+    <div class="pp-diag-accent"></div>
+    <div class="pp-diag-inner">
+      <div class="pp-panel-title">{{ t.preprocess.data_quality }}</div>
+      <!-- 전처리 상태 (인라인) -->
+      <div class="pp-existing-inline" id="ppExistingInline" hidden>
+        <span id="ppExistingTags"></span>
+        <span class="pp-existing-date" id="ppExistingDate"></span>
+        <button class="pp-btn-delete-sm" id="btnPpDelete" title="{{ t.preprocess.pp_delete }}">{{ t.preprocess.pp_delete }}</button>
+      </div>
+      <!-- 품질 점수 -->
+      <div class="pp-quality-bar" id="ppQualityBar" hidden style="flex-wrap:wrap;">
+        <div class="pp-quality-scores" id="ppQualityScores"></div>
+        <div class="pp-quality-meta" id="ppQualityMeta"></div>
+        <button class="pp-quality-info-btn" id="ppQualityInfoBtn" title="{{ t.preprocess.score_method }}">?</button>
+        <div class="pp-quality-tooltip" id="ppQualityTooltip">
+          <div><b>{{ t.preprocess.dqs_title }}</b></div>
+          <div>= 0.4 × validity + 0.25 × completeness + 0.2 × consistency + 0.15 × cleanliness</div>
+          <div style="margin-top:6px;color:var(--muted);">
+            validity = valid_points / expected_points<br>
+            completeness = 1 - (gap_segments / total_segments)<br>
+            consistency = 1 - (out_of_range / total_points)<br>
+            cleanliness = 1 - (nan_count / total_points)
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;display:inline-block;margin-bottom:8px;">
+        <button class="pp-quality-info-btn" id="ppTableInfoBtn" title="{{ t.preprocess.column_descriptions }}" style="position:relative;top:0;right:0;">i</button>
+        <div class="pp-quality-tooltip" id="ppTableTooltip" style="width:420px;left:30px;top:0;">
+          <div><b>{{ t.preprocess.col_desc_title }}</b></div>
+          <table style="width:100%;font-size:.72rem;margin-top:8px;border-collapse:collapse;">
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.valid_data }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_valid }}</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.missing_est }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_missing }}</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.gaps }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_gaps }}</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.outliers_iqr }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_outliers }}</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.out_of_range }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_oor }}</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);"><b>{{ t.preprocess.min_max }}</b></td><td style="padding:3px 6px;border-bottom:1px solid var(--border);">{{ t.preprocess.desc_minmax }}</td></tr>
+            <tr><td style="padding:3px 6px;"><b>{{ t.preprocess.range }}</b></td><td style="padding:3px 6px;">{{ t.preprocess.desc_range }}</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="pp-diag-table-wrap">
+        <table class="pp-diag-table">
+          <thead id="ppDiagHead"></thead>
+          <tbody id="ppDiagBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 컬럼 프리뷰 차트 -->
+  <div class="pp-chart-panel" id="ppChartPanel" hidden>
+    <div class="pp-chart-header">
+      <span class="pp-chart-title" id="ppChartTitle"></span>
+      <div class="pp-chart-legend" id="ppChartLegend"></div>
+      <button class="pp-chart-close" id="ppChartClose" title="{{ t.preprocess.close }}">X</button>
+    </div>
+    <div id="ppChart" style="width:100%;height:240px;"></div>
+  </div>
+
+  <!-- 전처리 파이프라인 -->
+  <div class="pp-pipeline" id="ppOptionsPanel" hidden>
+    <div class="pp-pipeline-title">{{ t.preprocess.pipeline_title }}</div>
+    <div style="font-size:.7rem;color:var(--text3);margin:-10px 0 14px;line-height:1.5;">
+      {{ t.preprocess.pipeline_order }}
+    </div>
+
+    <!-- Step 1: 극단값 처리 (택1: 값 범위 제한 OR 이상값 클램핑) -->
+    <div class="pp-step" id="ppStepExtreme" data-step="extreme">
+      <div class="pp-step-header" onclick="ppToggleStep('extreme')">
+        <span class="pp-step-badge">1</span>
+        <div class="pp-step-info">
+          <div class="pp-step-name">{{ t.preprocess.step1_name }}</div>
+          <div class="pp-step-desc">{{ t.preprocess.step1_desc }}</div>
+        </div>
+        <span class="pp-step-category cleaning">{{ t.preprocess.cat_cleaning }}</span>
+        <button class="pp-step-toggle" id="ppToggleExtreme" onclick="event.stopPropagation();ppFlipToggle('extreme')"></button>
+      </div>
+      <div class="pp-step-settings">
+        <!-- 택1 라디오 -->
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <label class="pp-radio-card" id="ppRadioRange" style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;">
+            <input type="radio" name="ppExtremeMode" value="range" checked style="accent-color:var(--green);">
+            {{ t.preprocess.range_limit }}
+            <span style="font-weight:400;color:var(--text3);font-size:.68rem;margin-left:auto;">{{ t.preprocess.range_domain }}</span>
+          </label>
+          <label class="pp-radio-card" id="ppRadioClamp" style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .15s;">
+            <input type="radio" name="ppExtremeMode" value="clamp" style="accent-color:var(--green);">
+            {{ t.preprocess.outlier_clamp_opt }}
+            <span style="font-weight:400;color:var(--text3);font-size:.68rem;margin-left:auto;">{{ t.preprocess.outlier_iqr }}</span>
+          </label>
+        </div>
+
+        <!-- 값 범위 제한 설정 -->
+        <div id="ppSettingsRange">
+          <div class="pp-step-setting-row">
+            <label>{{ t.preprocess.range_mode }}</label>
+            <select id="ppRangeMode">
+              <option value="clamp">{{ t.preprocess.clamp_mode }}</option>
+              <option value="nan">{{ t.preprocess.nan_mode }}</option>
+            </select>
+          </div>
+          <div id="ppLimitsSection">
+            <table class="pp-limits-table">
+              <thead>
+                <tr><th>{{ t.preprocess.column }}</th><th>{{ t.preprocess.db_min }}</th><th>{{ t.preprocess.db_max }}</th><th>{{ t.preprocess.apply_min }}</th><th>{{ t.preprocess.apply_max }}</th></tr>
+              </thead>
+              <tbody id="ppLimitsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 이상값 클램핑 설정 -->
+        <div id="ppSettingsClamp" hidden>
+          <div class="pp-step-setting-row">
+            <label>{{ t.preprocess.method }}</label>
+            <select id="ppClampMethod">
+              <option value="iqr">IQR</option>
+              <option value="percentile">{{ t.preprocess.percentile_pct }}</option>
+              <option value="sigma">{{ t.preprocess.k_sigma }}</option>
+            </select>
+          </div>
+          <div class="pp-step-setting-row">
+            <label id="ppClampKLabel">{{ t.preprocess.k_coeff }}</label>
+            <input type="number" id="ppClampK" value="3.0" min="0.1" max="10" step="0.5" style="width:70px;">
+            <span id="ppClampKHint" style="font-size:.62rem;color:var(--text3);margin-left:6px;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: 시간 갭 채움 -->
+    <div class="pp-step" id="ppStepGaps" data-step="gaps">
+      <div class="pp-step-header" onclick="ppToggleStep('gaps')">
+        <span class="pp-step-badge">2</span>
+        <div class="pp-step-info">
+          <div class="pp-step-name">{{ t.preprocess.step2_name }}</div>
+          <div class="pp-step-desc">{{ t.preprocess.step2_desc }}</div>
+        </div>
+        <span class="pp-step-category fill">{{ t.preprocess.cat_fill }}</span>
+        <button class="pp-step-toggle" id="ppToggleGaps" onclick="event.stopPropagation();ppFlipToggle('gaps')"></button>
+      </div>
+      <div class="pp-step-settings">
+        <div class="pp-step-setting-row" style="color:var(--text3);font-size:.74rem;">
+          {{ t.preprocess.step2_detail }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: NaN 보간 -->
+    <div class="pp-step" id="ppStepInterp" data-step="interp">
+      <div class="pp-step-header" onclick="ppToggleStep('interp')">
+        <span class="pp-step-badge">3</span>
+        <div class="pp-step-info">
+          <div class="pp-step-name">{{ t.preprocess.step3_name }}</div>
+          <div class="pp-step-desc">{{ t.preprocess.step3_desc }}</div>
+        </div>
+        <span class="pp-step-category cleaning">{{ t.preprocess.cat_interpolate }}</span>
+        <button class="pp-step-toggle" id="ppToggleInterp" onclick="event.stopPropagation();ppFlipToggle('interp')"></button>
+      </div>
+      <div class="pp-step-settings">
+        <div class="pp-step-setting-row">
+          <label>{{ t.preprocess.interp_method }}</label>
+          <select id="ppInterpMethod"></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden checkboxes for backward compat (driven by toggles) -->
+  <input type="checkbox" id="ppChkValueRange" hidden>
+  <input type="checkbox" id="ppChkClamp" hidden>
+  <input type="checkbox" id="ppChkFillGaps" hidden>
+  <input type="checkbox" id="ppChkInterpolateNan" hidden>
+
+  <!-- 실행 -->
+  <div class="pp-action-bar" id="ppActionBar" hidden>
+    <button class="pp-btn-execute" id="btnPpExecute" disabled>{{ t.preprocess.execute }}</button>
+    <span style="font-size:.76rem;color:var(--text3);" id="ppActionHint">{{ t.preprocess.enable_hint }}</span>
+  </div>
+
+  <!-- 결과 요약 -->
+  <div class="pp-result-panel" id="ppResultPanel" hidden>
+    <div class="pp-result-title">{{ t.preprocess.complete }}</div>
+    <div class="pp-result-grid" id="ppResultGrid"></div>
+  </div>
+
+  <!-- 빈 상태 -->
+  <div class="pp-empty" id="ppEmpty">{{ t.preprocess.empty }}</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function ppEscape(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c];
+  });
+}
+
+// ── Pipeline step toggle functions (global scope for onclick) ──
+var _ppStepState = { extreme: false, gaps: false, interp: false };
+var _ppExtremeMode = 'range'; // 'range' or 'clamp'
+
+function ppToggleStep(step) {
+  var nameMap = { extreme: 'Extreme', gaps: 'Gaps', interp: 'Interp' };
+  var el = document.getElementById('ppStep' + (nameMap[step] || step.charAt(0).toUpperCase() + step.slice(1)));
+  if (!el) return;
+  if (_ppStepState[step]) {
+    el.classList.toggle('active');
+  }
+}
+
+function ppFlipToggle(step) {
+  _ppStepState[step] = !_ppStepState[step];
+  var nameMap = { extreme: 'Extreme', gaps: 'Gaps', interp: 'Interp' };
+  var el = document.getElementById('ppStep' + nameMap[step]);
+  var toggleBtn = document.getElementById('ppToggle' + nameMap[step]);
+
+  if (_ppStepState[step]) {
+    el.classList.add('active');
+    toggleBtn.classList.add('on');
+  } else {
+    el.classList.remove('active');
+    toggleBtn.classList.remove('on');
+  }
+
+  // Sync hidden checkboxes
+  _syncExtremeCheckboxes();
+  if (step === 'gaps') {
+    var chk = document.getElementById('ppChkFillGaps');
+    if (chk) chk.checked = _ppStepState.gaps;
+  }
+  if (step === 'interp') {
+    var chk = document.getElementById('ppChkInterpolateNan');
+    if (chk) chk.checked = _ppStepState.interp;
+  }
+
+  ppUpdateExecuteBtn();
+}
+
+function _syncExtremeCheckboxes() {
+  var on = _ppStepState.extreme;
+  var chkRange = document.getElementById('ppChkValueRange');
+  var chkClamp = document.getElementById('ppChkClamp');
+  if (chkRange) chkRange.checked = on && _ppExtremeMode === 'range';
+  if (chkClamp) chkClamp.checked = on && _ppExtremeMode === 'clamp';
+}
+
+function ppSwitchExtremeMode(mode) {
+  _ppExtremeMode = mode;
+  document.getElementById('ppSettingsRange').hidden = (mode !== 'range');
+  document.getElementById('ppSettingsClamp').hidden = (mode !== 'clamp');
+  // Highlight selected radio card
+  document.getElementById('ppRadioRange').style.borderColor = mode === 'range' ? 'var(--green)' : 'var(--border)';
+  document.getElementById('ppRadioRange').style.background = mode === 'range' ? 'var(--green-lt,rgba(5,150,105,.06))' : '';
+  document.getElementById('ppRadioClamp').style.borderColor = mode === 'clamp' ? 'var(--green)' : 'var(--border)';
+  document.getElementById('ppRadioClamp').style.background = mode === 'clamp' ? 'var(--green-lt,rgba(5,150,105,.06))' : '';
+  _syncExtremeCheckboxes();
+}
+
+// Init radio listeners
+document.querySelectorAll('input[name="ppExtremeMode"]').forEach(function(r) {
+  r.addEventListener('change', function() { ppSwitchExtremeMode(this.value); });
+});
+// Set initial highlight
+ppSwitchExtremeMode('range');
+
+// Clamp method hint
+function ppUpdateClampHint() {
+  var method = document.getElementById('ppClampMethod').value;
+  var kInput = document.getElementById('ppClampK');
+  var hint = document.getElementById('ppClampKHint');
+  var label = document.getElementById('ppClampKLabel');
+  if (method === 'iqr') {
+    label.textContent = 'k coefficient';
+    kInput.value = 3.0; kInput.min = 1; kInput.max = 10; kInput.step = 0.5;
+    hint.textContent = 'Q1-k*IQR ~ Q3+k*IQR (1.5=normal, 3.0=loose)';
+  } else if (method === 'percentile') {
+    label.textContent = 'Trim %';
+    kInput.value = 1.0; kInput.min = 0.1; kInput.max = 10; kInput.step = 0.5;
+    hint.textContent = 'Trim top/bottom X% (1=1%, 5=5%)';
+  } else {
+    label.textContent = 'k (sigma)';
+    kInput.value = 3.0; kInput.min = 1; kInput.max = 10; kInput.step = 0.5;
+    hint.textContent = 'mean +/- k*std (2=95%, 3=99.7%)';
+  }
+}
+document.getElementById('ppClampMethod').addEventListener('change', ppUpdateClampHint);
+ppUpdateClampHint();
+
+function ppUpdateExecuteBtn() {
+  var any = _ppStepState.extreme || _ppStepState.gaps || _ppStepState.interp;
+  var btn = document.getElementById('btnPpExecute');
+  var hint = document.getElementById('ppActionHint');
+  if (btn) btn.disabled = !any;
+  if (hint) hint.textContent = any ? '' : 'Enable at least one step';
+}
+
+(function() {
+  var _dsKey = '';
+  var _datasets = [];
+  var _diagData = null;
+  var _interpMethods = [];
+
+  // ── 보간 방법 로드 ──
+  fetch('/api/preprocess/interpolation_methods').then(function(r){return r.json()}).then(function(data) {
+    _interpMethods = data.methods || [];
+    var sel = document.getElementById('ppInterpMethod');
+    _interpMethods.forEach(function(m) {
+      var opt = document.createElement('option');
+      opt.value = m.key;
+      opt.textContent = m.label + ' - ' + m.description;
+      sel.appendChild(opt);
+    });
+    if (data.default) sel.value = data.default;
+  });
+
+  // ── 데이터셋 목록 로드 ──
+  fetch('/api/datasets').then(function(r){return r.json()}).then(function(data) {
+    _datasets = data.datasets || [];
+    var sel = document.getElementById('ppDatasetSelect');
+    _datasets.forEach(function(ds) {
+      var opt = document.createElement('option');
+      opt.value = ds.key;
+      opt.textContent = (ds.name || ds.key) + ' (' + ds.type + ')';
+      sel.appendChild(opt);
+    });
+  });
+
+  // ── 데이터셋 선택 ──
+  document.getElementById('ppDatasetSelect').addEventListener('change', function() {
+    _dsKey = this.value;
+    hideAll();
+    if (!_dsKey) {
+      document.getElementById('ppEmpty').hidden = false;
+      return;
+    }
+    document.getElementById('ppEmpty').hidden = true;
+    showDatasetInfo();
+    loadStatus();
+    loadDiagnosis();
+  });
+
+  function hideAll() {
+    document.getElementById('ppStatusBadge').hidden = true;
+    document.getElementById('ppDsInfo').hidden = true;
+    document.getElementById('ppLoading').hidden = true;
+    document.getElementById('ppExistingInline').hidden = true;
+    document.getElementById('ppDiagPanel').hidden = true;
+    document.getElementById('ppChartPanel').hidden = true;
+    document.getElementById('ppOptionsPanel').hidden = true;
+    document.getElementById('ppActionBar').hidden = true;
+    document.getElementById('ppResultPanel').hidden = true;
+  }
+
+  // ── 데이터셋 정보 표시 ──
+  var _dbMeta = {};
+
+  function showDatasetInfo() {
+    var ds = _datasets.find(function(d) { return d.key === _dsKey; });
+    if (!ds) return;
+    var el = document.getElementById('ppDsInfo');
+    el.hidden = false;
+
+    document.getElementById('ppDsInfoName').textContent = ds.name || ds.key;
+    var typeEl = document.getElementById('ppDsInfoType');
+    if (ds.type === 'collection') {
+      typeEl.textContent = _t('preprocess.type_collection');
+      typeEl.className = 'pp-ds-info-type collection';
+    } else {
+      typeEl.textContent = _t('preprocess.type_single');
+      typeEl.className = 'pp-ds-info-type single';
+    }
+
+    document.getElementById('ppDsInfoDesc').textContent = ds.description || '';
+
+    var metaHtml = '';
+    metaHtml += '<span class="pp-ds-meta-item"><b>' + ds.columns.length + '</b> columns</span>';
+    if (ds.source_count > 1) {
+      metaHtml += '<span class="pp-ds-meta-item"><b>' + ds.source_count.toLocaleString() + '</b> sources</span>';
+    }
+    document.getElementById('ppDsInfoMeta').innerHTML = metaHtml;
+
+    var colHtml = '<div class="pp-ds-col-list-title">' + _t('preprocess.col_info') + '</div>'
+      + '<table class="pp-col-table"><thead><tr>'
+      + '<th>' + _t('preprocess.th_column') + '</th><th>' + _t('preprocess.th_unit') + '</th><th>' + _t('preprocess.th_desc') + '</th><th style="text-align:right;">' + _t('preprocess.min') + '</th><th style="text-align:right;">' + _t('preprocess.max') + '</th>'
+      + '</tr></thead><tbody>';
+    ds.columns.forEach(function(c) {
+      var mn = c.val_min != null ? Number(c.val_min).toLocaleString() : '\u2013';
+      var mx = c.val_max != null ? Number(c.val_max).toLocaleString() : '\u2013';
+      colHtml += '<tr>'
+        + '<td class="col-name">' + ppEscape(c.label || c.col_name) + '</td>'
+        + '<td class="col-unit">' + ppEscape(c.unit || '\u2013') + '</td>'
+        + '<td class="col-desc">' + ppEscape(c.description || '') + '</td>'
+        + '<td class="col-range">' + mn + '</td>'
+        + '<td class="col-range">' + mx + '</td>'
+        + '</tr>';
+    });
+    colHtml += '</tbody></table>';
+    document.getElementById('ppDsInfoCols').innerHTML = colHtml;
+
+    if (_dbMeta[_dsKey]) {
+      renderRichMeta(_dbMeta[_dsKey]);
+    } else {
+      fetchDbMeta();
+    }
+  }
+
+  function fetchDbMeta() {
+    fetch('/api/db/datasets').then(function(r){return r.json()}).then(function(data) {
+      (data.datasets || []).forEach(function(ds) {
+        _dbMeta[ds.key] = ds.metadata || {};
+      });
+      if (_dbMeta[_dsKey]) renderRichMeta(_dbMeta[_dsKey]);
+    });
+  }
+
+  function renderRichMeta(meta) {
+    var grid = document.getElementById('ppDsInfoMeta');
+    var extra = '';
+    if (meta.time_start) {
+      extra += '<span class="pp-ds-meta-item"><b>' + ppEscape(meta.time_start) + '</b> ~ <b>' + ppEscape(meta.time_end) + '</b></span>';
+    }
+    if (meta.sampling_interval) {
+      extra += '<span class="pp-ds-meta-item">Sampling: <b>' + ppEscape(meta.sampling_interval) + '</b></span>';
+    }
+    if (extra) grid.innerHTML += extra;
+  }
+
+  // ── 전처리 상태 로드 ──
+  function loadStatus() {
+    fetch('/api/preprocess/status/' + encodeURIComponent(_dsKey))
+      .then(function(r){return r.json()})
+      .then(function(data) {
+        var badge = document.getElementById('ppStatusBadge');
+        badge.hidden = false;
+        if (data.has_preprocessed) {
+          badge.className = 'pp-status-badge has-pp';
+          document.getElementById('ppStatusText').textContent = _t('preprocess.preprocessed');
+          showExistingConfig(data);
+        } else {
+          badge.className = 'pp-status-badge no-pp';
+          document.getElementById('ppStatusText').textContent = _t('preprocess.original');
+          document.getElementById('ppExistingInline').hidden = true;
+        }
+      });
+  }
+
+  function showExistingConfig(data) {
+    var el = document.getElementById('ppExistingInline');
+    el.hidden = false;
+    document.getElementById('ppExistingDate').textContent = data.created_at || '';
+    var cfg = data.config || {};
+    var tags = [];
+    if (cfg.value_range) tags.push(_t('preprocess.tag_range'));
+    else if (cfg.clamp_outliers) tags.push(_t('preprocess.tag_clamp'));
+    if (cfg.fill_gaps) tags.push(_t('preprocess.tag_gap'));
+    if (cfg.interpolation_method) tags.push('NaN interp: ' + cfg.interpolation_method);
+    var tagsHtml = '<span style="font-size:.64rem;font-weight:700;color:var(--green-dk);margin-right:2px;">Applied:</span>' +
+      tags.map(function(t) { return '<span class="pp-config-tag">' + t + '</span>'; }).join(' ');
+    document.getElementById('ppExistingTags').innerHTML = tagsHtml;
+  }
+
+  // ── 진단 로드 ──
+  function loadDiagnosis() {
+    var ds = _datasets.find(function(d) { return d.key === _dsKey; });
+    if (!ds || !ds.columns || ds.columns.length === 0) return;
+    var primaryCol = ds.columns[0].col_name;
+    var overlayCols = ds.columns.slice(1).map(function(c) { return c.col_name; });
+
+    document.getElementById('ppLoading').hidden = false;
+    document.getElementById('ppLoadingText').textContent = _t('preprocess.diagnosing');
+
+    fetch('/api/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_key: _dsKey, primary_col: primaryCol, overlay_cols: overlayCols }),
+    })
+    .then(function(r){return r.json()})
+    .then(function(data) {
+      document.getElementById('ppLoading').hidden = true;
+      if (data.error) return;
+      _diagData = data;
+      renderDiagnosis(data);
+      showOptionsPanel(ds.columns);
+    })
+    .catch(function() {
+      document.getElementById('ppLoading').hidden = true;
+    });
+  }
+
+  function _validCell(d) {
+    // d = diag object
+    var total = d.total_points || 0;
+    var nan = d.nan_count || 0;
+    var missing = d.points_missing || 0;
+    var expected = total + missing;  // if no gaps existed
+    var valid = total - nan;
+    if (expected <= 0) return '<td class="pp-valid-cell">-</td>';
+    var pct = (valid / expected * 100);
+    var pctStr = pct >= 99.95 ? '100' : pct.toFixed(1);
+    var barColor = pct >= 95 ? 'var(--green)' : pct >= 80 ? '#D97706' : 'var(--red)';
+    var pctClass = pct >= 95 ? 'pp-good' : pct >= 80 ? 'pp-warn' : 'pp-warn';
+    return '<td class="pp-valid-cell">' +
+      '<div class="pp-valid-bar"><div class="pp-valid-fill" style="width:' + Math.min(100, pct) + '%;background:' + barColor + ';"></div></div>' +
+      '<span class="pp-valid-pct ' + pctClass + '">' + pctStr + '%</span> ' +
+      '<span class="pp-valid-detail">' + valid.toLocaleString() + ' / ' + expected.toLocaleString() + '</span>' +
+    '</td>';
+  }
+
+  function _missingCell(d) {
+    var nan = d.nan_count || 0;
+    var missing = d.points_missing || 0;
+    var total = nan + missing;
+    var text = nan.toLocaleString();
+    if (total > nan) text += ' (' + total.toLocaleString() + ')';
+    var cls = total > 0 ? 'pp-warn' : 'pp-neutral';
+    return '<td class="' + cls + '">' + text + '</td>';
+  }
+
+  // DQS (Data Quality Score) 계산
+  function _calcDQS(columns, usePP) {
+    var totalValid = 0, totalExpected = 0;
+    var totalNan = 0, totalPoints = 0;
+    var totalOutOfRange = 0;
+    var totalGaps = 0, totalSegments = 0;
+    (columns || []).forEach(function(c) {
+      var d = usePP ? (c.diag_pp || c.diag || {}) : (c.diag || {});
+      var tp = d.total_points || 0;
+      var nan = d.nan_count || 0;
+      var missing = d.points_missing || 0;
+      var expected = tp + missing;
+      totalValid += tp - nan;
+      totalExpected += expected;
+      totalNan += nan;
+      totalPoints += tp;
+      totalOutOfRange += d.out_of_range || 0;
+      totalGaps += d.gaps_found || 0;
+      // Estimate total segments: expected / segment_size, or use expected as proxy
+      if (expected > 0) totalSegments += Math.max(1, Math.ceil(expected / Math.max(1, tp)));
+    });
+    if (totalExpected <= 0) return { score: 0, validity: 0, completeness: 0, consistency: 0, cleanliness: 0 };
+    var validity = totalValid / totalExpected;
+    var completeness = totalSegments > 0 ? Math.max(0, 1 - totalGaps / (totalGaps + (columns || []).length)) : 1;
+    var consistency = totalPoints > 0 ? Math.max(0, 1 - totalOutOfRange / totalPoints) : 1;
+    var cleanliness = totalPoints > 0 ? Math.max(0, 1 - totalNan / totalPoints) : 1;
+    var score = 0.4 * validity + 0.25 * completeness + 0.2 * consistency + 0.15 * cleanliness;
+    return {
+      score: Math.round(score * 100 * 10) / 10,
+      validity: Math.round(validity * 100 * 10) / 10,
+      completeness: Math.round(completeness * 100 * 10) / 10,
+      consistency: Math.round(consistency * 100 * 10) / 10,
+      cleanliness: Math.round(cleanliness * 100 * 10) / 10,
+    };
+  }
+
+  function _minMaxCell(val, origVal) {
+    if (val == null) return '<td>-</td>';
+    // If origVal exists and differs, show change
+    if (origVal != null && val !== origVal) {
+      return '<td><span class="pp-val-changed"><span class="pp-old-val">' + origVal + '</span>' +
+        '<span class="pp-arrow">&rarr;</span>' +
+        '<span style="color:var(--green-dk);font-weight:600;">' + val + '</span></span></td>';
+    }
+    return '<td>' + val + '</td>';
+  }
+
+  function renderDiagnosis(data) {
+    var panel = document.getElementById('ppDiagPanel');
+    panel.hidden = false;
+    var hasPP = data.has_preprocessed;
+
+    // DQS quality score
+    var qBar = document.getElementById('ppQualityBar');
+    qBar.hidden = false;
+    var origDQS = _calcDQS(data.columns, false);
+    var scoresEl = document.getElementById('ppQualityScores');
+    var origColor = origDQS.score >= 90 ? 'var(--green-dk)' : origDQS.score >= 70 ? '#B45309' : 'var(--red)';
+
+    if (hasPP) {
+      var ppDQS = _calcDQS(data.columns, true);
+      var ppColor = ppDQS.score >= 90 ? 'var(--green-dk)' : ppDQS.score >= 70 ? '#B45309' : 'var(--red)';
+      scoresEl.innerHTML =
+        '<div class="pp-quality-item">' +
+          '<span class="pp-quality-item-label">' + _t('preprocess.original') + '</span>' +
+          '<span class="pp-quality-score" style="color:' + origColor + '">' + origDQS.score.toFixed(1) + '</span>' +
+        '</div>' +
+        '<span class="pp-quality-arrow">&rarr;</span>' +
+        '<div class="pp-quality-item">' +
+          '<span class="pp-quality-item-label">' + _t('preprocess.preprocessed') + '</span>' +
+          '<span class="pp-quality-score" style="color:' + ppColor + '">' + ppDQS.score.toFixed(1) + '</span>' +
+        '</div>';
+      document.getElementById('ppQualityMeta').textContent =
+        (data.columns || []).length + ' columns';
+    } else {
+      scoresEl.innerHTML =
+        '<div class="pp-quality-item">' +
+          '<span class="pp-quality-item-label">DQS</span>' +
+          '<span class="pp-quality-score" style="color:' + origColor + '">' + origDQS.score.toFixed(1) + '</span>' +
+        '</div>';
+      document.getElementById('ppQualityMeta').textContent =
+        (data.columns || []).length + ' columns';
+    }
+
+    // Table header
+    var thead = document.getElementById('ppDiagHead');
+    var cols = '<th>' + _t('preprocess.valid_data') + '</th><th>' + _t('preprocess.missing_est') + '</th><th>' + _t('preprocess.gaps') + '</th><th title="' + _t('preprocess.tip_outliers') + '">' + _t('preprocess.outliers') + '<br><span style="font-weight:400;font-size:.65rem;color:var(--muted)">(IQR)</span></th><th title="' + _t('preprocess.tip_oor') + '">' + _t('preprocess.out_of_range') + '</th><th>' + _t('preprocess.min') + '</th><th>' + _t('preprocess.max') + '</th><th>' + _t('preprocess.range') + '</th>';
+    thead.innerHTML = hasPP
+      ? '<tr><th>' + _t('preprocess.th_column') + '</th><th></th>' + cols + '</tr>'
+      : '<tr><th>' + _t('preprocess.th_column') + '</th>' + cols + '</tr>';
+
+    // Table body
+    var tbody = document.getElementById('ppDiagBody');
+    var html = '';
+
+    (data.columns || []).forEach(function(c) {
+      var d = c.diag || {};
+      var gapCls = d.gaps_found > 0 ? 'pp-warn' : 'pp-neutral';
+      var outCls = d.outliers_iqr > 0 ? 'pp-warn' : 'pp-neutral';
+
+      var rowClass = hasPP ? ' class="pp-row-orig"' : '';
+      var tagTd = hasPP ? '<td><span class="pp-row-tag orig">' + _t('preprocess.original') + '</span></td>' : '';
+      var rangeText = (c.val_min != null && c.val_max != null)
+        ? c.val_min + '~' + c.val_max
+        : '<span style="color:var(--muted)">-</span>';
+      var oorCount = d.out_of_range || 0;
+      var oorCls = oorCount > 0 ? 'pp-warn' : 'pp-neutral';
+      html += '<tr' + rowClass + ' data-col="' + ppEscape(c.col_name) + '">' +
+        '<td class="pp-col-name"' + (hasPP ? ' rowspan="2"' : '') + '>' +
+          ppEscape(c.label || c.col_name) +
+          (c.unit ? ' <span class="pp-col-unit">(' + ppEscape(c.unit) + ')</span>' : '') +
+        '</td>' +
+        tagTd +
+        _validCell(d) +
+        _missingCell(d) +
+        '<td class="' + gapCls + '">' + (d.gaps_found || 0).toLocaleString() + '</td>' +
+        '<td class="' + outCls + '" style="color:var(--muted);font-size:.75rem;">' + (d.outliers_iqr || 0).toLocaleString() + '</td>' +
+        '<td class="' + oorCls + '">' + oorCount.toLocaleString() + '</td>' +
+        '<td>' + (c.data_min != null ? c.data_min : '-') + '</td>' +
+        '<td>' + (c.data_max != null ? c.data_max : '-') + '</td>' +
+        '<td style="color:var(--text2);font-size:.75rem;">' + rangeText + '</td>' +
+      '</tr>';
+
+      if (hasPP) {
+        var dp = c.diag_pp;
+        if (dp) {
+          var ppGapCls = dp.gaps_found > 0 ? 'pp-warn' : 'pp-neutral';
+          var ppOutCls = dp.outliers_iqr > 0 ? 'pp-warn' : 'pp-neutral';
+          var ppNan = dp.nan_count || 0;
+          var ppMissing = dp.points_missing || 0;
+          var ppMissCls = (ppNan + ppMissing) > 0 ? 'pp-warn' : 'pp-neutral';
+          var ppMissText = ppNan.toLocaleString();
+          if ((ppNan + ppMissing) > ppNan) ppMissText += ' (' + (ppNan + ppMissing).toLocaleString() + ')';
+
+          var ppOorCount = dp.out_of_range || 0;
+          var ppOorCls = ppOorCount > 0 ? 'pp-warn' : 'pp-neutral';
+          html += '<tr class="pp-row-pp" data-col="' + ppEscape(c.col_name) + '">' +
+            '<td><span class="pp-row-tag pp">PP</span></td>' +
+            _validCell(dp) +
+            '<td class="' + ppMissCls + '">' + ppMissText + '</td>' +
+            '<td class="' + ppGapCls + '">' + (dp.gaps_found || 0).toLocaleString() + '</td>' +
+            '<td class="' + ppOutCls + '" style="color:var(--muted);font-size:.75rem;">' + (dp.outliers_iqr || 0).toLocaleString() + '</td>' +
+            '<td class="' + ppOorCls + '">' + ppOorCount.toLocaleString() + '</td>' +
+            _minMaxCell(c.pp_data_min, c.data_min) +
+            _minMaxCell(c.pp_data_max, c.data_max) +
+            '<td></td>' +
+          '</tr>';
+        } else {
+          html += '<tr class="pp-row-pp" data-col="' + ppEscape(c.col_name) + '">' +
+            '<td><span class="pp-row-tag pp">PP</span></td>' +
+            '<td colspan="8" style="color:var(--muted);font-style:italic;">' + _t('preprocess.no_pp_data') + '</td>' +
+          '</tr>';
+        }
+      }
+    });
+    tbody.innerHTML = html;
+
+    // Info button toggle
+    document.getElementById('ppQualityInfoBtn').onclick = function() {
+      document.getElementById('ppQualityTooltip').classList.toggle('show');
+    };
+    document.getElementById('ppTableInfoBtn').onclick = function() {
+      document.getElementById('ppTableTooltip').classList.toggle('show');
+    };
+  }
+
+  function showOptionsPanel(columns) {
+    document.getElementById('ppOptionsPanel').hidden = false;
+    document.getElementById('ppActionBar').hidden = false;
+
+    // 컬럼별 min/max 테이블
+    var limBody = document.getElementById('ppLimitsBody');
+    var limHtml = '';
+    columns.forEach(function(c) {
+      limHtml += '<tr>' +
+        '<td class="pp-col-name">' + ppEscape(c.label || c.col_name) + '</td>' +
+        '<td style="font-family:DM Mono,monospace;font-size:.72rem;">' + (c.val_min != null ? c.val_min : '-') + '</td>' +
+        '<td style="font-family:DM Mono,monospace;font-size:.72rem;">' + (c.val_max != null ? c.val_max : '-') + '</td>' +
+        '<td><input type="number" class="pp-lim-min" data-col="' + ppEscape(c.col_name) + '" step="any" value="' + (c.val_min != null ? c.val_min : '') + '" placeholder="auto"></td>' +
+        '<td><input type="number" class="pp-lim-max" data-col="' + ppEscape(c.col_name) + '" step="any" value="' + (c.val_max != null ? c.val_max : '') + '" placeholder="auto"></td>' +
+      '</tr>';
+    });
+    limBody.innerHTML = limHtml;
+  }
+
+  // ── 옵션 토글 (driven by pipeline toggles now) ──
+  function updateExecuteBtn() { ppUpdateExecuteBtn(); }
+
+  // ── 전처리 실행 ──
+  document.getElementById('btnPpExecute').addEventListener('click', function() {
+    if (!_dsKey) return;
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+    document.getElementById('ppLoading').hidden = false;
+    document.getElementById('ppLoadingText').textContent = _t('preprocess.running');
+
+    var colLimits = {};
+    document.querySelectorAll('.pp-lim-min').forEach(function(el) {
+      var col = el.dataset.col;
+      if (!colLimits[col]) colLimits[col] = {};
+      if (el.value !== '') colLimits[col].val_min = parseFloat(el.value);
+    });
+    document.querySelectorAll('.pp-lim-max').forEach(function(el) {
+      var col = el.dataset.col;
+      if (!colLimits[col]) colLimits[col] = {};
+      if (el.value !== '') colLimits[col].val_max = parseFloat(el.value);
+    });
+
+    var extremeOn = _ppStepState.extreme;
+    var options = {
+      fill_gaps: document.getElementById('ppChkFillGaps').checked,
+      value_range: extremeOn && _ppExtremeMode === 'range',
+      range_mode: document.getElementById('ppRangeMode').value,
+      clamp_outliers: extremeOn && _ppExtremeMode === 'clamp',
+      clamp_method: document.getElementById('ppClampMethod').value,
+      clamp_k: parseFloat(document.getElementById('ppClampK').value) || 3.0,
+      interpolate_nan: _ppStepState.interp,
+      interpolation_method: document.getElementById('ppInterpMethod').value || 'adaptive',
+      col_limits: colLimits,
+    };
+
+    fetch('/api/preprocess/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_key: _dsKey, options: options }),
+    })
+    .then(function(r){return r.json()})
+    .then(function(data) {
+      document.getElementById('ppLoading').hidden = true;
+      btn.disabled = false;
+      btn.textContent = 'Run Preprocessing';
+      if (data.error) { alert(data.error); return; }
+      showResult(data.summary);
+      loadStatus();
+      loadDiagnosis();
+      // After preprocessing: collapse pipeline, scroll to diagnostics
+      setTimeout(function() {
+        // Collapse pipeline steps
+        document.querySelectorAll('.pp-step').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        // Scroll to diagnosis table and highlight
+        var diagPanel = document.getElementById('ppDiagPanel');
+        if (diagPanel) {
+          diagPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          diagPanel.classList.remove('highlight-pulse');
+          void diagPanel.offsetWidth; // force reflow
+          diagPanel.classList.add('highlight-pulse');
+        }
+      }, 300);
+    })
+    .catch(function(err) {
+      document.getElementById('ppLoading').hidden = true;
+      btn.disabled = false;
+      btn.textContent = 'Run Preprocessing';
+      alert('Preprocessing failed: ' + err.message);
+    });
+  });
+
+  function showResult(summary) {
+    var panel = document.getElementById('ppResultPanel');
+    panel.hidden = false;
+    var grid = document.getElementById('ppResultGrid');
+    var perCol = summary.per_column || {};
+    var totalNan = 0, totalGap = 0, totalClamp = 0, totalRange = 0;
+    var stepCount = 0;
+    Object.keys(perCol).forEach(function(k) {
+      var c = perCol[k];
+      totalNan += c.nan_interpolated || 0;
+      totalGap += c.points_inserted || 0;
+      totalClamp += c.clamped_count || 0;
+      totalRange += c.range_replaced || 0;
+    });
+
+    var cards = [];
+    if (totalClamp > 0) { cards.push(_rstat(totalClamp + 'pt', _t('preprocess.stat_clamp'))); stepCount++; }
+    if (totalRange > 0) { cards.push(_rstat(totalRange + 'pt', _t('preprocess.stat_range'))); stepCount++; }
+    if (totalGap > 0) { cards.push(_rstat(totalGap + 'pt', _t('preprocess.stat_gap'))); stepCount++; }
+    if (totalNan > 0) { cards.push(_rstat(totalNan + 'pt', 'NaN interp')); stepCount++; }
+    if (cards.length === 0) cards.push(_rstat('-', _t('preprocess.no_changes')));
+
+    document.querySelector('.pp-result-title').textContent =
+      stepCount + ' step(s) completed';
+    grid.innerHTML = cards.join('');
+  }
+
+  function _rstat(num, label) {
+    return '<div class="pp-result-stat">' +
+      '<div class="pp-result-num">' + num + '</div>' +
+      '<div class="pp-result-label">' + label + '</div></div>';
+  }
+
+  // ── 컬럼 프리뷰 차트 ──
+  document.getElementById('ppDiagBody').addEventListener('click', function(e) {
+    var tr = e.target.closest('tr');
+    if (!tr || !_dsKey || !_diagData) return;
+    var colName = tr.getAttribute('data-col');
+    if (!colName) return;
+    var colInfo = (_diagData.columns || []).find(function(c) { return c.col_name === colName; });
+    if (!colInfo) return;
+
+    // 활성 행 표시 (같은 컬럼의 orig+pp 행 모두)
+    tr.parentElement.querySelectorAll('tr.active').forEach(function(r) { r.classList.remove('active'); });
+    tr.parentElement.querySelectorAll('tr[data-col="' + colName + '"]').forEach(function(r) { r.classList.add('active'); });
+
+    loadColumnChart(colInfo.col_name, colInfo.label || colInfo.col_name, colInfo.unit);
+  });
+
+  function loadColumnChart(colName, label, unit) {
+    var panel = document.getElementById('ppChartPanel');
+    panel.hidden = false;
+    document.getElementById('ppChartTitle').textContent = label + (unit ? ' (' + unit + ')' : '');
+    document.getElementById('ppChart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.8rem;">' + _t('preprocess.loading') + '</div>';
+
+    fetch('/api/preprocess/column_preview/' + encodeURIComponent(_dsKey) + '/' + encodeURIComponent(colName))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          document.getElementById('ppChart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);">' + ppEscape(data.error) + '</div>';
+          return;
+        }
+        renderColumnChart(data, label, unit);
+      });
+  }
+
+  function renderColumnChart(data, label, unit) {
+    var traces = [];
+    var orig = data.original;
+    var pp = data.preprocessed;
+
+    if (orig && orig.values.length > 0) {
+      traces.push({
+        x: orig.labels,
+        y: orig.values,
+        type: 'scattergl',
+        mode: 'lines',
+        name: _t('preprocess.original') + ' (' + orig.total.toLocaleString() + 'pt)',
+        line: { color: pp ? 'rgba(150,150,150,0.5)' : '#059669', width: pp ? 1 : 1.2 },
+      });
+    }
+
+    if (pp && pp.values.length > 0) {
+      traces.push({
+        x: pp.labels,
+        y: pp.values,
+        type: 'scattergl',
+        mode: 'lines',
+        name: _t('preprocess.preprocessed') + ' (' + pp.total.toLocaleString() + 'pt)',
+        line: { color: '#059669', width: 1.2 },
+      });
+    }
+
+    var legend = document.getElementById('ppChartLegend');
+    if (pp) {
+      legend.innerHTML =
+        '<span><span class="dot" style="background:rgba(150,150,150,.5)"></span>' + _t('preprocess.original') + '</span>' +
+        '<span><span class="dot" style="background:var(--accent)"></span>' + _t('preprocess.preprocessed') + '</span>';
+    } else {
+      legend.innerHTML = '<span style="color:var(--text3);font-size:.68rem;">' + _t('preprocess.no_pp_applied') + '</span>';
+    }
+
+    var layout = {
+      margin: { l: 50, r: 16, t: 8, b: 32 },
+      xaxis: { type: orig.labels[0] && orig.labels[0].match(/^\d{4}/) ? 'date' : 'category', showgrid: false },
+      yaxis: { title: unit || '', titlefont: { size: 10 }, showgrid: true, gridcolor: '#f0f0f0' },
+      showlegend: false,
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      hovermode: 'x unified',
+    };
+
+    Plotly.newPlot('ppChart', traces, layout, { responsive: true, displayModeBar: false });
+  }
+
+  document.getElementById('ppChartClose').addEventListener('click', function() {
+    document.getElementById('ppChartPanel').hidden = true;
+    document.querySelectorAll('#ppDiagBody tr.active').forEach(function(r) { r.classList.remove('active'); });
+  });
+
+  // ── 전처리 삭제 ──
+  document.getElementById('btnPpDelete').addEventListener('click', function() {
+    if (!_dsKey) return;
+    if (!confirm('Delete preprocessed data and revert to original?')) return;
+    fetch('/api/preprocess/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_key: _dsKey }),
+    })
+    .then(function(r){return r.json()})
+    .then(function(data) {
+      if (data.error) { alert(data.error); return; }
+      document.getElementById('ppResultPanel').hidden = true;
+      loadStatus();
+      loadDiagnosis();
+    });
+  });
+})();
+</script>
+{% endblock %}

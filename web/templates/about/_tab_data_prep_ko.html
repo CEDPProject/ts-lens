@@ -1,0 +1,681 @@
+  <div class="about-tab-content" id="tab-data-prep">
+
+  <!-- 서브 탭 네비게이션 -->
+  <div class="sub-tabs-wrap">
+    <div class="sub-tabs" id="dataPrepSubTabs">
+      <button class="sub-tab active" data-subtab="sub-dp-format">데이터 형식</button>
+      <button class="sub-tab" data-subtab="sub-dp-preproc">전처리</button>
+      <button class="sub-tab" data-subtab="sub-dp-analysis">진단 & 분할</button>
+      <button class="sub-tab" data-subtab="sub-dp-scenarios">사용 시나리오</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 1: 데이터 형식 (from Input)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content active" id="sub-dp-format">
+  <section class="about-section">
+    <p class="sec-desc">데이터 관리 → 데이터 업로드 탭에서 CSV 파일 1개나 폴더를 올립니다. 폴더는 파일마다 소스로 두는 개별 모드와, 시간순으로 하나로 합치는 합치기 모드 중에서 고릅니다. 인코딩과 구분자는 자동으로 감지하며 직접 고칠 수도 있습니다.</p>
+    <div class="scenario-method-note" style="margin:14px 0;padding:12px 14px;font-size:.8rem;line-height:1.7;">
+      <strong>같은 시각 겹침·AI 메타 추정·삭제</strong> — 같은 시각이 두 번 이상 나오면 저장 안 함, 첫 값, 마지막 값, 평균, 밀기 중 하나로 처리합니다. 모든 시각이 똑같이 k번씩 나오면 지역별 파일 k개를 합친 것으로 진단해 알려 줍니다. 업로드 탭 맨 위 스위치를 켜면 외부 LLM(Anthropic Claude 또는 OpenAI 호환 서버, 관리자가 모델 연결 탭에서 연결)이 데이터셋 키·이름·설명·위치·시설·용량·측정 간격·특성·태그와 컬럼 메타를 채웁니다. 기본은 꺼져 있고 마지막 선택을 기억하며, AI가 채운 칸은 붉은 테두리로 표시되니 확인 후 저장합니다. 데이터 목록 탭에서 데이터셋을 지우면 연결된 전처리 결과·라벨·바스켓·프리셋·캐시·파일까지 함께 지워지고, 지우기 전에 DB 백업을 만듭니다. 공개 예시로 Elia(벨기에) 풍력 발전·예측 2015~2026 지역별 시간 CSV 5개, 상명풍력, 행원 기상탑 데이터가 data/wind_energy/에 있습니다.
+    </div>
+
+
+    <div class="input-compare">
+      <div class="input-card input-a">
+        <div class="input-badge">연속 시계열 (Single)</div>
+        <h3>하나의 긴 시계열</h3>
+        <p>시간축 컬럼과 값 컬럼을 포함하는 하나의 CSV 파일로 구성된 연속 시계열입니다.</p>
+        <div class="input-example">
+          <div class="code-mini">
+            <span class="cm-comment"># power_2024.csv (8,760행)</span><br>
+            datetime, power_kw, irradiance<br>
+            2024-01-01 00:00, 0.0, 0<br>
+            ...<br>
+            2024-12-31 23:00, 0.0, 0
+          </div>
+        </div>
+        <ul class="input-features">
+          <li>차트에서 드래그하여 쿼리 범위 선택</li>
+          <li>슬라이딩 윈도우로 전체 시계열 탐색</li>
+          <li>고정 길이(일별, 주별 등)로 자동 분할</li>
+        </ul>
+      </div>
+
+      <div class="input-vs">또는</div>
+
+      <div class="input-card input-b">
+        <div class="input-badge input-badge-b">세그먼트 컬렉션</div>
+        <h3>여러 개의 짧은 세그먼트</h3>
+        <p>동일한 구조의 CSV 파일 여러 개로 구성됩니다. 개별 모드에서는 파일마다 소스가 되고, 합치기 모드에서는 시간순으로 하나로 이어집니다.</p>
+        <div class="input-example">
+          <div class="code-mini">
+            <span class="cm-comment"># motor_runs/ (8개 파일)</span><br>
+            motor_run_01.csv <span class="cm-comment">(148행)</span><br>
+            motor_run_02.csv <span class="cm-comment">(95행)</span><br>
+            ...<br>
+            motor_run_08.csv <span class="cm-comment">(132행)</span>
+          </div>
+        </div>
+        <ul class="input-features">
+          <li>세그먼트 간 직접 비교</li>
+          <li>전체 세그먼트를 연결하여 연속 탐색</li>
+          <li>길이가 다르더라도 컬렉션으로 관리</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 인덱스 유형 -->
+    <h3 style="margin-top:28px;">인덱스 유형 자동 감지</h3>
+    <p style="margin-bottom:12px;">인덱스 컬럼(x축)의 유형을 자동으로 감지합니다.</p>
+    <div class="idx-cards">
+      <div class="idx-card">
+        <div class="idx-type">datetime</div>
+        <div class="idx-desc">날짜/시간 기반</div>
+        <div class="idx-example">
+          <code>2024-01-01 09:00</code><br>
+          기상 데이터, 발전량, 센서 로그
+        </div>
+      </div>
+      <div class="idx-card">
+        <div class="idx-type idx-type-num">numeric</div>
+        <div class="idx-desc">순번/숫자 기반</div>
+        <div class="idx-example">
+          <code>step: 1~148</code><br>
+          배치 공정, 모터 가동, 사이클 테스트
+        </div>
+      </div>
+      <div class="idx-card">
+        <div class="idx-type idx-type-txt">text</div>
+        <div class="idx-desc">기타 텍스트</div>
+        <div class="idx-example">
+          카테고리, 코드명 등
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-format -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 2: 전처리 (from Process)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-preproc">
+  <section class="about-section">
+    <p class="sec-desc">원본 데이터의 품질 문제를 해결하고 탐색에 적합한 형태로 변환합니다. 원본 데이터는 보존되며, 언제든지 전처리 전/후를 비교할 수 있습니다. 전처리는 상단 메뉴 "데이터 전처리"에서 합니다.</p>
+
+    <!-- 전처리 파이프라인 흐름 -->
+    <div class="pp-flow">
+      <div class="pp-flow-node pp-flow-io">
+        <div class="pp-flow-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div>
+        <div class="pp-flow-title">데이터셋</div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+
+      <div class="pp-flow-group">
+        <div class="pp-flow-group-label">전처리 파이프라인</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">1</div>
+          <div class="pp-flow-title">극단값 처리</div>
+        </div>
+        <div class="pp-flow-arrow-inner">→</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">2</div>
+          <div class="pp-flow-title">시간 갭 채움</div>
+        </div>
+        <div class="pp-flow-arrow-inner">→</div>
+        <div class="pp-flow-node pp-flow-proc">
+          <div class="pp-flow-badge">3</div>
+          <div class="pp-flow-title">NaN 보간/복원</div>
+        </div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+
+      <div class="pp-flow-node pp-flow-io">
+        <div class="pp-flow-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></div>
+        <div class="pp-flow-title">탐색 준비 완료</div>
+      </div>
+    </div>
+
+    <div class="feat-list" style="margin-top:20px;">
+      <!-- Step 1 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">01</span><h3>극단값 처리</h3></div>
+        <div class="input-compare">
+          <div class="input-card input-a">
+            <div class="input-badge">값 범위 제한</div>
+            <p>컬럼 메타에 적은 최소·최대(물리 범위)를 벗어난 값을 잘라내거나 NaN으로 바꿉니다. 컬럼마다 라벨·단위·설명도 함께 적으며, 칸마다 있는 ⓘ를 누르면 설명이 나옵니다.</p>
+            <ul class="input-features">
+              <li>clamp 또는 NaN 변환 모드</li>
+              <li>컬럼별 독립 설정</li>
+            </ul>
+          </div>
+          <div class="input-vs">or</div>
+          <div class="input-card input-b">
+            <div class="input-badge input-badge-b">이상값 클램핑</div>
+            <p>통계적으로 극단값을 자동 감지 (IQR, 백분위, 시그마).</p>
+            <ul class="input-features">
+              <li>최소/최대 모를 때 자동 감지</li>
+              <li>k 계수로 민감도 조절</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">02</span><h3>시간 갭 채움</h3></div>
+        <p>센서 다운타임, 통신 손실 등으로 발생한 <strong>시간 갭</strong>을 감지하고 누락된 타임스탬프에 NaN을 삽입합니다.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">03</span><h3>NaN 보간/복원</h3></div>
+        <p>8가지 보간 방법 중 선택: Adaptive(권장), Linear, Cubic spline, Smoothing spline, Nearest, Zero fill, Forward fill, <strong>MOMENT</strong> (파운데이션 모델 문맥 기반 복원).</p>
+        <div class="input-example" style="margin-top:10px;">
+          <div class="code-mini">
+            <span class="cm-comment"># 원본: [10, NaN, NaN, 16]</span><br>
+            <span class="cm-comment"># linear:   [10, <strong>12</strong>, <strong>14</strong>, 16]</span><br>
+            <span class="cm-comment"># MOMENT:   [10, <strong>11.3</strong>, <strong>14.1</strong>, 16]  ← 문맥 기반</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-preproc -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 3: 진단 & 분할 (from Process)
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-analysis">
+  <section class="about-section">
+    <p class="sec-desc">데이터 품질을 자동 진단하고, 주기성을 분석하며, 다양한 단위로 데이터를 분할합니다.</p>
+
+    <div class="feat-list">
+      <!-- 품질 진단 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">01</span><h3>데이터 품질 진단</h3></div>
+        <p>전처리 전에 결측값, 이상값, 갭에 대한 종합 현황을 자동 분석합니다.</p>
+
+        <!-- 진단 리포트 시각화 -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0;">
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(217,119,6,.06) 0%,rgba(217,119,6,.02) 100%);border:1px solid rgba(217,119,6,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><circle cx="10" cy="10" r="8" fill="rgba(217,119,6,.15)" stroke="#d97706" stroke-width="1.2"/><path d="M6,10 L14,10" stroke="#d97706" stroke-width="1.5"/><path d="M10,6 L10,14" stroke="#d97706" stroke-width="1.5"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#92400e;">샘플링 간격</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#d97706;">자동 감지</div>
+            <div style="font-size:.65rem;color:#b45309;margin-top:2px;">1h, 15min, 1min 등</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(239,68,68,.06) 0%,rgba(239,68,68,.02) 100%);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><rect x="3" y="8" width="14" height="8" rx="2" fill="rgba(239,68,68,.15)" stroke="#ef4444" stroke-width="1"/><circle cx="10" cy="5" r="2" fill="#ef4444"/><path d="M8,12 L12,12" stroke="#ef4444" stroke-width="1.5"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#dc2626;">시간 갭</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#ef4444;">3개</div>
+            <div style="font-size:.65rem;color:#b91c1c;margin-top:2px;">누락 포인트: 142</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,rgba(245,158,11,.02) 100%);border:1px solid rgba(245,158,11,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><path d="M4,16 L8,10 L10,4 L12,14 L16,8" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="10" cy="4" r="2" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2 1"/></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#b45309;">이상값 (IQR)</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#f59e0b;">28개</div>
+            <div style="font-size:.65rem;color:#92400e;margin-top:2px;">비율: 0.32%</div>
+          </div>
+
+          <div style="padding:14px;background:linear-gradient(135deg,rgba(100,116,139,.06) 0%,rgba(100,116,139,.02) 100%);border:1px solid rgba(100,116,139,.2);border-radius:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><rect x="4" y="4" width="12" height="12" rx="2" fill="rgba(100,116,139,.15)" stroke="#64748b" stroke-width="1"/><text x="10" y="13" text-anchor="middle" font-size="7" fill="#64748b" font-weight="600">?</text></svg>
+              <span style="font-size:.72rem;font-weight:600;color:#475569;">NaN 값</span>
+            </div>
+            <div style="font-size:1.1rem;font-weight:700;color:#64748b;">56개</div>
+            <div style="font-size:.65rem;color:#64748b;margin-top:2px;">비율: 0.64%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FFT -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">02</span><h3>FFT 주기성 분석</h3></div>
+
+        <!-- FFT 스펙트럼 시각화 -->
+        <div style="margin:12px 0;padding:16px;background:rgba(37,99,235,.03);border:1px solid rgba(37,99,235,.15);border-radius:10px;">
+          <svg viewBox="0 0 400 100" fill="none" style="width:100%;height:auto;max-height:100px;">
+            <!-- 축 -->
+            <line x1="40" y1="80" x2="390" y2="80" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="40" y1="10" x2="40" y2="80" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="215" y="96" text-anchor="middle" font-size="8" fill="#64748b">주파수 (cycles/day)</text>
+            <text x="12" y="45" text-anchor="middle" font-size="8" fill="#64748b" transform="rotate(-90,12,45)">Power</text>
+
+            <!-- 스펙트럼 바 -->
+            <rect x="60" y="20" width="12" height="60" rx="2" fill="#2563eb" opacity=".9"/>
+            <text x="66" y="90" text-anchor="middle" font-size="6" fill="#1e40af" font-weight="600">1/day</text>
+
+            <rect x="100" y="55" width="12" height="25" rx="2" fill="#3b82f6" opacity=".7"/>
+            <text x="106" y="90" text-anchor="middle" font-size="6" fill="#64748b">2/day</text>
+
+            <rect x="140" y="65" width="12" height="15" rx="2" fill="#60a5fa" opacity=".5"/>
+            <rect x="180" y="70" width="12" height="10" rx="2" fill="#93c5fd" opacity=".4"/>
+            <rect x="220" y="72" width="12" height="8" rx="2" fill="#bfdbfe" opacity=".3"/>
+            <rect x="260" y="74" width="12" height="6" rx="2" fill="#dbeafe" opacity=".3"/>
+            <rect x="300" y="75" width="12" height="5" rx="2" fill="#eff6ff" opacity=".3"/>
+            <rect x="340" y="76" width="12" height="4" rx="2" fill="#f8fafc" opacity=".2"/>
+
+            <!-- 피크 표시 -->
+            <circle cx="66" cy="16" r="4" fill="#dc2626"/>
+            <text x="66" y="8" text-anchor="middle" font-size="6" fill="#dc2626" font-weight="700">Peak</text>
+
+            <!-- 범례 -->
+            <rect x="300" y="15" width="88" height="32" rx="4" fill="rgba(255,255,255,.9)" stroke="#e2e8f0" stroke-width=".5"/>
+            <circle cx="312" cy="26" r="4" fill="#dc2626"/>
+            <text x="320" y="29" font-size="7" fill="#374151">주 피크: <tspan font-weight="600">24h</tspan></text>
+            <text x="308" y="42" font-size="6" fill="#6b7280">→ 일별 분할 권장</text>
+          </svg>
+        </div>
+
+        <p>FFT를 사용하여 데이터의 주기성을 분석합니다. 주요 피크를 식별하여 적절한 분할 단위를 결정하는 데 도움을 줍니다.</p>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <div style="padding:6px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#166534;font-weight:600;">24h 주기</span>
+            <span style="color:#6b7280;margin-left:4px;">→ 일별 분할</span>
+          </div>
+          <div style="padding:6px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#1e40af;font-weight:600;">168h 주기</span>
+            <span style="color:#6b7280;margin-left:4px;">→ 주간 분할</span>
+          </div>
+          <div style="padding:6px 12px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:6px;font-size:.72rem;">
+            <span style="color:#5b21b6;font-weight:600;">8760h 주기</span>
+            <span style="color:#6b7280;margin-left:4px;">→ 연간 패턴</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 구간 분할 -->
+      <div class="feat-item">
+        <div class="feat-head"><span class="feat-num">03</span><h3>유연한 구간 분할 & 연결</h3></div>
+        <p>동일한 데이터를 다양한 단위로 <strong>분할, 연결, 재분할</strong>할 수 있습니다.</p>
+
+        <!-- 분할/연결 흐름도 -->
+        <div style="margin:16px 0;padding:16px;background:rgba(5,150,105,.03);border:1px solid rgba(5,150,105,.15);border-radius:10px;">
+          <svg viewBox="0 0 440 120" fill="none" style="width:100%;height:auto;">
+            <!-- 원본 연속 데이터 -->
+            <text x="10" y="12" font-size="7" fill="#64748b" font-weight="600">연속 데이터</text>
+            <rect x="10" y="18" width="120" height="24" rx="4" fill="rgba(217,119,6,.1)" stroke="#d97706" stroke-width="1.2"/>
+            <polyline points="16,36 26,30 36,32 46,26 56,28 66,22 76,30 86,26 96,32 106,28 116,34 124,30" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+            <!-- 화살표: 분할 -->
+            <path d="M135,30 L155,30" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+            <text x="145" y="22" text-anchor="middle" font-size="6" fill="#059669" font-weight="600">분할</text>
+
+            <!-- 분할된 세그먼트들 -->
+            <text x="165" y="12" font-size="7" fill="#64748b" font-weight="600">세그먼트 (일별)</text>
+            <rect x="165" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="170,32 176,26 182,30 188,24 192,28" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="201" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="206,30 212,24 218,28 224,22 228,26" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <rect x="237" y="18" width="32" height="20" rx="3" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1"/>
+            <polyline points="242,28 248,22 254,26 260,20 264,24" stroke="#059669" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <text x="273" y="30" font-size="8" fill="#059669">...</text>
+
+            <!-- 화살표: 연결 -->
+            <path d="M220,42 L220,55" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+            <text x="232" y="52" font-size="6" fill="#7c3aed" font-weight="600">연결</text>
+
+            <!-- 연결된 데이터 -->
+            <text x="165" y="68" font-size="7" fill="#64748b" font-weight="600">연결된 연속 데이터</text>
+            <rect x="165" y="74" width="130" height="24" rx="4" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="1.2"/>
+            <polyline points="171,92 181,86 191,88 201,82 211,84 221,78 231,86 241,82 251,88 261,84 271,90 281,86 289,90" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+            <!-- 화살표: 재분할 -->
+            <path d="M300,86 L320,86" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+            <text x="310" y="78" text-anchor="middle" font-size="6" fill="#2563eb" font-weight="600">재분할</text>
+
+            <!-- 재분할된 세그먼트 (시간별) -->
+            <text x="330" y="68" font-size="7" fill="#64748b" font-weight="600">세그먼트 (시간별)</text>
+            <rect x="330" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="352" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="374" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <rect x="396" y="74" width="18" height="16" rx="2" fill="rgba(37,99,235,.12)" stroke="#2563eb" stroke-width=".8"/>
+            <text x="420" y="84" font-size="8" fill="#2563eb">...</text>
+
+            <!-- 화살표 마커 정의 -->
+            <defs>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#059669"/></marker>
+              <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L5,8 L8,2" fill="#7c3aed"/></marker>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#2563eb"/></marker>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- 시간 단위 카드 -->
+        <div class="split-demo-grid">
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">6시간</span></div>
+            <div class="split-demo-desc">오전/오후/저녁/야간 분리</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">1일</span></div>
+            <div class="split-demo-desc">일별 프로파일 비교</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">1주</span></div>
+            <div class="split-demo-desc">주간 추세 파악</div>
+          </div>
+          <div class="split-demo-card">
+            <div class="split-demo-header"><span class="split-demo-unit">전체</span></div>
+            <div class="split-demo-desc">슬라이딩 윈도우 탐색</div>
+          </div>
+        </div>
+
+        <!-- 연결 기능 설명 -->
+        <div style="margin-top:12px;padding:12px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.15);border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none"><path d="M4,10 L8,10 M12,10 L16,10" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="none" stroke="#7c3aed" stroke-width="1.5"/></svg>
+            <span style="font-size:.75rem;font-weight:600;color:#5b21b6;">세그먼트 연결 (Concat)</span>
+          </div>
+          <div style="font-size:.72rem;color:var(--text3);line-height:1.5;">
+            여러 세그먼트를 선택하여 하나의 연속 데이터로 연결합니다. 연결 후 다른 시간 단위로 재분할하거나, 전체에서 슬라이딩 윈도우 검색이 가능합니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-analysis -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUB-TAB 4: 사용 시나리오
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="sub-tab-content" id="sub-dp-scenarios">
+  <section class="about-section">
+    <h2 class="sec-title">사용 시나리오</h2>
+    <p class="sec-desc">데이터 준비 단계에서 자주 마주치는 실제 상황과 해결 방법입니다.</p>
+
+    <!-- Scenario 1: 데이터 형식 선택 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">1</span><span class="scenario-title-text">데이터 형식 선택</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-researcher">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#3b82f6" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#3b82f6" opacity=".55"/>
+            <rect x="26" y="24" width="8" height="10" rx="1" fill="#fff" stroke="#3b82f6" stroke-width="1"/>
+            <path d="M28,27 L32,27 M28,29 L31,29 M28,31 L32,31" stroke="#3b82f6" stroke-width=".6"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">연구원</div>
+          <div class="scenario-speech">"1년치 연속 데이터가 있는데, 모터 실행 기록처럼 여러 개의 짧은 CSV 파일로 된 데이터도 있습니다. 둘 다 분석할 수 있나요?"</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 연속 시계열 -->
+              <rect x="4" y="8" width="70" height="34" rx="4" fill="#fff7ed" stroke="#f59e0b" stroke-width="1"/>
+              <text x="39" y="18" text-anchor="middle" font-size="6" fill="#92400e" font-weight="600">연속 시계열</text>
+              <polyline points="10,38 20,30 30,34 40,26 50,30 60,24 68,32" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <text x="39" y="46" text-anchor="middle" font-size="5" fill="#b45309">power_2024.csv</text>
+              <!-- 또는 -->
+              <text x="90" y="28" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="600">또는</text>
+              <!-- 세그먼트 컬렉션 -->
+              <rect x="106" y="8" width="70" height="34" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+              <text x="141" y="18" text-anchor="middle" font-size="6" fill="#065f46" font-weight="600">세그먼트 컬렉션</text>
+              <rect x="112" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <rect x="132" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <rect x="152" y="24" width="16" height="12" rx="2" fill="#d1fae5" stroke="#34d399" stroke-width=".6"/>
+              <text x="141" y="46" text-anchor="middle" font-size="5" fill="#059669">motor_runs/ (8개)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div>
+        <div>
+          두 가지 데이터 형식을 모두 지원합니다:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>연속 시계열:</strong> 하나의 긴 CSV 파일 — 슬라이딩 윈도우 검색, 시간 단위별 분할 가능</li>
+            <li><strong>세그먼트 컬렉션:</strong> 폴더 내 여러 CSV 파일 — 길이가 달라도 DTW로 비교 가능, 필요시 연결하여 연속 탐색</li>
+          </ul>
+          <div class="scenario-method-note">인코딩·구분자·인덱스 자동 감지 · 컬럼 메타(단위·최소·최대) 입력 또는 AI 추정 · 샘플링 간격 자동 계산</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: 품질 진단 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">2</span><span class="scenario-title-text">품질 진단</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-analyst">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f59e0b" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f59e0b" opacity=".55"/>
+            <circle cx="30" cy="26" r="6" fill="#fff" stroke="#f59e0b" stroke-width="1.2"/>
+            <path d="M30,23 L30,27 M30,29 L30,29.5" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">데이터 분석가</div>
+          <div class="scenario-speech">"새로 받은 데이터인데, 어느 정도 결측값이 있는지, 이상값이 얼마나 심한지 먼저 파악하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-a" style="margin-bottom:6px;">데이터 품질 진단</div>
+          전처리 전에 데이터 품질을 자동으로 진단합니다:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>샘플링 간격:</strong> 자동 감지 (1h, 15min, 1min 등)</li>
+            <li><strong>시간 갭:</strong> 센서 다운타임으로 인한 누락 구간 수 및 누락 포인트</li>
+            <li><strong>이상값 (IQR):</strong> 통계적으로 극단적인 값의 수량 및 비율</li>
+            <li><strong>NaN 값:</strong> 결측값 수량 및 전체 대비 비율</li>
+          </ul>
+          <div class="scenario-method-note">읽기 전용 진단 · 원본 데이터 미변경 · 컬럼별 독립 분석</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: 전처리 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">3</span><span class="scenario-title-text">데이터 전처리</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-dataeng">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#f97316" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#f97316" opacity=".55"/>
+            <circle cx="30" cy="28" r="6" fill="none" stroke="#ea580c" stroke-width="1.4"/>
+            <circle cx="30" cy="28" r="2" fill="#ea580c"/>
+            <path d="M30,22 L30,24 M30,32 L30,34 M24,28 L26,28 M34,28 L36,28" stroke="#ea580c" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">데이터 엔지니어</div>
+          <div class="scenario-speech">"센서 갭과 이상치가 꽤 많아서, 원본 데이터로 바로 실행하면 신뢰할 수 없는 결과가 나올 것 같습니다."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 전처리 전 -->
+              <rect x="4" y="4" width="70" height="36" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+              <text x="39" y="14" text-anchor="middle" font-size="5.5" fill="#991b1b" font-weight="600">전처리 전</text>
+              <polyline points="10,32 16,28 22,30" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <circle cx="30" cy="18" r="2" fill="none" stroke="#ef4444" stroke-width=".8" stroke-dasharray="1.5 1"/>
+              <polyline points="38,26 44,22" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="2 2"/>
+              <polyline points="52,24 58,28 64,20 70,26" stroke="#ef4444" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- 화살표 -->
+              <path d="M78,22 L92,22" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+              <text x="85" y="18" text-anchor="middle" font-size="5" fill="#059669" font-weight="600">3단계</text>
+              <!-- 전처리 후 -->
+              <rect x="96" y="4" width="70" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+              <text x="131" y="14" text-anchor="middle" font-size="5.5" fill="#166534" font-weight="600">전처리 후</text>
+              <polyline points="102,32 112,26 122,28 132,22 142,24 152,20 162,26" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs><marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#059669"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span></div>
+        <div>
+          전처리 파이프라인은 3단계로 실행됩니다:
+          <ol style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>극단값 처리:</strong> 값 범위 제한(컬럼 최소·최대) 또는 IQR/Percentile/Sigma 기반 이상치 클램핑 중 선택</li>
+            <li><strong>시간 갭 채움:</strong> 센서 다운타임으로 누락된 타임스탬프를 NaN으로 삽입</li>
+            <li><strong>NaN 보간/복원:</strong> 8가지 방법 중 선택 — Linear, Cubic, Smoothing spline, Nearest, Zero fill, Forward fill, Adaptive, <strong>MOMENT</strong>(FM 기반 문맥 복원)</li>
+          </ol>
+          <div class="scenario-method-note">원본 보존 · 3단계 파이프라인 · 전/후 비교 차트 · 언제든 되돌리기</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: FFT 분석 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">4</span><span class="scenario-title-text">FFT 주기성 분석</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-energy">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#eab308" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#eab308" opacity=".55"/>
+            <circle cx="30" cy="26" r="5" fill="#fef08a" stroke="#ca8a04" stroke-width="1"/>
+            <path d="M30,23 L30,26 L32,28" stroke="#ca8a04" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">에너지 분석가</div>
+          <div class="scenario-speech">"태양광 발전 데이터인데, 일별로 분할하는 게 맞는지 주별이 나은지 잘 모르겠습니다. 데이터의 주기성을 먼저 확인하고 싶습니다."</div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-b" style="margin-bottom:6px;">FFT 주기성 분석</div>
+          FFT(고속 푸리에 변환)를 사용하여 데이터의 숨겨진 주기성을 발견합니다:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>주 피크 감지:</strong> 가장 강한 주기적 패턴 자동 식별</li>
+            <li><strong>분할 단위 추천:</strong> 24h 피크 → 일별 분할 권장, 168h 피크 → 주별 분할 권장</li>
+            <li><strong>다중 주기 확인:</strong> 일별 + 주별 + 연간 패턴 동시 파악</li>
+          </ul>
+          <div class="scenario-method-note">스펙트럼 시각화 · 피크 자동 감지 · 분할 단위 추천</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 5: 시간 단위 선택 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">5</span><span class="scenario-title-text">시간 단위 분할</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-facility">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#10b981" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#10b981" opacity=".55"/>
+            <rect x="24" y="22" width="4" height="6" rx=".5" fill="#059669"/>
+            <rect x="29" y="25" width="4" height="3" rx=".5" fill="#34d399"/>
+            <rect x="24" y="29" width="9" height="5" rx=".5" fill="#047857" opacity=".7"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">시설 관리자</div>
+          <div class="scenario-speech">"때로는 주 단위로, 때로는 시간 단위로 분석하고 싶습니다 — 목적에 따라 데이터를 다른 시간 단위로 분할해야 합니다."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 원본 -->
+              <rect x="4" y="8" width="50" height="28" rx="3" fill="rgba(217,119,6,.1)" stroke="#d97706" stroke-width="1"/>
+              <polyline points="10,28 18,22 26,26 34,18 42,24 48,20" stroke="#d97706" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- 화살표 -->
+              <path d="M58,22 L72,14" stroke="#059669" stroke-width="1"/>
+              <path d="M58,22 L72,22" stroke="#059669" stroke-width="1"/>
+              <path d="M58,22 L72,30" stroke="#059669" stroke-width="1"/>
+              <!-- 6시간 -->
+              <rect x="76" y="4" width="36" height="12" rx="2" fill="rgba(5,150,105,.1)" stroke="#059669" stroke-width=".8"/>
+              <text x="94" y="12" text-anchor="middle" font-size="5" fill="#059669" font-weight="600">6시간</text>
+              <!-- 1일 -->
+              <rect x="76" y="18" width="36" height="12" rx="2" fill="rgba(37,99,235,.1)" stroke="#2563eb" stroke-width=".8"/>
+              <text x="94" y="26" text-anchor="middle" font-size="5" fill="#2563eb" font-weight="600">1일</text>
+              <!-- 1주 -->
+              <rect x="76" y="32" width="36" height="12" rx="2" fill="rgba(124,58,237,.1)" stroke="#7c3aed" stroke-width=".8"/>
+              <text x="94" y="40" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="600">1주</text>
+              <!-- 결과 세그먼트 -->
+              <rect x="120" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="136" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="152" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <rect x="168" y="18" width="12" height="12" rx="2" fill="rgba(37,99,235,.15)" stroke="#2563eb" stroke-width=".6"/>
+              <text x="186" y="26" font-size="6" fill="#2563eb">...</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-b" style="margin-bottom:6px;">시간 단위 선택 (6 types)</div>
+          hour · 6hour · day · week · month · year 중 원하는 단위를 선택하면,
+          데이터의 샘플링 간격을 기반으로 세그먼트 길이가 자동으로 계산되어 분할됩니다.
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>6시간:</strong> 오전/오후/저녁/야간 패턴 분리</li>
+            <li><strong>1일:</strong> 일별 프로파일 비교 — 태양광 발전 패턴에 이상적</li>
+            <li><strong>1주:</strong> 주간 추세 파악 — 평일/주말 패턴 구분</li>
+          </ul>
+          <div class="scenario-method-note">6가지 시간 단위 · 샘플링 간격 자동 감지 · 단위별 다른 패턴 · 즉시 전환</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 6: 세그먼트 연결 -->
+    <div class="about-scenario">
+      <div class="scenario-num-title"><span class="scenario-num">6</span><span class="scenario-title-text">세그먼트 연결 (Concat)</span></div>
+      <div class="scenario-q">
+        <div class="persona-avatar pa-process">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="6" fill="#8b5cf6" opacity=".85"/>
+            <path d="M8 34c0-7 5.4-12 12-12s12 5 12 12" fill="#8b5cf6" opacity=".55"/>
+            <rect x="24" y="23" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="29" y="23" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="24" y="28" width="4" height="4" rx=".5" fill="#a78bfa"/>
+            <rect x="29" y="28" width="4" height="4" rx=".5" fill="#a78bfa"/>
+          </svg>
+        </div>
+        <div class="scenario-q-body">
+          <div class="scenario-who">공정 엔지니어</div>
+          <div class="scenario-speech">"일별로 분할된 세그먼트 중 특정 3일을 선택해서 연결하고, 그 전체에서 패턴을 검색하고 싶습니다."</div>
+          <div class="scenario-illust">
+            <svg viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 선택된 세그먼트들 -->
+              <rect x="4" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="8,24 12,18 16,22 20,16 24,20" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="32" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="36,22 40,16 44,20 48,14 52,18" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <rect x="60" y="10" width="24" height="20" rx="3" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="64,20 68,14 72,18 76,12 80,16" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <!-- 화살표 -->
+              <path d="M90,20 L106,20" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+              <text x="98" y="14" text-anchor="middle" font-size="5" fill="#7c3aed" font-weight="600">연결</text>
+              <!-- 연결된 결과 -->
+              <rect x="112" y="6" width="84" height="28" rx="4" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="1.2"/>
+              <polyline points="118,26 126,18 134,24 142,16 150,22 158,14 166,20 174,12 182,18 190,24" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="154" y="40" text-anchor="middle" font-size="5" fill="#5b21b6">연속 탐색 가능</text>
+              <defs><marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="#7c3aed"/></marker></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scenario-a">
+        <div class="scenario-icon"><span class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/></svg></span></div>
+        <div>
+          <div class="scenario-method-badge sm-badge-c" style="margin-bottom:6px;">세그먼트 연결</div>
+          여러 세그먼트를 선택하여 하나의 연속 데이터로 연결합니다:
+          <ul style="margin:8px 0 0 20px;font-size:.78rem;line-height:1.6;">
+            <li><strong>선택적 연결:</strong> 원하는 세그먼트만 골라서 연결</li>
+            <li><strong>슬라이딩 윈도우:</strong> 연결된 전체에서 패턴 검색 가능</li>
+            <li><strong>재분할:</strong> 연결 후 다른 시간 단위로 다시 분할 가능</li>
+          </ul>
+          <div class="scenario-method-note">멀티 선택 · 순서 유지 · 연결 후 재분할 · 전체 검색</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /sub-dp-scenarios -->
+
+  </div><!-- /tab-data-prep -->

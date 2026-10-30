@@ -1,0 +1,110 @@
+# ═══════════════════════════════════════════════════════════════
+# Korean Time-Series Vocabulary Lexicon
+# ═══════════════════════════════════════════════════════════════
+#
+# 한국어 시계열 패턴 어휘 ↔ 표준 shape primitive 매핑.
+# 사용처:
+#   - backend/llm_service.py 의 paraphrase 생성 / shape 생성 프롬프트에 inject
+# 형식:
+#   <primitive_key>:
+#     synonyms: [한국어 표현 리스트 — paraphrase 시 동등 후보]
+#     en: 영문 대응어
+#     description: 자연어 설명 (LLM 프롬프트에 포함)
+# ═══════════════════════════════════════════════════════════════
+
+primitives:
+  spike:
+    synonyms: [뾰족, 뾰족함, 스파이크, 첨두, 삐죽, 튄다, 솟구침, 피크]
+    en: spike
+    description: "짧은 구간에 값이 급격히 솟았다가 즉시 회복되는 형태"
+
+  dip:
+    synonyms: [움푹, 골짜기, 함몰, 짧은 하락, 푹 꺼짐]
+    en: dip
+    description: "짧은 구간에 값이 급격히 내려갔다가 즉시 회복되는 형태"
+
+  rise:
+    synonyms: [상승, 오름, 증가, 우상향, 올라감]
+    en: rising
+    description: "전반적으로 값이 증가하는 추세"
+
+  surge:
+    synonyms: [급등, 폭등, 치솟음, 급격한 상승, 가파른 상승]
+    en: sudden surge
+    description: "짧은 시간에 값이 크게 상승하는 형태"
+
+  fall:
+    synonyms: [하락, 감소, 떨어짐, 우하향, 내려감]
+    en: falling
+    description: "전반적으로 값이 감소하는 추세"
+
+  crash:
+    synonyms: [급락, 폭락, 급격한 하락, 가파른 하락, 곤두박질]
+    en: sudden drop
+    description: "짧은 시간에 값이 크게 하락하는 형태"
+
+  flat:
+    synonyms: [평탄, 횡보, 일정, 변동 없음, 가만함]
+    en: flat
+    description: "값이 거의 변하지 않고 일정 수준 유지"
+
+  bell:
+    synonyms: [종 모양, 산 모양, 봉우리, 정점 한 번]
+    en: bell-shaped
+    description: "오르다가 정점을 찍고 다시 내려오는 대칭형"
+
+  v_shape:
+    synonyms: [V자, 급락 후 회복, 골 한 번, 떨어졌다가 다시]
+    en: V-shape
+    description: "내려갔다가 다시 올라오는 형태"
+
+  step_up:
+    synonyms: [계단식 상승, 한 단계 위로, 레벨 시프트 업]
+    en: step up
+    description: "특정 시점 이후 값이 한 단계 위에서 유지"
+
+  step_down:
+    synonyms: [계단식 하락, 한 단계 아래로, 레벨 시프트 다운]
+    en: step down
+    description: "특정 시점 이후 값이 한 단계 아래에서 유지"
+
+  oscillation:
+    synonyms: [진동, 흔들림, 들쭉날쭉, 등락 반복, 노이즈 많음]
+    en: oscillation
+    description: "값이 위아래로 빠르게 반복적으로 변화"
+
+  periodic:
+    synonyms: [주기적, 반복, 사이클, 주기성]
+    en: periodic
+    description: "일정 간격으로 비슷한 패턴이 반복"
+
+  cutout:
+    synonyms: [정지, 셧다운, 0으로 떨어짐, 값 사라짐]
+    en: cutout / shutdown
+    description: "운전 중 갑자기 값이 0 또는 매우 낮은 수준으로 떨어진 채 유지"
+
+  recovery:
+    synonyms: [회복, 복구, 정상화, 돌아옴]
+    en: recovery
+    description: "비정상 구간 후 정상 수준으로 돌아오는 형태"
+
+
+# ── Modifiers (정도/시간 표현) ────────────────────────────────
+modifiers:
+  intensity:
+    high: [매우, 아주, 크게, 극심한, 심한]
+    medium: [어느 정도, 보통, 중간]
+    low: [약간, 조금, 살짝, 미세한]
+
+  speed:
+    fast: [급격히, 빠르게, 순식간에, 갑자기]
+    slow: [서서히, 천천히, 점진적으로, 완만히]
+
+  position:
+    early: [초반, 처음, 앞부분, 시작 부근, 오전]
+    middle: [중반, 가운데, 중간 부근]
+    late: [후반, 끝, 마지막, 종료 부근, 오후]
+    any: [어디든, 임의 위치]
+
+  negation:
+    not: [없이, 빼고, 제외하고, 아닌, 안]

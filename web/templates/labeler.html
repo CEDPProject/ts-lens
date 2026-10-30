@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ t.basket.page_title }}{% endblock %}
+{% block head_style %}
+<link rel="stylesheet" href="/static/css/labeler.css?v={{ cache_bust }}">
+{% endblock %}
+
+{% block body %}
+<main class="labeler-wrap">
+  <div class="labeler-header">
+    <div class="labeler-heading">
+      <span class="labeler-eyebrow">{{ t.basket.eyebrow }}</span>
+      <h2 class="labeler-title">{{ t.basket.title }}</h2>
+      <p class="labeler-subtitle">{{ t.basket.subtitle }}</p>
+    </div>
+    <div class="labeler-actions">
+      <div class="lb-col-picker" id="colPicker">
+        <button id="btnColPicker" class="lb-btn lb-btn-ghost" title="{{ t.basket.select_columns }}">
+          {{ t.basket.columns }} <span class="lb-col-picker-count" id="colPickerCount">0</span>
+        </button>
+        <div class="lb-col-dropdown" id="colDropdown" hidden>
+          <div class="lb-col-dropdown-header">
+            <span>{{ t.basket.display_columns }}</span>
+            <button id="colSelectAll" class="lb-link">{{ t.basket.all }}</button>
+            <button id="colSelectNone" class="lb-link">{{ t.basket.none }}</button>
+          </div>
+          <div class="lb-col-list" id="colList"></div>
+          <p class="lb-col-scale-note">{{ t.basket.chart_scale_note }}</p>
+        </div>
+      </div>
+      <button id="btnSyncBasket" class="lb-btn lb-btn-outline" title="{{ t.basket.refresh }}">{{ t.basket.sync }}</button>
+      <button id="btnExportAll" class="lb-btn lb-btn-primary">{{ t.basket.export_csv }}</button>
+    </div>
+  </div>
+
+  <section class="lb-workflow" aria-label="{{ t.basket.workflow }}">
+    <div class="lb-workflow-step lb-workflow-draft">
+      <span class="lb-workflow-num">01</span>
+      <div><strong>{{ t.basket.collect }}</strong><small>{{ t.basket.collect_desc }}</small></div>
+      <span class="lb-workflow-value" id="workflowDraftCount">0</span>
+    </div>
+    <span class="lb-workflow-arrow" aria-hidden="true">→</span>
+    <div class="lb-workflow-step lb-workflow-confirmed">
+      <span class="lb-workflow-num">02</span>
+      <div><strong>{{ t.basket.review }}</strong><small>{{ t.basket.review_desc }}</small></div>
+      <span class="lb-workflow-value" id="workflowConfirmedCount">0</span>
+    </div>
+    <span class="lb-workflow-arrow" aria-hidden="true">→</span>
+    <div class="lb-workflow-step lb-workflow-export">
+      <span class="lb-workflow-num">03</span>
+      <div><strong>{{ t.basket.export }}</strong><small>{{ t.basket.export_desc }}</small></div>
+      <span class="lb-workflow-ready" id="workflowReady">{{ t.basket.not_ready }}</span>
+    </div>
+  </section>
+
+  <div class="lb-columns">
+    <section class="lb-column" id="draftSection">
+      <div class="lb-col-head">
+        <h3 class="lb-col-title">{{ t.basket.draft }}</h3>
+        <span id="draftCount" class="lb-count">0</span>
+      </div>
+      <div class="lb-filter-bar" id="draftFilterBar">
+        <div class="lb-filter-group">
+          <label>{{ t.basket.sort }}</label>
+          <select id="draftSort" class="lb-select-sm">
+            <option value="point_count">{{ t.basket.points }}</option>
+            <option value="start_ts">{{ t.basket.date }}</option>
+            <option value="col_name">{{ t.basket.column }}</option>
+          </select>
+        </div>
+        <div class="lb-filter-group">
+          <input type="text" id="draftFilter" class="lb-input-sm" placeholder="{{ t.basket.filter }}">
+        </div>
+      </div>
+      <div class="lb-toolbar" id="draftToolbar" hidden>
+        <label class="lb-check-all">
+          <input type="checkbox" id="draftCheckAll"> {{ t.basket.select_all }}
+        </label>
+        <input type="text" id="draftLabelInput" class="lb-label-input" placeholder="{{ t.basket.enter_label }}">
+        <button id="btnConfirmSelected" class="lb-btn lb-btn-primary lb-btn-sm">{{ t.basket.confirm }}</button>
+        <button id="btnDeleteDraft" class="lb-btn lb-btn-danger lb-btn-sm">{{ t.basket.delete }}</button>
+      </div>
+      <div class="lb-scroll" id="draftScroll">
+        <div id="draftGroups"></div>
+      </div>
+    </section>
+
+    <section class="lb-column" id="confirmedSection">
+      <div class="lb-col-head">
+        <h3 class="lb-col-title">{{ t.basket.confirmed }}</h3>
+        <span id="confirmedCount" class="lb-count">0</span>
+      </div>
+      <div class="lb-filter-bar" id="confirmedFilterBar">
+        <div class="lb-filter-group">
+          <label>{{ t.basket.sort }}</label>
+          <select id="confirmedSort" class="lb-select-sm">
+            <option value="point_count">{{ t.basket.points }}</option>
+            <option value="start_ts">{{ t.basket.date }}</option>
+            <option value="col_name">{{ t.basket.column }}</option>
+          </select>
+        </div>
+        <div class="lb-filter-group">
+          <input type="text" id="confirmedFilter" class="lb-input-sm" placeholder="{{ t.basket.filter }}">
+        </div>
+      </div>
+      <div class="lb-toolbar" id="confirmedToolbar" hidden>
+        <label class="lb-check-all">
+          <input type="checkbox" id="confirmedCheckAll"> {{ t.basket.select_all }}
+        </label>
+        <button id="btnDeleteConfirmed" class="lb-btn lb-btn-danger lb-btn-sm">{{ t.basket.delete }}</button>
+      </div>
+      <div class="lb-scroll" id="confirmedScroll">
+        <div id="confirmedGroups"></div>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/labeler.js?v={{ cache_bust }}"></script>
+{% endblock %}
